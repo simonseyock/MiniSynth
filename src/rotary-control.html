@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.rotary-control {
+	//width: 100%;
+	//height: 100%;
+}
+
+.rotary-control-svg {
+	fill: black;
+	stroke: black;
+}
+
+.rotary-control-valuefield {
+	width: 100%;
+	box-sizing: border-box;
+	text-align: center;
+	color: black;
+}
+
+.rotary-control-valuefield-camouflage {
+	border: 0;
+	background: transparent;
+}
+
+#here1 {
+	width: 50px;
+	height: auto;
+}
+
+#here1 .rotary-control-svg {
+	fill: red;
+	stroke: red;
+}
+
+#here2 {
+	width: 100px;
+	height: auto;
+}
+
+#here3 {
+	background-color: lightblue;
+	width: 150px;
+	height: auto;
+}
+
+#here3 .rotary-control-svg {
+	fill: green;
+	stroke: green;
+}
+
+#here4 {
+	width: 150px;
+	height: auto;
+}
+
+#here4 .rotary-control-svg {
+	fill: blue;
+	stroke: blue;
+}
+
+</style>
+<script src="../lib/jquery-1.11.2.min.js"></script>
+<script>
+
+// TODO:
+// find better names for transferFrom transferTo
+//
+
+var RotaryControl = function(target) {
+	this.value_ = 0;
+	this.spareDegrees = 90;
+	
+	this.resolution = 0.005;
+	
+	this.className_ = "rotary-control";
+	this.classNameSVG_ = "rotary-control-svg";
+	this.classNamePointer_ = "rotary-control-pointer";
+	this.classNameValueField_ = "rotary-control-valuefield";
+	this.classNameValueFieldCamouflage_ = "rotary-control-valuefield-camouflage";
+	
+	this.$element_ = $("<div>").addClass(this.className_);
+	$(target).append(this.$element_);
+		
+	this.strokeWidth_ = 8;
+	this.radius_ = 26;
+	this.pointerLength_ = 25;
+	this.pointerDistanceFromCenter_ = 12;
+	this.dotRadius = 4;
+	this.dotMinDistanceFromBorder_ = 2;
+	
+	this.$svg_ = $('<svg viewBox = "0 0 100 100" version = "1.1"></svg>').attr("class", this.classNameSVG_);
+	
+	this.$element_.append(this.$svg_);
+	
+	this.$svg_.html('<circle cx="50" cy="50" r="' + this.radius_ + '" stroke-width="' + this.strokeWidth_ + '" fill="transparent" />'
+		+'<rect class="' + this.classNamePointer_ + '" width="' + this.strokeWidth_ + '" height="' + this.pointerLength_ + '" x="' + (50 - this.strokeWidth_/2) + '" y="' + (50 + this.pointerDistanceFromCenter_) + '"/>');
+	
+	this.displayFunction_ = null;
+	this.editFunction_ = null;
+	
+	var thisRef = this;
+	
+	this.$svg_.on("mousedown", function (e) {
+		thisRef.onSVGMouseDown_(e);
+	});
+	
+	this.$svg_.on("touchstart", function (e) {
+		e.pageX = e.originalEvent.targetTouches[0].pageX;
+		e.pageY = e.originalEvent.targetTouches[0].pageY;
+		thisRef.onSVGMouseDown_(e);
+	});
+	
+	$(document).on("mousemove", function (e) {
+		thisRef.onDocMouseMove_(e);
+	});
+	
+	this.$svg_.on("touchmove", function (e) {
+		e.pageX = e.originalEvent.targetTouches[0].pageX;
+		e.pageY = e.originalEvent.targetTouches[0].pageY;
+		thisRef.onDocMouseMove_(e);
+	});
+	
+	$(document).on("mouseup touchend", function (e) {
+		thisRef.onDocMouseUp_(e);
+	});
+	
+	this.$valueField_ = $('<input type="text" disabled>').addClass(this.classNameValueField_).addClass(this.classNameValueFieldCamouflage_);
+	this.$element_.append($("<div>").append(this.$valueField_));
+	
+	this.createDots_([0,1]);
+	this.setValue(0);
+	
+	this.$valueField_.val("0");
+};
+
+RotaryControl.prototype.createDots_ = function (values) {
+	var alpha, x, y;
+	for(var i=0; i<values.length; i++) {
+		alpha = (this.spareDegrees/2 + (360-this.spareDegrees)*values[i]);
+		x = -Math.sin(alpha/360*2*Math.PI) * (50 - this.dotMinDistanceFromBorder_ - this.dotRadius) + 50;
+		y = Math.cos(alpha/360*2*Math.PI) * (50 - this.dotMinDistanceFromBorder_ - this.dotRadius) + 50;
+		this.$svg_.html(this.$svg_.html() + '<circle cx="' + x +'" cy="' + y +'" r="' + this.dotRadius + '" />'); 
+	}
+};
+
+RotaryControl.prototype.onSVGMouseDown_ = function (e) {
+	this.mouseMove_ = true;
+	this.lastY_ = e.pageY;
+	e.preventDefault();
+};
+
+RotaryControl.prototype.onDocMouseMove_ = function (e) {
+	if(this.mouseMove_) {
+		var distance = this.lastY_ - e.pageY;
+		var newValue = Math.max(0, Math.min(this.value_ + distance*this.resolution, 1));
+		this.setValue(newValue);
+		this.lastY_ = e.pageY;
+	}
+};
+
+RotaryControl.prototype.onDocMouseUp_ = function (e) {
+	this.mouseMove_ = false;
+};
+
+RotaryControl.prototype.getValue = function () {
+	return this.value_;
+};
+
+RotaryControl.prototype.setValue = function (value) {
+	
+	this.value_ = value;
+	
+	var transformString = "rotate(" + (this.spareDegrees/2 + (360-this.spareDegrees)*value)  + " 50 50)";
+	this.$svg_.children("."+this.classNamePointer_).attr("transform", transformString);
+	
+	var displayValue = value;
+	if(this.displayFunction_) {
+		displayValue = this.displayFunction_(displayValue);
+	}
+	this.$valueField_.val(displayValue);
+};
+
+RotaryControl.prototype.setEditFunction = function (interpretFunction) {
+	var thisRef = this;
+	var valueBeforeEdit = 0;
+	
+	var onFocus = function(e) {
+		$(this).removeClass(thisRef.classNameValueFieldCamouflage_);
+		valueBeforeEdit = $(this).val();
+	};
+	
+	this.interpretFunction_ = interpretFunction;
+	if (interpretFunction) {
+		this.$valueField_.attr("disabled", false);
+		this.$valueField_.on("focus", onFocus);
+		this.$valueField_.on("blur", function(e) {
+			$(this).addClass(thisRef.classNameValueFieldCamouflage_);
+			thisRef.setValue(interpretFunction($(this).val()));
+		});
+		this.$valueField_.on("keydown", function(e) {
+			if(e.which === 13) { // enter
+				$(this).blur();
+			} else if (e.which === 27) { // escape
+				$(this).val(valueBeforeEdit);
+				$(this).blur();
+			}
+		});
+	} else {
+		this.$valueField_.attr("disabled", true);
+		this.$valueField_.off("focus", onFocus);
+	}
+};
+
+RotaryControl.prototype.setDisplayFunction = function (displayFunction) {
+	this.displayFunction_ = displayFunction;
+};
+
+//AnalogRotaryControl.prototype.setTransformFunctions = function (from, to) {
+//	this.valueFromExternal_ = from
+//	this.valueToExternal_ = to;
+//};
+
+/**
+ * AnalogRotaryControl
+ * @class
+ *
+ *
+ */
+ 
+AnalogRotaryControl = function(target) {
+	RotaryControl.call(this, target);
+};
+jQuery.extend(AnalogRotaryControl.prototype, RotaryControl.prototype);
+
+//AnalogRotaryControl.prototype.setDisplayFunction = function (displayFunction) {
+//	this.displayFunction_ = displayFunction;
+//};
+
+
+
+/**
+ * DiscreteRotaryControl
+ * @class
+ *
+ *
+ */
+ 
+DiscreteRotaryControl = function(target) {
+	this.points_ = [0,1];
+	RotaryControl.call(this, target);
+};
+jQuery.extend(DiscreteRotaryControl.prototype, RotaryControl.prototype);
+
+DiscreteRotaryControl.prototype.setValueInternal_ = function (value) {
+
+	RotaryControl.prototype.setValueInternal_.call(this, value);
+	if(this.displayFunction_) {
+		this.$valueField_.val(this.displayFunction_(value));
+	} else {
+		this.$valueField_.val(value);
+	}
+};
+
+DiscreteRotaryControl.prototype.setDisplayArray = function (displayArray) {
+	this.length_ = displayArray.length;
+	this.displayFunction_ = displayFunction;
+};
+
+DiscreteRotaryControl.prototype.setValueArray = function (valueArray) {
+	this.length_ = valueArray.length;
+	this.value_Array_ = valueArray;
+};
+
+$(document).ready(function() {
+
+	var editNumberFunc = function(string) {
+		var candidate = parseFloat(string);
+		if(isNaN(candidate)) {
+			return 0;
+		} else {
+			return Math.max(0, Math.min(candidate, 1));
+		}
+	};
+	
+	var displayNumberFunc = function(number) {
+		return number.toFixed(2);
+	};
+
+
+	
+	window.rc1 = new AnalogRotaryControl("#here1");
+	rc1.setValue(0.5);
+	window.rc2 = new AnalogRotaryControl("#here2");
+	//rc2.setValueInternal_(0.25);
+	//rc2.setTransformFunctions(transformFromLin, transformToLin);
+	rc2.setEditFunction( editNumberFunc );
+	rc2.setDisplayFunction(	displayNumberFunc );
+	window.rc3 = new AnalogRotaryControl("#here3");
+	rc3.setDisplayFunction(	displayNumberFunc );
+	window.rc4 = new AnalogRotaryControl("#here4");
+	rc4.setValueInternal_(1);
+});
+</script>
+</head>
+<body>
+<div id="here1"></div>
+<div id="here2"></div>
+Some pretty normal Text here. Some pretty normal Text here. Some pretty normal Text here.Some pretty normal Text here. Some pretty normal Text here.
+Some pretty normal Text here. Some pretty normal Text here. Some pretty normal Text here.Some pretty normal Text here. Some pretty normal Text here.
+Some pretty normal Text here. Some pretty normal Text here. Some pretty normal Text here.Some pretty normal Text here. Some pretty normal Text here.
+Some pretty normal Text here. Some pretty normal Text here. Some pretty normal Text here.Some pretty normal Text here. Some pretty normal Text here.
+Some pretty normal Text here. Some pretty normal Text here.
+<div id="here3"></div>
+<div id="here4"></div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+	"name": "MobileSynthMiniSeq",
+	"version": "0.0.1",
+	"description": "A small sequencer and synthesizer for a mobile.",
+	"author": {
+		"name": "Simon Seyock",
+		"email": "simonseyock@gmail.com"
+		},
+	"private": true,
+	"dependencies": {
+		"jquery": "1.11.1"
+	}
+}
