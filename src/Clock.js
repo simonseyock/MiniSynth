@@ -1,3 +1,6 @@
+// #ifndef __CLOCK__
+// #define __CLOCK__
+
 // #include "init.js"
 // #include "StateExchangeObject.js"
 
@@ -49,3 +52,5 @@ synth.Clock.prototype.stop = function (/* time here? */) {
 synth.Clock.prototype.calcTime = function (beats) {
 	return this.startTime_ + beats / this.bpm_ * 60 * 1000;
 };
+
+// #endif
