@@ -20,12 +20,12 @@ synth.inherits(synth.GlobalMerger, synth.StateExchangeObject);
 synth.StateExchangeObject.addType("synth.GlobalMerger", synth.GlobalMerger);
 
 synth.GlobalMerger.prototype.setLines = function (lines) {
-	this.merger_ = this.audioContext_.createChannelMerger(Math.max(lines.length * 2, 2));
-	this.merger_.connect(this.gain_);
+	//this.merger_ = this.audioContext_.createChannelMerger(Math.max(lines.length * 2, 2));
+	//this.merger_.connect(this.gain_);
 	this.lines_ = lines;
 	for (var i=0; i<this.lines_.length; i++) {
-		lines[i].connect(this.merger_, 0, i*2);
-		lines[i].connect(this.merger_, 1, i*2+1);
+		lines[i].connect(this.gain_);
+		//lines[i].connect(this.merger_, 1, i*2+1);
 	}
 };
 
