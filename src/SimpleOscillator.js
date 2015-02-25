@@ -29,16 +29,29 @@ synth.StateExchangeObject.addType("synth.instrument.SimpleOscillator", synth.ins
 
 synth.instrument.SimpleOscillator.prototype.playFrequency = function (frequency, time, duration) {
 	//store
-	var index = this.occupancy_.length - 1;
-	while (index > 0 && time < this.occupancy_[index].time) {
+	var index = this.occupancy_.length;
+	while (index > 0 && time < this.occupancy_[index-1].time) {
 		index--;
 	}
 	this.occupancy_.splice(index, 0, {time: time, duration: duration});
 
-	//play sounds at given time
+	
+	//play sound at given time
 	this.oscillator_.frequency.setValueAtTime(frequency, time);
-	this.gain_.gain.setValueAtTime(1, time);
-	this.gain_.gain.setValueAtTime(0, time+duration);
+	
+	
+	//adjust on/off
+	if ((index > 0) && (this.occupancy_[index-1].time + this.occupancy_[index-1].duration > time)) {
+		this.gain_.gain.setValueAtTime(1, this.occupancy_[index-1].time + this.occupancy_[index-1].duration);
+	} else {
+		this.gain_.gain.setValueAtTime(1, time);
+	}
+		
+	if ((index+1 < this.occupancy_.length) && time + duration > this.occupancy_[index+1].time) {
+		// nothing to do ... stays 1
+	} else {
+		this.gain_.gain.setValueAtTime(0, time+duration);
+	}
 	
 	//keep occupancy_ small
 	var that = this;

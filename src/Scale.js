@@ -14,7 +14,7 @@ synth.Scale = function () {
 synth.inherits(synth.Scale, synth.StateExchangeObject);
 //synth.StateExchangeObject.addType("synth.Scale", synth.Scale);
 
-synth.Scale.prototype.getNote = synth.abstractFunction;
+synth.Scale.prototype.getFrequency = synth.abstractFunction;
 
 
 
@@ -30,7 +30,7 @@ synth.EqualTemperedScale = function (index, frequency) {
 synth.inherits(synth.EqualTemperedScale, synth.Scale);
 synth.StateExchangeObject.addType("synth.EqualTemperedScale", synth.EqualTemperedScale);
 
-synth.EqualTemperedScale.prototype.getNote = function (index) {
+synth.EqualTemperedScale.prototype.getFrequency = function (index) {
 	return this.baseFrequency_ * Math.pow(this.factor_, index);
 };
 

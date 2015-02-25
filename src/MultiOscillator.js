@@ -20,6 +20,8 @@ synth.instrument.MultiOscillator = function (audioContext, waveType, numVoices) 
 	this.waveType_ = waveType || "sine";
 	
 	this.setVoices(numVoices || 1);
+	
+	this.oscIndex_ = 0;
 };
 synth.inherits(synth.instrument.MultiOscillator, synth.instrument.Instrument);
 synth.StateExchangeObject.addType("synth.instrument.MultiOscillator", synth.instrument.MultiOscillator);
@@ -39,16 +41,25 @@ synth.instrument.MultiOscillator.prototype.setWaveType = function (type) {
 };
 
 synth.instrument.MultiOscillator.prototype.playFrequency = function (frequency, time, duration) {
-	var abort = false;
+	
+	//this variant of the mechanism does assume the values come in in the order they are played
+	this.simpleOscillators_[this.oscIndex_].playFrequency(frequency, time, duration);
+	
+	this.oscIndex_ = (this.oscIndex_ + 1) % this.numVoices_;
+	
 	//console.log("time:",time);
-	for (var i=0; i<this.numVoices_ && !abort; i++) {
-		//console.log("osc:",i);
-		if (this.simpleOscillators_[i].isFree(time, duration)) {
-			//console.log("is free");
-			this.simpleOscillators_[i].playFrequency(frequency, time, duration);
-			abort = true;
-		}
-	}
+	// for (var i=0, found=false; i<this.numVoices_ && !found; i++) {
+		// //console.log("osc:",i);
+		// if (this.simpleOscillators_[i].isFree(time, duration)) {
+			// //console.log("is free");
+			// this.simpleOscillators_[i].playFrequency(frequency, time, duration);
+			// found = true;
+		// }
+	// }
+	// if(!found) {
+		// //interrupt a random oscillator at that time ... not that good, it's not the same sound anymore everytime you play it
+		// this.simpleOscillators_[Math.rand()%this.numVoices_].playFrequency(frequency, time, duration);
+	// }
 };
 
 synth.instrument.MultiOscillator.prototype.connect = function (anAudioNode) {
