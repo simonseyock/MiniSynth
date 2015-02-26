@@ -10,8 +10,8 @@ synth.instrument = synth.instrument || {};
 /**
  *	Can play multiple sounds at a time
  */
-synth.instrument.MultiOscillator = function (audioContext, waveType, numVoices) {
-	synth.instrument.Instrument.call(this);
+synth.instrument.MultiOscillator = function (audioContext, waveType, numVoices, scale) {
+	synth.instrument.Instrument.call(this, scale);
 	
 	this.audioContext_ = audioContext;
 
@@ -30,9 +30,15 @@ synth.instrument.MultiOscillator.prototype.setVoices = function (numVoices) {
 	this.numVoices_ = numVoices;
 	this.simpleOscillators_ = [];
 	for(var i=0; i<numVoices; i++) {
-		var osc = new synth.instrument.SimpleOscillator(this.audioContext_, this.waveType_);
+		var osc = new synth.instrument.SimpleOscillator(this.audioContext_, this.waveType_, this.scale_);
 		this.simpleOscillators_.push(osc);
 		osc.connect(this.gain_);
+	}
+};
+
+synth.instrument.MultiOscillator.prototype.setScale = function (scale) {
+	for (var i=0; i<numVoices; i++) {
+		this.simpleOscillators_[i].setScale(scale);
 	}
 };
 
