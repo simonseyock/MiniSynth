@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<script src="http://localhost:9091"></script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	var clock = new synth.Clock(audioCtx);
+	
+	clock.on("start", function (time) {
+		console.log("Clock started, time: " + time + ", realTime: " + clock.getRealTime(time))
+	});
+	
+	clock.on("stop", function (time) {
+		console.log("Clock stopped, time: " + time + ", realTime: " + clock.getRealTime(time))
+	});
+	
+	clock.on("tick", function (begin, end) {
+		console.log("Clock tick, begin: " + begin + ", end: " + end + ", realTime: " + clock.getRealTime(begin) + ", " + clock.getRealTime(end));
+	});
+	
+	clock.start();
+	
+	setTimeout(function () {
+		clock.stop();
+	}, 4000);
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+</body>
+</html>

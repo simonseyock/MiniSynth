@@ -1,7 +1,7 @@
 // #ifndef __VIEW__
 // #define __VIEW__
 
-// #include "init.js"
+// #include "../init.js"
 
 synth.View = function (opt_options) {
 

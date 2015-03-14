@@ -26,6 +26,6 @@
     "build": "npm run build:js && npm run build:css",
     "watch": "parallelshell \"npm run watch:js\" \"npm run watch:css\"",
     "livereload": "live-reload --port 9091 build/",
-    "serve": "parallelshell \"npm run watch\" \"npm run livereload\""
+    "develop": "parallelshell \"npm run watch\" \"npm run livereload\""
   }
 }

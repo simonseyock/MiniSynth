@@ -18,7 +18,7 @@ synth.TimeCollection = function (begin, end, options) {
 	this.count = 0;
 	
 	if (_.isNaN(begin) || _.isNaN(end)) {
-		throw new Error("TimeCollection needs a begin and an end!");
+		throw new Error("TimeCollection needs a begin and an end!"); // NOTE: really?
 	}
 	this.begin = begin;
 	this.end = end;
@@ -55,7 +55,7 @@ synth.TimeCollection.prototype.remove = function (timeObject) {
 		}
 	}
 
-	return found;
+	return this; // return found
 };
 
 synth.TimeCollection.prototype.between = function (begin, end) {

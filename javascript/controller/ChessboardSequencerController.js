@@ -1,9 +1,9 @@
 // #ifndef __CHESSBOARDSEQUENCERCONTROLLER__
 // #define __CHESSBOARDSEQUENCERCONTROLLER__
 
-// #include "init.js"
-// #include "ChessBoardSequencer.js"
-// #include "SequencerChessBoardView.js"
+// #include "../init.js"
+// #include "../players/ChessBoardSequencer.js"
+// #include "../views/SequencerChessBoardView.js"
 
 synth.ChessboardSequencerController = function (viewoptions) {
 	var that = this;

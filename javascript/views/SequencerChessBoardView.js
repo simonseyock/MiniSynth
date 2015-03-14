@@ -1,7 +1,7 @@
 // #ifndef __SEQUENCERCHESSBOARDVIEW
 // #define __SEQUENCERCHESSBOARDVIEW
 
-// #include "init.js"
+// #include "../init.js"
 // #include "View.js"
 
 synth.SequencerChessBoardView = function (opt_options) {

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<script src="http://localhost:9091"></script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/lodash/index.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	window.logCollection = function (collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	};
+	
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	var timeCollection = new synth.TimeCollection(0,8);
+	
+	var objA = { time: 0, duration: 1  , value: 4 };
+	var objB = { time: 1, duration: 1  , value: 2 };
+	var objC = { time: 3, duration: 0.5, value: 7 };
+	var objD = { time: 3, duration: 2  , value: 8 };
+	var objE = { time: 5, duration: 2  , value: 4 };
+	
+	timeCollection.insert(objA);
+	timeCollection.insert(objB);
+	//timeCollection.insert(objC);
+	timeCollection.insert(objD);
+	//timeCollection.insert(objE);
+	//timeCollection.insert(objD);
+	
+	console.log("timeCollection: ");
+	logCollection(timeCollection);
+	
+	anotherTimeCollection = new synth.TimeCollection(0,8);
+	anotherTimeCollection.insert(objD);
+	console.log("another TimeCollection: ");
+	logCollection(anotherTimeCollection);
+	
+	var simpleOscillator = new synth.instrument.SimpleOscillator(audioCtx, "square");
+	
+	simpleOscillator.connect(audioCtx.destination);
+	
+	var scaleC3 = new synth.EqualTemperedScale(21, 440);
+	
+	simpleOscillator.setScale(scaleC3);
+	
+	$("#testA").on("click", function () {
+		console.log("simplePlayback");
+		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+	}.bind(this));
+	
+	$("#testB").on("click", function () {
+		console.log("interrupt");
+		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		simpleOscillator.interrupt(audioCtx.currentTime + 4.5);
+	}.bind(this));
+	
+	$("#testC").on("click", function () {
+		var curTime = audioCtx.currentTime;
+		console.log("remove while playing");
+		console.log("playing:");
+		logCollection(timeCollection.timeAdd(curTime + 1));
+		simpleOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
+		setTimeout(function () {
+			console.log("remove now:");
+			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
+			simpleOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
+		}, 4500);
+	});
+	
+	$("#testD").on("click", function () {
+		var curTime = audioCtx.currentTime;
+		console.log("inserting while playing");
+		console.log("playing:");
+		logCollection(timeCollection.remove(objD).timeAdd(curTime + 1));
+		simpleOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
+		setTimeout(function () {
+			console.log("insert now:");
+			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
+			simpleOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
+		}, 4500);
+	});
+	
+	$("#testE").on("click", function () {
+		logCollection(timeCollection);
+		logCollection(anotherTimeCollection);
+	});
+	
+	simpleOscillator.start(audioCtx.currentTime + 0.5);
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+<button id="testA">Test A</button>
+<button id="testB">Test B</button>
+<button id="testC">Test C</button>
+<button id="testD">Test D</button>
+<button id="testE">Test E</button>
+</body>
+</html>

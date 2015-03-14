@@ -1,7 +1,7 @@
 // #ifndef __ONEBARSTEPSEQUENCER__
 // #define __ONEBARSTEPSEQUENCER__
 
-// #include "init.js"
+// #include "../init.js"
 // #include "Player.js"
 
 synth.player.OneBarStepSequencer = function (opt_grainSize) {

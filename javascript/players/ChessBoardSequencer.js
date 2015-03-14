@@ -1,7 +1,7 @@
 // #ifndef __CHESSBOARDSEQUENCER__
 // #define __CHESSBOARDSEQUENCER__
 
-// #include "init.js"
+// #include "../init.js"
 // #include "OneBarStepSequencer.js"
 
 synth.player.ChessBoardSequencer = function () {

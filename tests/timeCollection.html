@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<script src="http://localhost:9091"></script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/lodash/index.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	function logCollection(collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	}
+
+	var timeCollection = new synth.TimeCollection(0,8);
+	
+	var objA = { time: 0, duration: 1  , value: 4 };
+	var objB = { time: 1, duration: 1  , value: 2 };
+	var objC = { time: 3, duration: 0.5, value: 7 };
+	var objD = { time: 3, duration: 1  , value: 8 };
+	var objE = { time: 5, duration: 2  , value: 4 };
+	
+	timeCollection.insert(objA);
+	timeCollection.insert(objB);
+	timeCollection.insert(objC);
+	timeCollection.insert(objD);
+	timeCollection.insert(objE);
+	timeCollection.insert(objD);
+	
+	console.log("initial inserts: ");
+	logCollection(timeCollection);
+	
+	timeCollection.remove(objD);
+	
+	console.log("remove: ");
+	logCollection(timeCollection);
+	
+	console.log("before: ");
+	logCollection(timeCollection.before(2));
+	
+	console.log("after equal: ");
+	logCollection(timeCollection.afterEqual(3));
+	
+	console.log("between: ");
+	logCollection(timeCollection.between(1,4));
+	
+	console.log("atTime 3.2: ");
+	logCollection(timeCollection.atTime(3.2));
+	
+	var anotherTimeCollection = new synth.TimeCollection(5,12);
+	var objF = { time: 9, duration:1, value: 3};
+	var objG = { time: 11, duration: 3, value: 5};
+	
+	anotherTimeCollection.insert(objG).insert(objF).insert(objE);
+	
+	console.log("another timeCollection: ");
+	logCollection(anotherTimeCollection);
+	
+	console.log("sort: ");
+	logCollection(anotherTimeCollection.sort());
+	
+	console.log("merge: ");
+	logCollection(timeCollection.merge(anotherTimeCollection).sort());
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+</body>
+</html>
