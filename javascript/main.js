@@ -1,6 +1,6 @@
 
 	// #include "controller/ChessboardSequencerController.js"
-	// #include "instruments/MultiOscillator.js"
+	// #include "instruments/MultiVoiceOscillator.js"
 	// #include "InstrumentLine.js"
 	// #include "GlobalMerger.js"
 	// #include "Scale.js"

@@ -5,13 +5,15 @@
 // #include "StateExchangeObject.var.js"
 // #include "EventHandling.js"
 
+// NOTE: Global Assumption: BpM is the Velocity of Quarters
+
 synth.Clock = function (audioContext) {
 	synth.EventHandling.call(this);
 	
 	this.setBpm(120);
 	//this.on("statechange:bpm", ...);
-	this.setBeats(4);
-	this.setNoteValue(4);
+	//this.setBeats(4);
+	//this.setNoteValue(4);
 
 	this.audioContext_ = audioContext;
 	
@@ -28,24 +30,33 @@ synth.Clock = function (audioContext) {
 	this.registerEventType("tick"); // gives relative times to startTime
 	this.registerEventType("start");
 	this.registerEventType("stop");
+	this.registerEventType("change:bpm");
+	//this.registerEventType("change:noteValues");
+	//this.registerEventType("change:beats");
 };
 synth.inherits(synth.Clock, synth.StateExchangeObject);
 synth.inherits(synth.Clock, synth.EventHandling);
 
 synth.Clock.prototype.setBpm = function (bpm) {
+	var oldValue = this.bpm_;
 	this.bpm_ = bpm;
+	this.fireEvent("change:bpm", [{oldValue: oldValue, newValue: bpm}]);
 	//this.setState("bpm", bpm);
 };
 
-synth.Clock.prototype.setNoteValue = function (noteValue) {
-	this.noteValue_ = noteValue;
-	//this.setState("noteValue", noteValue);
-};
+// synth.Clock.prototype.setNoteValue = function (noteValue) {
+	// var oldValue = this.noteValue_;
+	// this.noteValue_ = noteValue;
+	// this.fireEvent("change:noteValue", [{oldValue: oldValue, newValue: noteValue}]);
+	// //this.setState("noteValue", noteValue);
+// };
 
-synth.Clock.prototype.setBeats = function (beats) {
-	this.beats_ = beats;
-	//this.setState("beats", beats);
-};
+// synth.Clock.prototype.setBeats = function (beats) {
+	// var oldValue = this.beats_;
+	// this.beats_ = beats;
+	// this.fireEvent("change:beats", [{oldValue: oldValue, newValue: beats}]);
+	// //this.setState("beats", beats);
+// };
 
 synth.Clock.prototype.start = function (/* time here? */) {
 	

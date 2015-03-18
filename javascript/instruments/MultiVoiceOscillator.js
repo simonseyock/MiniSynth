@@ -3,7 +3,7 @@
 
 // #include "../init.js"
 // #include "Instrument.js"
-// #include "SimpleOscillator.js"
+// #include "SingleVoiceOscillator.js"
 
 synth.instrument = synth.instrument || {};
 
@@ -23,7 +23,7 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 	this.voiceOscillators_ = [];
 	
 	for(var i=0; i<this.voices_; i++) {
-		var osc = new synth.instrument.SimpleOscillator(this.audioContext_, this.waveType_, this.scale_);
+		var osc = new synth.instrument.SingleVoiceOscillator(this.audioContext_, this.waveType_, this.scale_);
 		this.voiceOscillators_.push(osc);
 		osc.connect(this.gain_);
 	}
@@ -52,7 +52,7 @@ synth.instrument.MultiVoiceOscillator.prototype.setScale = function (scale) {
 	for (var i=0; i<this.voices_; i++) {
 		this.voiceOscillators_[i].setScale(scale);
 	}
-	synth.instrument.Instrument.prototype.call(this, scale);
+	synth.instrument.Instrument.prototype.setScale.call(this, scale);
 };
 
 // synth.instrument.MultiVoiceOscillator.prototype.playFrequency = function (frequency, time, duration) {
@@ -78,14 +78,20 @@ synth.instrument.MultiVoiceOscillator.prototype.setScale = function (scale) {
 	// // }
 // };
 
-// synth.instrument.MultiVoiceOscillator.prototype.connect = function (anAudioNode) {
-	// this.gain_.connect(anAudioNode);
-// };
+synth.instrument.MultiVoiceOscillator.prototype.connect = function (anAudioNode) {
+	this.gain_.connect(anAudioNode);
+};
 
 synth.instrument.MultiVoiceOscillator.prototype.start = function (when) {
 	for(var i=0; i<this.voices_; i++) {
 		this.voiceOscillators_[i].start(when);
 	}
 };
+
+synth.instrument.MultiVoiceOscillator.prototype.interrupt = function (when) {
+	for(var i=0; i<this.voices_; i++) {
+		this.voiceOscillators_[i].interrupt(when);
+	}
+}
 
 // #endif

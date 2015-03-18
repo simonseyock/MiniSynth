@@ -42,23 +42,23 @@ $(document).ready(function () {
 	console.log("another TimeCollection: ");
 	logCollection(anotherTimeCollection);
 	
-	var simpleOscillator = new synth.instrument.SimpleOscillator(audioCtx, "square");
+	var singleVoiceOscillator = new synth.instrument.SingleVoiceOscillator(audioCtx, "square");
 	
-	simpleOscillator.connect(audioCtx.destination);
+	singleVoiceOscillator.connect(audioCtx.destination);
 	
 	var scaleC3 = new synth.EqualTemperedScale(21, 440);
 	
-	simpleOscillator.setScale(scaleC3);
+	singleVoiceOscillator.setScale(scaleC3);
 	
 	$("#testA").on("click", function () {
-		console.log("simplePlayback");
-		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		console.log("singleVoicePlayback");
+		singleVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
 	}.bind(this));
 	
 	$("#testB").on("click", function () {
 		console.log("interrupt");
-		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
-		simpleOscillator.interrupt(audioCtx.currentTime + 4.5);
+		singleVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		singleVoiceOscillator.interrupt(audioCtx.currentTime + 4.5);
 	}.bind(this));
 	
 	$("#testC").on("click", function () {
@@ -66,11 +66,11 @@ $(document).ready(function () {
 		console.log("remove while playing");
 		console.log("playing:");
 		logCollection(timeCollection.timeAdd(curTime + 1));
-		simpleOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
+		singleVoiceOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("remove now:");
 			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			simpleOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
+			singleVoiceOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
 		}, 4500);
 	});
 	
@@ -79,11 +79,11 @@ $(document).ready(function () {
 		console.log("inserting while playing");
 		console.log("playing:");
 		logCollection(timeCollection.remove(objD).timeAdd(curTime + 1));
-		simpleOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
+		singleVoiceOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("insert now:");
 			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			simpleOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
+			singleVoiceOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
 		}, 4500);
 	});
 	
@@ -92,7 +92,7 @@ $(document).ready(function () {
 		logCollection(anotherTimeCollection);
 	});
 	
-	simpleOscillator.start(audioCtx.currentTime + 0.5);
+	singleVoiceOscillator.start(audioCtx.currentTime + 0.5);
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">

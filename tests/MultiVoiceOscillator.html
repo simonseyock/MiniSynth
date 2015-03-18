@@ -23,15 +23,15 @@ $(document).ready(function () {
 	
 	var objA = { time: 0, duration: 1  , value: 4 };
 	var objB = { time: 1, duration: 1  , value: 2 };
-	var objC = { time: 3, duration: 0.5, value: 7 };
-	var objD = { time: 3, duration: 2  , value: 8 };
-	var objE = { time: 5, duration: 2  , value: 4 };
+	var objC = { time: 1, duration: 0.5, value: 7 };
+	var objD = { time: 1, duration: 2  , value: 8 };
+	var objE = { time: 3, duration: 2  , value: 4 };
 	
 	timeCollection.insert(objA);
 	timeCollection.insert(objB);
-	//timeCollection.insert(objC);
+	timeCollection.insert(objC);
 	timeCollection.insert(objD);
-	//timeCollection.insert(objE);
+	timeCollection.insert(objE);
 	//timeCollection.insert(objD);
 	
 	console.log("timeCollection: ");
@@ -40,25 +40,25 @@ $(document).ready(function () {
 	anotherTimeCollection = new synth.TimeCollection(0,8);
 	anotherTimeCollection.insert(objD);
 	console.log("another TimeCollection: ");
-	logCollection(anotherTimeCollection);
+ 	logCollection(anotherTimeCollection);
 	
-	var simpleOscillator = new synth.instrument.SimpleOscillator(audioCtx, "square");
+	var multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
 	
-	simpleOscillator.connect(audioCtx.destination);
+	multiVoiceOscillator.connect(audioCtx.destination);
 	
 	var scaleC3 = new synth.EqualTemperedScale(21, 440);
 	
-	simpleOscillator.setScale(scaleC3);
+	multiVoiceOscillator.setScale(scaleC3);
 	
 	$("#testA").on("click", function () {
 		console.log("simplePlayback");
-		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
 	}.bind(this));
 	
 	$("#testB").on("click", function () {
 		console.log("interrupt");
-		simpleOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
-		simpleOscillator.interrupt(audioCtx.currentTime + 4.5);
+		multiVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		multiVoiceOscillator.interrupt(audioCtx.currentTime + 2.5);
 	}.bind(this));
 	
 	$("#testC").on("click", function () {
@@ -66,12 +66,12 @@ $(document).ready(function () {
 		console.log("remove while playing");
 		console.log("playing:");
 		logCollection(timeCollection.timeAdd(curTime + 1));
-		simpleOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("remove now:");
 			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			simpleOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
-		}, 4500);
+			multiVoiceOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
+		}, 2500);
 	});
 	
 	$("#testD").on("click", function () {
@@ -79,12 +79,12 @@ $(document).ready(function () {
 		console.log("inserting while playing");
 		console.log("playing:");
 		logCollection(timeCollection.remove(objD).timeAdd(curTime + 1));
-		simpleOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("insert now:");
 			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			simpleOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
-		}, 4500);
+			multiVoiceOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
+		}, 2500);
 	});
 	
 	$("#testE").on("click", function () {
@@ -92,7 +92,7 @@ $(document).ready(function () {
 		logCollection(anotherTimeCollection);
 	});
 	
-	simpleOscillator.start(audioCtx.currentTime + 0.5);
+	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
