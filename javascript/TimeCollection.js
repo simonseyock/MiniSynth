@@ -74,18 +74,18 @@ synth.TimeCollection.prototype.remove = function (timeObject) {
 	return this; // return found
 };
 
-synth.TimeCollection.prototype.between = function (begin, end, overlappingBefore, overlappingAfter) {
-	// var newTimeCollection = new synth.TimeCollection(begin, end);
-	// for (var i=0; i<this.count; i++) {
-		// if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
-			// newTimeCollection.insert(this.timeObjects_[i]);
-		// }
-	// }
+// synth.TimeCollection.prototype.between = function (begin, end, overlappingBefore, overlappingAfter) {
+	// // var newTimeCollection = new synth.TimeCollection(begin, end);
+	// // for (var i=0; i<this.count; i++) {
+		// // if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
+			// // newTimeCollection.insert(this.timeObjects_[i]);
+		// // }
+	// // }
 	
-	// return newTimeCollection;
+	// // return newTimeCollection;
 	
-	return this.afterEqual(begin, overlappingAfter).before(end, overlappingBefore); 
-};
+	// return this.afterEqual(begin, overlappingAfter).before(end, overlappingBefore); 
+// };
 
 synth.TimeCollection.prototype.forEach = function (callback) {
 	this.timeObjects_.forEach(callback);
@@ -109,7 +109,20 @@ synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time >= when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
-		} else if (overlapping && his.timeObjects_[i].time + his.timeObjects_[i].duration) {
+		} else if (overlapping && this.timeObjects_[i].time + this.timeObjects_[i].duration >= when) {
+			newTimeCollection.insert(this.timeObjects_[i]);
+		}
+	}
+	
+	return newTimeCollection;
+};
+
+synth.TimeCollection.prototype.after = function (when, overlapping) {
+	var newTimeCollection = new synth.TimeCollection(when, this.end);
+	for (var i=0; i<this.count; i++) {
+		if (this.timeObjects_[i].time > when) {
+			newTimeCollection.insert(this.timeObjects_[i]);
+		} else if (overlapping && this.timeObjects_[i].time + this.timeObjects_[i].duration > when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
@@ -140,9 +153,11 @@ synth.TimeCollection.prototype.clone = function () {
 };
 
 synth.TimeCollection.prototype.clear = function () {
-	this.forEach(function (timeObject) {
-		this.remove(timeObject);
-	}.bind(this));
+	for (var i=0, ii=this.count; i<ii; i++) {
+		this.count--;
+		this.fireEvent("remove", [this.timeObjects_.shift()]);
+	};
+	return this;
 };
 
 synth.TimeCollection.prototype.timeAdd = function (time) {

@@ -22,7 +22,10 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 		this.notes_.timeMultiply(multiplier);
 	}.bind(this));
 	
+	this.nextBarTime_ = 0;
+	
 	this.clock_.on("nextBar", function (bar, when) {
+		this.nextBarTime_ = when;
 		this.playBar(bar, when);
 	}.bind(this));
 	
@@ -34,15 +37,39 @@ synth.inherits(synth.player.OneBarStepSequencer, synth.player.Player);
 synth.StateExchangeObject.addType("synth.player.OneBarStepSequencer", synth.player.OneBarStepSequencer);
 
 synth.player.OneBarStepSequencer.prototype.playBar = function (bar, when) {
-	this.getInstrument().playNotes(this.notes_.clone().timeAdd(when));
+	this.getInstrument().addNotes(this.notes_.clone().timeAdd(when));
 };
 
 synth.player.OneBarStepSequencer.prototype.addNote = function (stepIndex, value) {
-	this.notes_.insert({ time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value });
+	var timeObject = { time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value };
+	
+	this.notes_.insert(timeObject);
+	
+	if (this.clock_.started) {
+		var barLength = this.clock_.getBarLength();
+		var timeCollection = new synth.TimeCollection(0, 2 * barLength);
+		timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
+		this.getInstrument().addNotes(timeCollection.timeAdd(this.nextBarTime_));
+	}
 };
 
 synth.player.OneBarStepSequencer.prototype.removeNote = function (stepIndex, value) {
-	this.notes_.remove({ time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value });
+	var timeObject = { time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value };
+	
+	this.notes_.remove(timeObject);
+	
+	if (this.clock_.started) {
+		var barLength = this.clock_.getBarLength();
+		var timeCollection = new synth.TimeCollection(0, 2 * barLength);
+		timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
+		this.getInstrument().removeNotes(timeCollection.timeAdd(this.nextBarTime_));
+	}
 };
 
+synth.player.OneBarStepSequencer.prototype.clear = function () {
+	var notesToRemove = this.notes_.clone();
+	notesToRemove.forEach(function (timeObject) {
+		this.notes_.remove(timeObject);
+	}.bind(this));
+};
 // #endif

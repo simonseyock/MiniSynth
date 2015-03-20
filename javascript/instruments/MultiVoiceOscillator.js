@@ -32,10 +32,13 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 	
 	this.frequenciesToPlay.on("insert", function (timeObject) {
 		for(var i=0, found=false; i<this.voices_ && !found; i++) {
-			if (this.voiceOscillators_[i].frequenciesToPlay.between(timeObject.time, timeObject.time + timeObject.duration).count == 0) {
+			if (this.voiceOscillators_[i].frequenciesToPlay.after(timeObject.time, true).before(timeObject.time + timeObject.duration, true).count == 0) {
 				found = true;
 				this.voiceOscillators_[i].addFrequency(timeObject);
 			}
+		}
+		if(!found) {
+			console.log("multi oscillator voice overflow");
 		}
 	}.bind(this));
 	
@@ -83,12 +86,14 @@ synth.instrument.MultiVoiceOscillator.prototype.connect = function (anAudioNode)
 };
 
 synth.instrument.MultiVoiceOscillator.prototype.start = function (when) {
+	when = when || 0;
 	for(var i=0; i<this.voices_; i++) {
 		this.voiceOscillators_[i].start(when);
 	}
 };
 
 synth.instrument.MultiVoiceOscillator.prototype.interrupt = function (when) {
+	when = when || 0;
 	for(var i=0; i<this.voices_; i++) {
 		this.voiceOscillators_[i].interrupt(when);
 	}

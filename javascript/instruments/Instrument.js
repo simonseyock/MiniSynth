@@ -25,7 +25,7 @@ synth.instrument.Instrument.prototype.addFrequency = function (timeObject) {
 	this.frequenciesToPlay.insert(timeObject);
 	
 	var curTime = this.audioContext_.currentTime;
-	this.frequenciesToPlay.before(curTime).forEach(function (timeObject) {
+	this.frequenciesToPlay.before(curTime, false).forEach(function (timeObject) {
 		if (timeObject.time + timeObject.duration < curTime) {
 			this.frequenciesToPlay.remove(timeObject);
 		}
@@ -73,7 +73,7 @@ synth.instrument.Instrument.prototype.removeNotes = function (noteTimeCollection
 };
 
 synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, when) {
-	this.frequenciesToPlay.afterEqual(when).forEach(function (timeObject) {
+	this.frequenciesToPlay.afterEqual(when, true).forEach(function (timeObject) {
 		timeObject.time = (timeObject - when) * tempoMultiplier + when;
 		timeObject.duration *= tempoMultiplier;
 	});

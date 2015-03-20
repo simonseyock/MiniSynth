@@ -40,14 +40,17 @@ $(document).ready(function () {
 	console.log("remove: ");
 	logCollection(timeCollection);
 	
-	console.log("before: ");
-	logCollection(timeCollection.before(2));
+	console.log("before 3.2 not overlapping: ");
+	logCollection(timeCollection.before(3.2, false));
 	
-	console.log("after equal: ");
-	logCollection(timeCollection.afterEqual(3));
+	console.log("before 3.2 overlapping: ");
+	logCollection(timeCollection.before(3.2, true));
 	
-	console.log("between: ");
-	logCollection(timeCollection.between(1,4));
+	console.log("after equal 3.2 not overlapping: ");
+	logCollection(timeCollection.afterEqual(3.2, false));
+	
+	console.log("after equal 3.2 overlapping: ");
+	logCollection(timeCollection.afterEqual(3.2, true));
 	
 	console.log("atTime 3.2: ");
 	logCollection(timeCollection.atTime(3.2));
@@ -63,6 +66,10 @@ $(document).ready(function () {
 	
 	console.log("sort: ");
 	logCollection(anotherTimeCollection.sort());
+	
+	console.log("clear: ");
+	timeCollection.insert(objB);
+	logCollection(timeCollection.clear());
 	
 	//console.log("merge: ");
 	//logCollection(timeCollection.merge(anotherTimeCollection).sort());

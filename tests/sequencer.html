@@ -10,15 +10,21 @@
 <script src="../build/lib/MobileSynthMiniSeq.js"></script>
 <script>
 $(document).ready(function () {
+	window.logCollection = function (collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	};
 	
 	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 	var clock = new synth.Clock(audioCtx);
 	
-	var sequencer = new synth.player.OneBarStepSequencer(clock, 8);
+	window.sequencer = new synth.player.OneBarStepSequencer(clock, 8);
 	
-	var multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
-	squencer.setInstrument(multiVoiceOscillator);
+	window.multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
+	sequencer.setInstrument(multiVoiceOscillator);
 	
 	var gain = audioCtx.createGain();
 	gain.gain.value = 0.5;
@@ -47,12 +53,14 @@ $(document).ready(function () {
 	}.bind(this));
 	
 	$("#testC").on("click", function () {
-		var patternA = [[5],[],[5],[],[12],[],[5],[]];
+		sequencer.clear();
+		var patternA = [[5],[],[5],[],[17],[],[5],[]];
 		addPattern(patternA);
 	});
 	
 	$("#testD").on("click", function () {
-		var patternB = [[5],[],[5,12],[7],[7,10,14],[10],[5],[]];
+		sequencer.clear();
+		var patternB = [[5],[],[5,12],[7],[7,10,14],[10],[5,8],[7]];
 		addPattern(patternB);
 	});
 	
@@ -65,6 +73,14 @@ $(document).ready(function () {
 	});
 	
 	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
+	
+	multiVoiceOscillator.frequenciesToPlay.on("insert", function () {
+		//logCollection(multiVoiceOscillator.frequenciesToPlay.sort());
+	});
+	
+	sequencer.notes_.on("remove", function () {
+		logCollection(sequencer.notes_);
+	});
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
@@ -75,7 +91,7 @@ $(document).ready(function () {
 <button id="testA">Start</button>
 <button id="testB">Stop</button>
 <button id="testC">Pattern A</button>
-<button id="testC">Pattern B</button>
+<button id="testD">Pattern B</button>
 <button id="testE">Add Note</button>
 <button id="testF">Remove Note</button>
 <div>Open up the console (F12) to see output</div>

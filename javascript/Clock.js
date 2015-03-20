@@ -37,7 +37,7 @@ synth.Clock = function (audioContext) {
 	//this.gridTime_ = 0.2;
 	
 	//this.startTime_ = 0;
-	this.started_ = false;
+	this.started = false;
 	this.nextbar_ = 0;
 	
 	this.tickerI_ = null;
@@ -64,7 +64,7 @@ synth.Clock.prototype.setBpM = function (bpm) {
 		
 		this.bpm_ = bpm;
 		
-		if (this.started_) {
+		if (this.started) {
 			
 			// if (when > this.nextBarTime_) {
 				// // this only happens when the timeChange falls in the precognition interval
@@ -122,6 +122,8 @@ synth.Clock.prototype.getBarLength = function () {
 
 synth.Clock.prototype.start = function (when) {
 	
+	when = when || this.audioContext_.currentTime;
+	
 	this.fireEvent("start", [when]);
 	
 	this.fireEvent("nextBar", [ 0, when ] );
@@ -130,7 +132,7 @@ synth.Clock.prototype.start = function (when) {
 	this.nextBarTime_ = when + this.getBarLength();
 	this.makeTicker(when);
 	
-	this.started_ = true;
+	this.started = true;
 	//this.startTime_ = this.audioContext_.currentTime;
 };
 
@@ -159,7 +161,7 @@ synth.Clock.prototype.makeTicker = function () {
 synth.Clock.prototype.stop = function (when) {
 	//clearInterval(this.informer_);
 	setTimeout(function () {
-		this.started_ = false;
+		this.started = false;
 	
 		clearTimeout(this.tickerT_);
 		clearInterval(this.tickerI_);
