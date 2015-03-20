@@ -74,27 +74,29 @@ synth.TimeCollection.prototype.remove = function (timeObject) {
 	return this; // return found
 };
 
-synth.TimeCollection.prototype.between = function (begin, end) {
-	var newTimeCollection = new synth.TimeCollection(begin, end);
-	for (var i=0; i<this.count; i++) {
-		if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
-			newTimeCollection.insert(this.timeObjects_[i]);
-		}
-	}
+synth.TimeCollection.prototype.between = function (begin, end, overlappingBefore, overlappingAfter) {
+	// var newTimeCollection = new synth.TimeCollection(begin, end);
+	// for (var i=0; i<this.count; i++) {
+		// if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
+			// newTimeCollection.insert(this.timeObjects_[i]);
+		// }
+	// }
 	
-	return newTimeCollection;
+	// return newTimeCollection;
 	
-	//return this.afterEqual(begin).before(end); 
+	return this.afterEqual(begin, overlappingAfter).before(end, overlappingBefore); 
 };
 
 synth.TimeCollection.prototype.forEach = function (callback) {
 	this.timeObjects_.forEach(callback);
 };
 
-synth.TimeCollection.prototype.before = function (when) {
+synth.TimeCollection.prototype.before = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, when);
 	for (var i=0; i<this.count; i++) {
-		if (this.timeObjects_[i].time < when) {
+		if (this.timeObjects_[i].time + this.timeObjects_[i].duration < when) {
+			newTimeCollection.insert(this.timeObjects_[i]);
+		} else if( overlapping && this.timeObjects_[i].time < when ) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
@@ -102,15 +104,15 @@ synth.TimeCollection.prototype.before = function (when) {
 	return newTimeCollection;
 };
 
-synth.TimeCollection.prototype.afterEqual = function (when) {
+synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(when, this.end);
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time >= when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
+		} else if (overlapping && his.timeObjects_[i].time + his.timeObjects_[i].duration) {
+			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
-	
-	newTimeCollection
 	
 	return newTimeCollection;
 };
@@ -135,6 +137,12 @@ synth.TimeCollection.prototype.clone = function () {
 		newTimeCollection.insert(_.cloneDeep(timeObject));
 	});
 	return newTimeCollection;
+};
+
+synth.TimeCollection.prototype.clear = function () {
+	this.forEach(function (timeObject) {
+		this.remove(timeObject);
+	}.bind(this));
 };
 
 synth.TimeCollection.prototype.timeAdd = function (time) {
@@ -169,7 +177,7 @@ synth.TimeCollection.prototype.sort = function () {
 synth.TimeCollection.prototype.atTime = function (time) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
 	this.forEach(function (timeObject) {
-		if(timeObject.time < time && timeObject.time + timeObject.duration > time) {
+		if(timeObject.time <= time && timeObject.time + timeObject.duration >= time) {
 			newTimeCollection.insert(timeObject);
 		}
 	});
