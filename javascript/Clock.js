@@ -40,9 +40,6 @@ synth.Clock = function (audioContext) {
 	this.started = false;
 	this.nextbar_ = 0;
 	
-	this.tickerI_ = null;
-	this.tickerT_ = null;
-	
 };
 synth.inherits(synth.Clock, synth.StateExchangeObject);
 synth.inherits(synth.Clock, synth.ObservableObject);
@@ -137,23 +134,16 @@ synth.Clock.prototype.start = function (when) {
 };
 
 synth.Clock.prototype.makeTicker = function () {
-	// var tempI = this.tickerI_;
-	// var tempT = this.tickerT_; // this would theoretically allow me to make this function whenable
+	clearInterval(this.ticker_);
 	
-	clearInterval(this.tickerI_);
-	clearTimeout(this.tickerT_);
-	
-	this.tickerT_ = setTimeout( function () {
-		
+	var loop = function () {
 		this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
 		this.nextBar_++;
 		this.nextBarTime_ += this.getBarLength();
-		this.tickerI_ = setInterval( function () {
-			this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
-			this.nextBar_++;
-			this.nextBarTime_ += this.getBarLength();
-		}.bind(this), this.getBarLength() * 1000);
-	}.bind(this), (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
+		this.ticker_ = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
+	}.bind(this);
+	
+	this.ticker_ = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
 };
 
 // NOTE: another possibility: makeTicker to when the tempo changes
@@ -163,8 +153,7 @@ synth.Clock.prototype.stop = function (when) {
 	setTimeout(function () {
 		this.started = false;
 	
-		clearTimeout(this.tickerT_);
-		clearInterval(this.tickerI_);
+		clearTimeout(this.ticker_);
 	
 		this.fireEvent("stop", [when]);
 	}.bind(this), (when - this.audioContext_.currentTime) * 1000)

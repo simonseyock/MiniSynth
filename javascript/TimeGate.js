@@ -16,32 +16,34 @@ synth.TimeGate = function (audioContext) {
 synth.TimeGate.prototype.addTime = function (timeObject) {
 	this.times_ = this.times_.afterEqual(this.audioContext_.currentTime, true);
 	
-	if (synth.timeObject.includes(timeObject, this.audioContext_.currentTime)) {
-		//this.gain_.gain.value = 1;
-		this.gain_.gain.setValueAtTime(1, this.audioContext_.currentTime);
-	} else if (timeObject.time > this.audioContext_.currentTime) {
-		this.gain_.gain.setValueAtTime(1, timeObject.time);
+	if (timeObject.time + timeObject.duration > this.audioContext_.currentTime) {
+		//check if gate needs to be opened immediately
+		if (timeObject.time > this.audioContext_.currentTime) {
+			this.gain_.gain.setValueAtTime(1, timeObject.time);
+		} else {
+			this.gain_.gain.setValueAtTime(1, this.audioContext_.currentTime);
+		}
+		
+		//check if a new note starts
+		if(this.times_.atTime(timeObject.time + timeObject.duration).count === 0) {
+			this.gain_.gain.setValueAtTime(0, timeObject.time + timeObject.duration);
+		}
 	}
-	
-	if(this.times_.atTime(timeObject.time + timeObject.duration).count === 0) {
-		this.gain_.gain.setValueAtTime(0, timeObject.time + timeObject.duration);
-	}
-	
 	this.times_.insert(timeObject);
 };
 
 synth.TimeGate.prototype.removeTime = function (timeObject) {
 	this.times_ = this.times_.afterEqual(this.audioContext_.currentTime, true);
 	
-	this.times_.remove(timeObject);
-	
-	if(this.times_.atTime(timeObject.time).count === 0) {
-		if (synth.timeObject.includes(timeObject, this.audioContext_.currentTime)) {
-			//this.gain_.gain.value = 0; //this does not work
-			//this.gain_.gain.setValueAtTime(0, timeObject.time); //this of course(?) doesn't work either
-			this.gain_.gain.setValueAtTime(0, this.audioContext_.currentTime);
-		} else if (timeObject.time > this.audioContext_.currentTime) {
-			this.gain_.gain.setValueAtTime(0, timeObject.time);
+	if (timeObject.time + timeObject.duration > this.audioContext_.currentTime) {
+		this.times_.remove(timeObject);
+		
+		if(this.times_.atTime(timeObject.time).count === 0) {
+			if (timeObject.time < this.audioContext_.currentTime) {
+				this.gain_.gain.setValueAtTime(0, this.audioContext_.currentTime);
+			} else {
+				this.gain_.gain.setValueAtTime(0, timeObject.time);
+			}
 		}
 	}
 };

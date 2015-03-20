@@ -38,7 +38,7 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 			}
 		}
 		if(!found) {
-			console.log("multi oscillator voice overflow");
+			console.warn("multi oscillator voice overflow");
 		}
 	}.bind(this));
 	
