@@ -4,9 +4,9 @@
 <style>
 
 </style>
-<script src="http://localhost:9091"></script>
-<script src="../node_modules/jquery/dist/jquery.js"></script>
-<script src="../node_modules/lodash/index.js"></script>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
 <script src="../build/lib/MobileSynthMiniSeq.js"></script>
 <script>
 $(document).ready(function () {
@@ -43,8 +43,10 @@ $(document).ready(function () {
  	logCollection(anotherTimeCollection);
 	
 	var multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
-	
-	multiVoiceOscillator.connect(audioCtx.destination);
+	var gain = audioCtx.createGain();
+	gain.gain.value = 0.5;
+	multiVoiceOscillator.connect(gain);
+	gain.connect(audioCtx.destination);
 	
 	var scaleC3 = new synth.EqualTemperedScale(21, 440);
 	
@@ -52,12 +54,12 @@ $(document).ready(function () {
 	
 	$("#testA").on("click", function () {
 		console.log("simplePlayback");
-		multiVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.clone().timeAdd(audioCtx.currentTime + 1));
 	}.bind(this));
 	
 	$("#testB").on("click", function () {
 		console.log("interrupt");
-		multiVoiceOscillator.addNotes(timeCollection.timeAdd(audioCtx.currentTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.clone().timeAdd(audioCtx.currentTime + 1));
 		multiVoiceOscillator.interrupt(audioCtx.currentTime + 2.5);
 	}.bind(this));
 	
@@ -65,12 +67,12 @@ $(document).ready(function () {
 		var curTime = audioCtx.currentTime;
 		console.log("remove while playing");
 		console.log("playing:");
-		logCollection(timeCollection.timeAdd(curTime + 1));
-		multiVoiceOscillator.addNotes(timeCollection.timeAdd(curTime + 1));
+		logCollection(timeCollection.clone().timeAdd(curTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.clone().timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("remove now:");
-			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			multiVoiceOscillator.removeNotes(anotherTimeCollection.timeAdd(curTime + 1));
+			logCollection(anotherTimeCollection.clone().timeAdd(curTime + 1));
+			multiVoiceOscillator.removeNotes(anotherTimeCollection.clone().timeAdd(curTime + 1));
 		}, 2500);
 	});
 	
@@ -78,12 +80,12 @@ $(document).ready(function () {
 		var curTime = audioCtx.currentTime;
 		console.log("inserting while playing");
 		console.log("playing:");
-		logCollection(timeCollection.remove(objD).timeAdd(curTime + 1));
-		multiVoiceOscillator.addNotes(timeCollection.remove(objD).timeAdd(curTime + 1));
+		logCollection(timeCollection.clone().remove(objD).timeAdd(curTime + 1));
+		multiVoiceOscillator.addNotes(timeCollection.clone().remove(objD).timeAdd(curTime + 1));
 		setTimeout(function () {
 			console.log("insert now:");
-			logCollection(anotherTimeCollection.timeAdd(curTime + 1));
-			multiVoiceOscillator.addNotes(anotherTimeCollection.timeAdd(curTime + 1));
+			logCollection(anotherTimeCollection.clone().timeAdd(curTime + 1));
+			multiVoiceOscillator.addNotes(anotherTimeCollection.clone().timeAdd(curTime + 1));
 		}, 2500);
 	});
 	
@@ -105,5 +107,6 @@ $(document).ready(function () {
 <button id="testC">Test C</button>
 <button id="testD">Test D</button>
 <button id="testE">Test E</button>
+<div>Open up the console (F12) to see output</div>
 </body>
 </html>

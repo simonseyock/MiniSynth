@@ -4,31 +4,52 @@
 <style>
 
 </style>
-<script src="http://localhost:9091"></script>
-<script src="../node_modules/jquery/dist/jquery.js"></script>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
 <script src="../build/lib/MobileSynthMiniSeq.js"></script>
 <script>
 $(document).ready(function () {
 	window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 	var clock = new synth.Clock(audioCtx);
 	
+	var buffer = 0.1;
+	
 	clock.on("start", function (time) {
-		console.log("Clock started, time: " + time + ", realTime: " + clock.getRealTime(time))
+		console.log("Clock started, time: " + time);
 	});
 	
 	clock.on("stop", function (time) {
-		console.log("Clock stopped, time: " + time + ", realTime: " + clock.getRealTime(time))
+		console.log("Clock stopped, time: " + time);
 	});
 	
-	clock.on("tick", function (begin, end) {
-		console.log("Clock tick, begin: " + begin + ", end: " + end + ", realTime: " + clock.getRealTime(begin) + ", " + clock.getRealTime(end));
+	clock.on("nextBar", function (bar, when) {
+		console.log("Clock tick, nextBar: " + bar + ", when: " + when);
+		console.log("time:" + audioCtx.currentTime);
 	});
 	
-	clock.start();
+	clock.on("tempoChange", function (multiplier) {
+		console.log("tempoChange, newTempo: " + clock.getBpM() + " multiplier: " + multiplier );
+	});
 	
-	setTimeout(function () {
-		clock.stop();
-	}, 4000);
+	$("#start").on("click", function () {
+		clock.start(audioCtx.currentTime + buffer);
+	});
+	
+	$("#stop").on("click", function () {
+		clock.stop(audioCtx.currentTime + buffer);
+	});
+	
+	$("#change60").on("click", function () {
+		clock.setBpM(60, audioCtx.currentTime + buffer);
+	});
+	
+	$("#change120").on("click", function () {
+		clock.setBpM(120, audioCtx.currentTime + buffer);
+	});
+	
+	$("#change180").on("click", function () {
+		clock.setBpM(180, audioCtx.currentTime + buffer);
+	});
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
@@ -36,5 +57,11 @@ $(document).ready(function () {
 </style>
 </head>
 <body>
+<button id="start">start clock</button>
+<button id="stop">stop clock</button>
+<button id="change120">120 bpm</button>
+<button id="change180">180 bpm</button>
+<button id="change60">60 bpm</button>
+<div>Open up the console (F12) to see output</div>
 </body>
 </html>

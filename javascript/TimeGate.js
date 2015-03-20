@@ -39,8 +39,12 @@ synth.TimeGate.prototype.getNode = function () {
 	return this.gain_;
 };
 
-synth.TimeGate.prototype.interrupt = function (when) {
+synth.TimeGate.prototype.cancel = function (when) {
 	this.gain_.gain.cancelScheduledValues(when);
+};
+
+synth.TimeGate.prototype.interrupt = function (when) {
+	this.cancel(when);
 	this.gain_.gain.setValueAtTime(0, when);
 };
 

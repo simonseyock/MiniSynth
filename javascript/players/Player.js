@@ -21,6 +21,6 @@ synth.player.Player.prototype.setInstrument = function (instrument) {
 	this.instrument_ = instrument;
 };
 
-synth.player.Player.prototype.playBar = synth.abstractFunction;
+synth.player.Player.prototype.playIntervall = synth.abstractFunction;
 
 // #endif

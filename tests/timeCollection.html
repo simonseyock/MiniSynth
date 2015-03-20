@@ -5,8 +5,8 @@
 
 </style>
 <script src="http://localhost:9091"></script>
-<script src="../node_modules/jquery/dist/jquery.js"></script>
-<script src="../node_modules/lodash/index.js"></script>
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
 <script src="../build/lib/MobileSynthMiniSeq.js"></script>
 <script>
 $(document).ready(function () {
@@ -64,8 +64,8 @@ $(document).ready(function () {
 	console.log("sort: ");
 	logCollection(anotherTimeCollection.sort());
 	
-	console.log("merge: ");
-	logCollection(timeCollection.merge(anotherTimeCollection).sort());
+	//console.log("merge: ");
+	//logCollection(timeCollection.merge(anotherTimeCollection).sort());
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
@@ -73,5 +73,6 @@ $(document).ready(function () {
 </style>
 </head>
 <body>
+<div>Open up the console (F12) to see output</div>
 </body>
 </html>

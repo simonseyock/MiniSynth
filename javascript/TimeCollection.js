@@ -1,16 +1,15 @@
 // #ifndef __TIMECOLLECTION__
 // #define __TIMECOLLECTION__
 
-// #include "EventHandling.js"
+// #include "ObservableObject.js"
 
 /**
- * could be sorted to optimize before after between
  * 		timeObjects must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
  * @class
  */
 
 synth.TimeCollection = function (begin, end, options) {
-	synth.EventHandling.call(this);
+	synth.ObservableObject.call(this);
 	
 	options = options || {};
 	
@@ -23,15 +22,32 @@ synth.TimeCollection = function (begin, end, options) {
 	this.begin = begin;
 	this.end = end;
 	  
-	// neccessary?
-	this.lines_ = false;
-	this.flat_ = false;
+	//this.lines_ = false;
+	//this.flat_ = false;
 	
 	this.registerEventType("insert");
 	this.registerEventType("remove");
+	this.registerEventType("objectChanged");
 	//this.registerEventType("object:change");
 };
-synth.inherits(synth.TimeCollection, synth.EventHandling);
+synth.inherits(synth.TimeCollection, synth.ObservableObject);
+
+// synth.TimeCollection.prototype.bind_ = function (aTimeCollection, transform) {
+	// transform = transform || function (v) { return v; };
+	
+	// aTimeCollection.on("insert", function (timeObject) {
+		// this.insert(transform(timeObject));
+	// }.bind(this));
+	// aTimeCollection.on("remove", function (timeObject) {
+		// this.remove(tranform(timeObject));
+	// }.bind(this));
+	// aTimeCollection.on("objectChanged", function (oldObject, newObject) {
+		// var oldTransformed = transform(oldObject);
+		// this.forEach(function (timeObject) {
+			
+		// });
+	// }.bind(this));
+// };
 
 //insert with ? 
 
@@ -62,7 +78,7 @@ synth.TimeCollection.prototype.between = function (begin, end) {
 	var newTimeCollection = new synth.TimeCollection(begin, end);
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
-			newTimeCollection.insert(_.cloneDeep(this.timeObjects_[i]));
+			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
 	
@@ -79,7 +95,7 @@ synth.TimeCollection.prototype.before = function (when) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, when);
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time < when) {
-			newTimeCollection.insert(_.cloneDeep(this.timeObjects_[i]));
+			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
 	
@@ -90,26 +106,28 @@ synth.TimeCollection.prototype.afterEqual = function (when) {
 	var newTimeCollection = new synth.TimeCollection(when, this.end);
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time >= when) {
-			newTimeCollection.insert(_.cloneDeep(this.timeObjects_[i]));
+			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
+	
+	newTimeCollection
 	
 	return newTimeCollection;
 };
 
-synth.TimeCollection.prototype.merge = function (anotherTimeCollection) {
-	var newTimeCollection = new synth.TimeCollection(Math.min(this.begin, anotherTimeCollection.begin), Math.max(this.end, anotherTimeCollection.end));
+// synth.TimeCollection.prototype.merge = function (anotherTimeCollection) {
+	// var newTimeCollection = new synth.TimeCollection(Math.min(this.begin, anotherTimeCollection.begin), Math.max(this.end, anotherTimeCollection.end));
 	
-	this.forEach( function (timeObject) { 
-		newTimeCollection.insert(_.cloneDeep(timeObject));
-	} );
+	// this.forEach( function (timeObject) { 
+		// newTimeCollection.insert(_.cloneDeep(timeObject));
+	// } );
 	
-	anotherTimeCollection.forEach(function (timeObject) {
-		newTimeCollection.insert(_.cloneDeep(timeObject));
-	} );
+	// anotherTimeCollection.forEach(function (timeObject) {
+		// newTimeCollection.insert(_.cloneDeep(timeObject));
+	// } );
 	
-	return newTimeCollection;
-};
+	// return newTimeCollection;
+// };
 
 synth.TimeCollection.prototype.clone = function () {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
@@ -120,25 +138,30 @@ synth.TimeCollection.prototype.clone = function () {
 };
 
 synth.TimeCollection.prototype.timeAdd = function (time) {
-	var newTimeCollection = this.clone();
-	newTimeCollection.forEach(function (timeObject) {
+	this.begin += time;
+	this.end += time;
+	//var newTimeCollection = this.clone();
+	this.forEach(function (timeObject) {
 		timeObject.time += time;
-	});
-	return newTimeCollection;
+		this.fireEvent("objectChanged", [timeObject]);
+	}.bind(this));
+	return this;
 };
 
 synth.TimeCollection.prototype.timeMultiply = function (time) {
-	var newTimeCollection = this.clone();
-	newTimeCollection.forEach(function (timeObject) {
+	this.begin *= time;
+	this.end *= time;
+	this.forEach(function (timeObject) {
 		timeObject.time *= time;
-	});
-	return newTimeCollection;
+		this.fireEvent("objectChanged", [timeObject]);
+	}.bind(this));
+	return this;
 };
 
 synth.TimeCollection.prototype.sort = function () {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
 	_.sortBy(this.timeObjects_, 'time').forEach(function (timeObject) {
-		newTimeCollection.insert(_.cloneDeep(timeObject));
+		newTimeCollection.insert(timeObject);
 	});
 	return newTimeCollection;
 };

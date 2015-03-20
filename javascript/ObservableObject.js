@@ -2,7 +2,7 @@
 // #define __EVENTHANDLING
 
 
-synth.EventHandling = function ( opt_options ) {
+synth.ObservableObject = function ( opt_options ) {
 
     opt_options = opt_options || {};
 
@@ -14,7 +14,7 @@ synth.EventHandling = function ( opt_options ) {
  * This will register the event type and will prevent spelling mistakes ;)
  */
 
-synth.EventHandling.prototype.registerEventType = function (type) {
+synth.ObservableObject.prototype.registerEventType = function (type) {
     this.EventListeners_[type] = [];
 };
 
@@ -25,7 +25,7 @@ synth.EventHandling.prototype.registerEventType = function (type) {
  * @param {Array} passArgs an array of arguments which will be applied (using .apply) to the eventhandlers/listeners
  */
 
-synth.EventHandling.prototype.fireEvent = function ( type, passArgs ) {
+synth.ObservableObject.prototype.fireEvent = function ( type, passArgs ) {
 
     if ( type in this.EventListeners_ ) {
         for (var i=0; i< this.EventListeners_[type].length; i++) {
@@ -46,7 +46,7 @@ synth.EventHandling.prototype.fireEvent = function ( type, passArgs ) {
     }
 };
 
-//synth.EventHandling.prototype.hasListenersOnEvent = function ( type ) {
+//synth.ObservableObject.prototype.hasListenersOnEvent = function ( type ) {
 
 //    if ( type in this.EventListeners_ ) {
 //        return this.EventListeners_[type].length > 0;
@@ -55,7 +55,7 @@ synth.EventHandling.prototype.fireEvent = function ( type, passArgs ) {
 //    }
 //};
 
-synth.EventHandling.prototype.on = function ( type, listener, opt_this ) {
+synth.ObservableObject.prototype.on = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         var key = this.customKey_++;
         this.EventListeners_[type].push( { listener: listener, opt_this: opt_this, once: false, key: key } );
@@ -65,7 +65,7 @@ synth.EventHandling.prototype.on = function ( type, listener, opt_this ) {
     }
 };
 
-synth.EventHandling.prototype.once = function ( type, listener, opt_this ) {
+synth.ObservableObject.prototype.once = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         var key = this.customKey_++;
         this.EventListeners_[type].push( { listener: listener, opt_this: opt_this, once: true, key: key } );
@@ -75,7 +75,7 @@ synth.EventHandling.prototype.once = function ( type, listener, opt_this ) {
     }
 };
 
-synth.EventHandling.prototype.un = function ( type, listener, opt_this ) {
+synth.ObservableObject.prototype.un = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         for ( var i = 0; i < this.EventListeners_[type].length; i++ ) {
 
@@ -89,7 +89,7 @@ synth.EventHandling.prototype.un = function ( type, listener, opt_this ) {
     }
 };
 
-synth.EventHandling.prototype.unByKey = function ( key ) {
+synth.ObservableObject.prototype.unByKey = function ( key ) {
     if ( "type" in key ) {
         if (key.type in this.EventListeners_) {
             for (var i=0; i< this.EventListeners_[key.type].length; i++) {

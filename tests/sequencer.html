@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	var clock = new synth.Clock(audioCtx);
+	
+	var sequencer = new synth.player.OneBarStepSequencer(clock, 8);
+	
+	var multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
+	squencer.setInstrument(multiVoiceOscillator);
+	
+	var gain = audioCtx.createGain();
+	gain.gain.value = 0.5;
+	multiVoiceOscillator.connect(gain);
+	
+	gain.connect(audioCtx.destination);
+	
+	var scaleC3 = new synth.EqualTemperedScale(21, 440);
+	
+	multiVoiceOscillator.setScale(scaleC3);
+	
+	var addPattern = function (pattern) {
+		for(var i=0; i<8; i++) {
+			pattern[i].forEach(function (note) {
+				sequencer.addNote(i, note);
+			}.bind(this));
+		}
+	};
+	
+	$("#testA").on("click", function () {
+		clock.start();
+	}.bind(this));
+	
+	$("#testB").on("click", function () {
+		clock.stop();
+	}.bind(this));
+	
+	$("#testC").on("click", function () {
+		var patternA = [[5],[],[5],[],[12],[],[5],[]];
+		addPattern(patternA);
+	});
+	
+	$("#testD").on("click", function () {
+		var patternB = [[5],[],[5,12],[7],[7,10,14],[10],[5],[]];
+		addPattern(patternB);
+	});
+	
+	$("#testE").on("click", function () {
+		sequencer.addNote(3,0);
+	});
+	
+	$("#testF").on("click", function () {
+		sequencer.removeNote(3,0);
+	});
+	
+	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+<button id="testA">Start</button>
+<button id="testB">Stop</button>
+<button id="testC">Pattern A</button>
+<button id="testC">Pattern B</button>
+<button id="testE">Add Note</button>
+<button id="testF">Remove Note</button>
+<div>Open up the console (F12) to see output</div>
+</body>
+</html>

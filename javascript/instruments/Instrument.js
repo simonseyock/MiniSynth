@@ -72,6 +72,13 @@ synth.instrument.Instrument.prototype.removeNotes = function (noteTimeCollection
 	}.bind(this));
 };
 
+synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, when) {
+	this.frequenciesToPlay.afterEqual(when).forEach(function (timeObject) {
+		timeObject.time = (timeObject - when) * tempoMultiplier + when;
+		timeObject.duration *= tempoMultiplier;
+	});
+};
+
 synth.instrument.Instrument.prototype.connect = synth.abstractFunction;
 
 synth.instrument.Instrument.prototype.interrupt = synth.abstractFunction;

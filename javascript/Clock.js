@@ -3,44 +3,90 @@
 
 // #include "init.js"
 // #include "StateExchangeObject.var.js"
-// #include "EventHandling.js"
+// #include "ObservableObject.js"
 
 // NOTE: Global Assumption: BpM is the Velocity of Quarters
 
+// clock should fire events the say which bar starts next
+// the listeners then get the real time from the clock, giving it a relative time (like 0.5 for a note at the middle of the bar.)
+// this will for now only work for the next bar, not the current bar, but is not needed for the current bar anyways? maybe for inserting or removing ...
+
+// only saves next bar start time and adjust this with tempo changes.
+// maintains an intervall, timeout which fires half way before the next bar starts. gets adjusted with tempoChange, too
+
 synth.Clock = function (audioContext) {
-	synth.EventHandling.call(this);
+	synth.ObservableObject.call(this);
 	
-	this.setBpm(120);
+	this.registerEventType("nextBar");
+	this.registerEventType("start");
+	this.registerEventType("stop");
+	this.registerEventType("tempoChange");
+	//this.registerEventType("change:noteValues");
+	//this.registerEventType("change:beats");
+	
+	this.audioContext_ = audioContext;
+	
+	this.bpm_ = 120;
+	//this.setBpm(120);
 	//this.on("statechange:bpm", ...);
 	//this.setBeats(4);
 	//this.setNoteValue(4);
-
-	this.audioContext_ = audioContext;
 	
 	this.bufferTime_ = 0.05;
-	this.precognitionTime_ = 0.1;
-	this.gridTime_ = 0.2;
+	this.precognitionTime_ = 0.3;
+	//this.gridTime_ = 0.2;
 	
-	this.startTime_ = 0;
+	//this.startTime_ = 0;
 	this.started_ = false;
+	this.nextbar_ = 0;
 	
 	this.tickerI_ = null;
 	this.tickerT_ = null;
 	
-	this.registerEventType("tick"); // gives relative times to startTime
-	this.registerEventType("start");
-	this.registerEventType("stop");
-	this.registerEventType("change:bpm");
-	//this.registerEventType("change:noteValues");
-	//this.registerEventType("change:beats");
 };
 synth.inherits(synth.Clock, synth.StateExchangeObject);
-synth.inherits(synth.Clock, synth.EventHandling);
+synth.inherits(synth.Clock, synth.ObservableObject);
 
-synth.Clock.prototype.setBpm = function (bpm) {
-	var oldValue = this.bpm_;
-	this.bpm_ = bpm;
-	this.fireEvent("change:bpm", [{oldValue: oldValue, newValue: bpm}]);
+synth.Clock.prototype.getBpM = function () {
+	return this.bpm_;
+};
+
+/*
+* 
+* NOTE: whenability ...
+*/
+synth.Clock.prototype.setBpM = function (bpm) {
+
+	//setTimeout( function () {
+		
+		var oldBpM = this.bpm_;
+		var oldBarLength = this.getBarLength();
+		
+		this.bpm_ = bpm;
+		
+		if (this.started_) {
+			
+			// if (when > this.nextBarTime_) {
+				// // this only happens when the timeChange falls in the precognition interval
+				// // causes a problem in calculation of the intervals and timeouts
+				// var barTimeBeforeTimeChange = this.nextBarTime_;
+				// //var correction = -1;
+			// } else {
+				var barTimeBeforeTimeChange = this.nextBarTime_ - oldBarLength;
+			//}
+			
+			var oldTempoPart = (this.audioContext_.currentTime - barTimeBeforeTimeChange) / oldBarLength;
+			var newTempoPart = 1 - oldTempoPart;
+			
+			// console.log("when: %f timeBefore: %f oldBarLength: %f newBarLength: %f oldNextBar: %f newNextBar: %f now: %f", 
+				// when, barTimeBeforeTimeChange, oldBarLength, this.getBarLength(), this.nextBarTime_, when + (1 - oldTempoPart) * this.getBarLength(), this.audioContext_.currentTime);			
+			
+			this.nextBarTime_ = this.audioContext_.currentTime + (1 - oldTempoPart) * this.getBarLength(); 
+			this.makeTicker();
+		}
+		
+		this.fireEvent("tempoChange", [oldBpM/bpm]);
+	//}.bind(this), (when-this.audioContext_.currentTime-this.precognitionTime_) * 1000);
 	//this.setState("bpm", bpm);
 };
 
@@ -58,40 +104,68 @@ synth.Clock.prototype.setBpm = function (bpm) {
 	// //this.setState("beats", beats);
 // };
 
-synth.Clock.prototype.start = function (/* time here? */) {
-	
-	this.fireEvent("start", [0]);
-	
-	this.fireEvent("tick", [ 0, this.gridTime_ ] );
-	this.tickCount_ = 1;
-	
-	var that = this;
-	
-	that.tickerT_ = setTimeout( function () {
-		that.fireEvent("tick", [that.gridTime_, 2* that.gridTime_]);
-		that.tickCount_++;
-		that.tickerI_ = setInterval( function () {
-			that.fireEvent("tick", [that.gridTime_ * that.tickCount_, that.gridTime_ * (that.tickCount_ + 1)]);
-			that.tickCount_++;
-		}, that.gridTime_ * 1000);
-	}, (this.gridTime_-this.precognitionTime_) * 1000);
-	
-	this.started = true;
-	this.startTime_ = this.audioContext_.currentTime;
+
+
+// sketch
+
+// synth.Clock.prototype.getRealTime = function (relativeTime) {
+	// var bar = Math.floor(relativeTime);
+// };
+
+// synth.Clock.prototype.getRealTime = function (time) {
+	// return this.startTime_ + this.bufferTime_ + time;
+// };
+
+synth.Clock.prototype.getBarLength = function () {
+	return 60 / this.bpm_ * 4;
 };
 
-synth.Clock.prototype.stop = function (/* time here? */) {
-	//clearInterval(this.informer_);
-	this.started = false;
+synth.Clock.prototype.start = function (when) {
 	
-	clearTimeout(this.tickerT_);
+	this.fireEvent("start", [when]);
+	
+	this.fireEvent("nextBar", [ 0, when ] );
+	
+	this.nextBar_ = 1;
+	this.nextBarTime_ = when + this.getBarLength();
+	this.makeTicker(when);
+	
+	this.started_ = true;
+	//this.startTime_ = this.audioContext_.currentTime;
+};
+
+synth.Clock.prototype.makeTicker = function () {
+	// var tempI = this.tickerI_;
+	// var tempT = this.tickerT_; // this would theoretically allow me to make this function whenable
+	
 	clearInterval(this.tickerI_);
+	clearTimeout(this.tickerT_);
 	
-	this.fireEvent("stop", [this.audioContext_.currentTime - this.startTime_]);
+	this.tickerT_ = setTimeout( function () {
+		
+		this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
+		this.nextBar_++;
+		this.nextBarTime_ += this.getBarLength();
+		this.tickerI_ = setInterval( function () {
+			this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
+			this.nextBar_++;
+			this.nextBarTime_ += this.getBarLength();
+		}.bind(this), this.getBarLength() * 1000);
+	}.bind(this), (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
 };
 
-synth.Clock.prototype.getRealTime = function (time) {
-	return this.startTime_ + this.bufferTime_ + time;
+// NOTE: another possibility: makeTicker to when the tempo changes
+
+synth.Clock.prototype.stop = function (when) {
+	//clearInterval(this.informer_);
+	setTimeout(function () {
+		this.started_ = false;
+	
+		clearTimeout(this.tickerT_);
+		clearInterval(this.tickerI_);
+	
+		this.fireEvent("stop", [when]);
+	}.bind(this), (when - this.audioContext_.currentTime) * 1000)
 };
 
 // synth.Clock.prototype.registerPlayer = function (player) {
@@ -112,9 +186,9 @@ synth.Clock.prototype.getRealTime = function (time) {
 
 // };
 
-synth.Clock.prototype.getBarLength = function () {
-	return this.beats_ / this.bpm_ * 60;
-};
+// synth.Clock.prototype.getBarLength = function () {
+	// return this.beats_ / this.bpm_ * 60;
+// };
 
 // synth.Clock.prototype.calcTime = function (beats) {
 	// return this.startTime_ + beats / this.bpm_ * 60 * 1000;
