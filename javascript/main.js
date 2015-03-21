@@ -10,6 +10,7 @@ var synth = window.synth;
 // #include "instruments/MultiVoiceOscillator.js"
 // #include "players/OneBarStepSequencer.js"
 // #include "ViewControllers/PlayBackViewController.js"
+// #include "ViewControllers/Sequencer.js"
 // #include "Scale.js"
 // #include "Clock.js"
 // #include "TimeCollection.js"

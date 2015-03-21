@@ -58,6 +58,18 @@ synth.html.InputFieldWithValueDrag = function (resolution) {
 	this.$element_.on("mousedown", onMouseDown);
 	$(document).on("mousemove", onMouseMove);
 	$(document).on("mouseup", onMouseUp);
+	
+	this.$element_.on("touchstart", function (e) {
+		e.pageX = e.originalEvent.targetTouches[0].pageX;
+		e.pageY = e.originalEvent.targetTouches[0].pageY;
+		onMouseDown(e);
+	});
+	this.$element_.on("touchmove", function (e) {
+		e.pageX = e.originalEvent.targetTouches[0].pageX;
+		e.pageY = e.originalEvent.targetTouches[0].pageY;
+		onMouseMove_(e);
+	});
+	this.$element_.on("touchend", onMouseUp);
 };
 synth.inherits(synth.html.InputFieldWithValueDrag, synth.html.InputField);
 

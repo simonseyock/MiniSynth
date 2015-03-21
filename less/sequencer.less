@@ -1,0 +1,41 @@
+
+@synth-sequencer-button-size: 30px;
+
+.synth-sequencer-button-position(x, y) {
+	#synth-sequencer-button-@{x}-@{y} {
+		
+	}
+}
+
+.make-columns(@counter) when (@counter > 0) {
+	.make-columns((@counter - 1));    // next iteration
+	.synth-sequencer-column-@{counter} {
+		left: @counter * @synth-sequencer-button-size;
+	}
+}
+
+.make-rows(@counter) when (@counter > 0) {
+	.make-rows((@counter - 1));    // next iteration
+	.synth-sequencer-row-@{counter} {
+		top: @counter * @synth-sequencer-button-size;
+	}
+}
+
+.make-rows(8);
+
+.make-columns(8);
+
+.synth-sequencer {
+	position: relative; // important for the absolute positioning of child elements
+	width: @synth-sequencer-button-size * 8;
+	height: @synth-sequencer-button-size * 8;
+}
+
+.synth-sequencer-button {
+	position: absolute;
+	width: @synth-sequencer-button-size;
+	height: @synth-sequencer-button-size;
+	&.synth-sequencer-button-active {
+		background: green;
+	}
+}
