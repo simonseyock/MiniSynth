@@ -1,10 +1,10 @@
 // #ifndef __SCALE__
 // #define __SCALE__
 
-// #include "init.js"
-
 /**
- *	
+ * An abstract Scale class
+ * @class
+ * @abstract
  */
 synth.Scale = function () {
 	synth.StateExchangeObject.call(this);
@@ -17,7 +17,10 @@ synth.inherits(synth.Scale, synth.StateExchangeObject);
 synth.Scale.prototype.getFrequency = synth.abstractFunction;
 
 
-
+/**
+ * An equal tempered Scale class
+ * @class
+ */
 synth.EqualTemperedScale = function (index, frequency) {
 	synth.Scale.call(this);
 	

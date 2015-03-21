@@ -1,13 +1,17 @@
 // #ifndef __INSTRUMENT__
 // #define __INSTRUMENT__
 
-// #include "../init.js"
-// #include "../StateExchangeObject.var.js"
+// #include "../StateExchangeObject.js"
 
-// NOTE: At the moment instrument doesn't support live playing of a note
 
 synth.instrument = synth.instrument || {};
 
+/**
+ * This is the base class for all instruments, providing a common interface.
+ * All base classes only need to listen for inserts and removes on the frequenciesToPlay TimeCollection property to get informed aboput all new frequencies
+ * @class
+ */
+// NOTE: At the moment instrument doesn't support live playing of a note
 synth.instrument.Instrument = function (audioContext, scale) {
 	synth.StateExchangeObject.call(this);
 	
@@ -21,6 +25,10 @@ synth.instrument.Instrument = function (audioContext, scale) {
 synth.inherits(synth.instrument.Instrument, synth.StateExchangeObject);
 synth.StateExchangeObject.addType("synth.instrument.Instrument", synth.instrument.Instrument);
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.addFrequency = function (timeObject) {
 	this.frequenciesToPlay.insert(timeObject);
 	
@@ -32,11 +40,13 @@ synth.instrument.Instrument.prototype.addFrequency = function (timeObject) {
 	}.bind(this));
 };
 
+
 synth.instrument.Instrument.prototype.addFrequencies = function (frequencyTimeCollection) {
 	frequencyTimeCollection.forEach(function (timeObject) {
 		this.addFrequency(timeObject);
 	}.bind(this));
 };
+
 
 synth.instrument.Instrument.prototype.addNote = function (timeObject) {
 	var newTimeObject = _.cloneDeep(timeObject);
@@ -50,6 +60,11 @@ synth.instrument.Instrument.prototype.addNotes = function (noteTimeCollection) {
 	}.bind(this));
 };
 
+
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.removeFrequency = function (timeObject) {
 	this.frequenciesToPlay.remove(timeObject);
 };
@@ -72,6 +87,10 @@ synth.instrument.Instrument.prototype.removeNotes = function (noteTimeCollection
 	}.bind(this));
 };
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, when) {
 	this.frequenciesToPlay.afterEqual(when, true).forEach(function (timeObject) {
 		timeObject.time = (timeObject - when) * tempoMultiplier + when;
@@ -79,14 +98,30 @@ synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, w
 	});
 };
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.connect = synth.abstractFunction;
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.interrupt = synth.abstractFunction;
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.setScale = function (scale) {
 	this.scale_ = scale;
 };
 
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.getScale = function () {
 	return this.scale_;
 };

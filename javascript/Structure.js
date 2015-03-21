@@ -1,4 +1,6 @@
-// #include "init.js"
+/*
+ * This file contains structural helper functions
+ */
 
 synth.inherits = function (child, parent) {
 	jQuery.extend(child.prototype, parent.prototype);

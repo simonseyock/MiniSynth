@@ -1,10 +1,11 @@
 // #ifndef __TIMEGATE
 // #define __TIMEGATE
 
-// #include "init.js"
-
-// #include "timeObject.js"
-
+/*
+ *
+ * This class controls if a sound should be let through at a certain time or not.
+ */
+ 
 synth.TimeGate = function (audioContext) {
 	this.audioContext_ = audioContext;
 	this.gain_ = audioContext.createGain();

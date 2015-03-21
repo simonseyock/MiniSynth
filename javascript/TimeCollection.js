@@ -4,10 +4,15 @@
 // #include "ObservableObject.js"
 
 /**
- * 		timeObjects must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
+ * This is a class which stores a collection of timed objects. Each timeObject must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
+ * It provides many helper methods.
+ * It is chainable. 
  * @class
+ * @fires insert
+ * @fires remove
+ * @fires objectChanged
  */
-
+  
 synth.TimeCollection = function (begin, end, options) {
 	synth.ObservableObject.call(this);
 	
@@ -32,41 +37,42 @@ synth.TimeCollection = function (begin, end, options) {
 };
 synth.inherits(synth.TimeCollection, synth.ObservableObject);
 
-// synth.TimeCollection.prototype.bind_ = function (aTimeCollection, transform) {
-	// transform = transform || function (v) { return v; };
-	
-	// aTimeCollection.on("insert", function (timeObject) {
-		// this.insert(transform(timeObject));
-	// }.bind(this));
-	// aTimeCollection.on("remove", function (timeObject) {
-		// this.remove(tranform(timeObject));
-	// }.bind(this));
-	// aTimeCollection.on("objectChanged", function (oldObject, newObject) {
-		// var oldTransformed = transform(oldObject);
-		// this.forEach(function (timeObject) {
-			
-		// });
-	// }.bind(this));
-// };
-
-//insert with ? 
-
+/**
+ * Inserts a timeObject
+ * @param timeObject {object}
+ * @method
+ */
 synth.TimeCollection.prototype.insert = function (timeObject) {
 	this.timeObjects_.push(timeObject);
 	this.count++;
+	
+	/**
+	 * Insert Event
+	 * @event insert
+	 * @property timeObject {object} the inserted timeObject
+	 */
 	this.fireEvent("insert", [timeObject]);
 	
 	return this;
 };
 
-//insert more efficient search maybe? 
-
-synth.TimeCollection.prototype.remove = function (timeObject) {
+/**
+ * Removes the first occurance of timeObject
+ * @param timeObject {object}
+ * @method
+ */
+ synth.TimeCollection.prototype.remove = function (timeObject) {
 	for(var i=0, found=false; i<this.count && !found; i++) {
 		if(timeObject.time == this.timeObjects_[i].time && timeObject.duration == this.timeObjects_[i].duration && timeObject.value == this.timeObjects_[i].value) {
 			this.timeObjects_.splice(i, 1);
 			found = true;
 			this.count--;
+			
+			/**
+			 * Remove Event
+			 * @event remove
+			 * @property timeObject {object} the removed timeObject
+			 */
 			this.fireEvent("remove", [timeObject]);
 		}
 	}
@@ -74,23 +80,21 @@ synth.TimeCollection.prototype.remove = function (timeObject) {
 	return this; // return found
 };
 
-// synth.TimeCollection.prototype.between = function (begin, end, overlappingBefore, overlappingAfter) {
-	// // var newTimeCollection = new synth.TimeCollection(begin, end);
-	// // for (var i=0; i<this.count; i++) {
-		// // if (this.timeObjects_[i].time >= begin && this.timeObjects_[i].time < end) {
-			// // newTimeCollection.insert(this.timeObjects_[i]);
-		// // }
-	// // }
-	
-	// // return newTimeCollection;
-	
-	// return this.afterEqual(begin, overlappingAfter).before(end, overlappingBefore); 
-// };
-
+/**
+ * Takes a function which is executed for every timeObject inside this collection.
+ * @param callback {function}
+ * @method
+ */
 synth.TimeCollection.prototype.forEach = function (callback) {
 	this.timeObjects_.forEach(callback);
 };
 
+/**
+ * Returns a new collection containing all objects before the given time. If overlapping is set to true it also contains objects which start, but don't end before the given time. 
+ * @method
+ * @param when {float} time
+ * @param overlapping {boolean}
+ */
 synth.TimeCollection.prototype.before = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, when);
 	for (var i=0; i<this.count; i++) {
@@ -104,12 +108,19 @@ synth.TimeCollection.prototype.before = function (when, overlapping) {
 	return newTimeCollection;
 };
 
-synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
-	var newTimeCollection = new synth.TimeCollection(when, this.end);
+
+/**
+ * Returns a new collection containing all objects before or equal the given time. If overlapping is set to true it also contains objects which start, but don't end before or equal the given time. 
+ * @method
+ * @param when {float} time
+ * @param overlapping {boolean} 
+ */
+synth.TimeCollection.prototype.beforeEqual = function (when, overlapping) {
+	var newTimeCollection = new synth.TimeCollection(this.begin, when);
 	for (var i=0; i<this.count; i++) {
-		if (this.timeObjects_[i].time >= when) {
+		if (this.timeObjects_[i].time + this.timeObjects_[i].duration <= when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
-		} else if (overlapping && this.timeObjects_[i].time + this.timeObjects_[i].duration >= when) {
+		} else if( overlapping && this.timeObjects_[i].time <= when ) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
@@ -117,12 +128,38 @@ synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
 	return newTimeCollection;
 };
 
+
+/**
+ * Returns a new collection containing all objects after the given time. If overlapping is set to true it also contains objects which start, but don't end after the given time. 
+ * @method
+ * @param when {float} time
+ * @param overlapping {boolean} 
+ */
 synth.TimeCollection.prototype.after = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(when, this.end);
 	for (var i=0; i<this.count; i++) {
 		if (this.timeObjects_[i].time > when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		} else if (overlapping && this.timeObjects_[i].time + this.timeObjects_[i].duration > when) {
+			newTimeCollection.insert(this.timeObjects_[i]);
+		}
+	}
+	
+	return newTimeCollection;
+};
+
+/**
+ * Returns a new collection containing all objects after or equal the given time. If overlapping is set to true it also contains objects which start, but don't end after or equal the given time. 
+ * @method
+ * @param when {float} time
+ * @param overlapping {boolean} 
+ */
+synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
+	var newTimeCollection = new synth.TimeCollection(when, this.end);
+	for (var i=0; i<this.count; i++) {
+		if (this.timeObjects_[i].time >= when) {
+			newTimeCollection.insert(this.timeObjects_[i]);
+		} else if (overlapping && this.timeObjects_[i].time + this.timeObjects_[i].duration >= when) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
@@ -144,6 +181,11 @@ synth.TimeCollection.prototype.after = function (when, overlapping) {
 	// return newTimeCollection;
 // };
 
+
+/**
+ * Clones a timeCollection and all containing timeObjects
+ * @method
+ */
 synth.TimeCollection.prototype.clone = function () {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
 	this.forEach(function (timeObject) {
@@ -152,35 +194,60 @@ synth.TimeCollection.prototype.clone = function () {
 	return newTimeCollection;
 };
 
-synth.TimeCollection.prototype.clear = function () {
-	for (var i=0, ii=this.count; i<ii; i++) {
-		this.count--;
-		this.fireEvent("remove", [this.timeObjects_.shift()]);
-	};
-	return this;
-};
 
+// synth.TimeCollection.prototype.clear = function () {
+	// for (var i=0, ii=this.count; i<ii; i++) {
+		// this.count--;
+		// this.fireEvent("remove", [this.timeObjects_.shift()]);
+	// };
+	// return this;
+// };
+
+
+/**
+ * Adds a given time to all times of the timeObjects 
+ * @method
+ */
 synth.TimeCollection.prototype.timeAdd = function (time) {
 	this.begin += time;
 	this.end += time;
 	//var newTimeCollection = this.clone();
 	this.forEach(function (timeObject) {
 		timeObject.time += time;
+		/**
+		 * Object changed Event
+		 * @event objectChanged
+		 * @property timeObject {object} the changed object
+		 */
 		this.fireEvent("objectChanged", [timeObject]);
 	}.bind(this));
 	return this;
 };
 
-synth.TimeCollection.prototype.timeMultiply = function (time) {
-	this.begin *= time;
-	this.end *= time;
+
+/**
+ * Multiply a given value to all times of the timeObjects 
+ * @method
+ */
+synth.TimeCollection.prototype.timeMultiply = function (value) {
+	this.begin *= value;
+	this.end *= value;
 	this.forEach(function (timeObject) {
-		timeObject.time *= time;
+		timeObject.time *= value;
+		/**
+		 * Object changed Event
+		 * @event objectChanged
+		 * @property timeObject {object} the changed object
+		 */
 		this.fireEvent("objectChanged", [timeObject]);
 	}.bind(this));
 	return this;
 };
 
+/**
+ * Sorts the collection by time
+ * @method
+ */
 synth.TimeCollection.prototype.sort = function () {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
 	_.sortBy(this.timeObjects_, 'time').forEach(function (timeObject) {
@@ -189,6 +256,10 @@ synth.TimeCollection.prototype.sort = function () {
 	return newTimeCollection;
 };
 
+/**
+ * Returns a new collection containing all time Objects which are at this time
+ * @method
+ */
 synth.TimeCollection.prototype.atTime = function (time) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, this.end);
 	this.forEach(function (timeObject) {
@@ -199,41 +270,5 @@ synth.TimeCollection.prototype.atTime = function (time) {
 	
 	return newTimeCollection;
 };
-
-
-// synth.TimeCollection.prototype.addTimed = function (timedFunction) {
-	// this.timedFunctions_.push(timedFunction);
-// };
-
-// synth.TimeCollection.prototype.removeTimed = function (timedFunction) {
-	
-	// this.timedFunctions_.push(timedFunction);
-	// this.timedAdvances_.push(timedAdvance || this.timedAdvanceDefault_);
-// };
-
-//var b
-// synth.TimeCollection.prototype.controlAudioParam = function (audioParam) {
-	
-// };
-
-// maybe:
-// TimedAudioParamController uses a TimeCollection to control an AudioParam <-
-// or
-// An unknown controller uses TimeCollection to time an AudioParam
-
-// Question: when to give the time to an audioaparam ... alternatives:
-// a) long time before (like one bar in advance)
-// b) shortly before a bar starts
-// c) shortly before a note starts <-
-
-//other idea: having a controlNode which directly controls input/output of a node. Advantage: it could start and stop the node while a note is playing
-
-
-//aaand: add a warning when timedAdvance is overrun
-
-// TimeCollection
-	// ^
-	// |
-// loopTimeTimeCollection
 
 // #endif

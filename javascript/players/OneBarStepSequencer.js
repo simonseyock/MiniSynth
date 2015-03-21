@@ -1,7 +1,6 @@
 // #ifndef __ONEBARSTEPSEQUENCER__
 // #define __ONEBARSTEPSEQUENCER__
 
-// #include "../init.js"
 // #include "Player.js"
 
 synth.player.OneBarStepSequencer = function (clock, opt_steps) {
@@ -47,10 +46,12 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 	
 	
 	this.notes_.on("insert", function (timeObject) {
-		var barLength = this.clock_.getBarLength();
-		var timeCollection = new synth.TimeCollection(0, 2 * barLength);
-		timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
-		this.getInstrument().addNotes(timeCollection.timeAdd(this.nextBarTime_));
+		if (this.clock_.started) {
+			var barLength = this.clock_.getBarLength();
+			var timeCollection = new synth.TimeCollection(0, 2 * barLength);
+			timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
+			this.getInstrument().addNotes(timeCollection.timeAdd(this.nextBarTime_));
+		}
 	}.bind(this));
 };
 synth.inherits(synth.player.OneBarStepSequencer, synth.player.Player);

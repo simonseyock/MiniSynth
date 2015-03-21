@@ -72,6 +72,14 @@ $(document).ready(function () {
 		sequencer.removeNote(3,0);
 	});
 	
+	$("#testG").on("click", function () {
+		clock.setBpM(clock.getBpM()-20);
+	});
+	
+	$("#testH").on("click", function () {
+		clock.setBpM(clock.getBpM()+20);
+	});
+	
 	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
 	
 	multiVoiceOscillator.frequenciesToPlay.on("insert", function () {
@@ -94,6 +102,8 @@ $(document).ready(function () {
 <button id="testD">Pattern B</button>
 <button id="testE">Add Note</button>
 <button id="testF">Remove Note</button>
+<button id="testG">Slower</button>
+<button id="testH">Faster</button>
 <div>Open up the console (F12) to see output</div>
 </body>
 </html>

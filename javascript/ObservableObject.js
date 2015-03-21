@@ -55,6 +55,10 @@ synth.ObservableObject.prototype.fireEvent = function ( type, passArgs ) {
 //    }
 //};
 
+/**
+ * Registers a listener to fire every time the given event occurs
+ * @method
+ */
 synth.ObservableObject.prototype.on = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         var key = this.customKey_++;
@@ -65,6 +69,10 @@ synth.ObservableObject.prototype.on = function ( type, listener, opt_this ) {
     }
 };
 
+/**
+ * Registers a listener to fire once the given event occurs
+ * @method
+ */
 synth.ObservableObject.prototype.once = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         var key = this.customKey_++;
@@ -75,6 +83,10 @@ synth.ObservableObject.prototype.once = function ( type, listener, opt_this ) {
     }
 };
 
+/**
+ * Removes a given listener for an event
+ * @method
+ */
 synth.ObservableObject.prototype.un = function ( type, listener, opt_this ) {
     if ( type in this.EventListeners_ ) {
         for ( var i = 0; i < this.EventListeners_[type].length; i++ ) {
@@ -89,6 +101,10 @@ synth.ObservableObject.prototype.un = function ( type, listener, opt_this ) {
     }
 };
 
+/**
+ * Removes a listener identified by the key which is returned by on or once
+ * @method
+ */
 synth.ObservableObject.prototype.unByKey = function ( key ) {
     if ( "type" in key ) {
         if (key.type in this.EventListeners_) {

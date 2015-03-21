@@ -74,7 +74,7 @@ Zeitplanung:
 |4. SingleVoiceOscillator									| 12.03.2015	|
 |5. MultiVoiceOscillator									| 12.03.2015	|
 |6. Clock													| 19.03.2015	|
-|7. Sequencer												|				|
+|7. Sequencer												| 21.03.2015	|
 | --- Fertig: 25.03.2015 ---							    |				|
 |8. ViewControllers für Clock/Playback und Sequencer		|				|
 |--- Fertig: 02.04.2015 ---									|				|

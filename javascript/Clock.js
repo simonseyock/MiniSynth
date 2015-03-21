@@ -1,18 +1,20 @@
 // #ifndef __CLOCK__
 // #define __CLOCK__
 
-// #include "init.js"
-// #include "StateExchangeObject.var.js"
+// #include "StateExchangeObject.js"
 // #include "ObservableObject.js"
 
+/**
+ * This class provides a timing event named nextBar, which is listened to by playing objects of the project to know when the next notes should be played and in which tempo they should be played.
+ * @class
+ * @params audioContext {audioContext} the audioContext
+ * @fires nextBar
+ * @fires start
+ * @fires stop
+ * @fires tempoChange
+ */
+
 // NOTE: Global Assumption: BpM is the Velocity of Quarters
-
-// clock should fire events the say which bar starts next
-// the listeners then get the real time from the clock, giving it a relative time (like 0.5 for a note at the middle of the bar.)
-// this will for now only work for the next bar, not the current bar, but is not needed for the current bar anyways? maybe for inserting or removing ...
-
-// only saves next bar start time and adjust this with tempo changes.
-// maintains an intervall, timeout which fires half way before the next bar starts. gets adjusted with tempoChange, too
 
 synth.Clock = function (audioContext) {
 	synth.ObservableObject.call(this);
@@ -21,168 +23,153 @@ synth.Clock = function (audioContext) {
 	this.registerEventType("start");
 	this.registerEventType("stop");
 	this.registerEventType("tempoChange");
-	//this.registerEventType("change:noteValues");
-	//this.registerEventType("change:beats");
 	
 	this.audioContext_ = audioContext;
 	
 	this.bpm_ = 120;
-	//this.setBpm(120);
-	//this.on("statechange:bpm", ...);
-	//this.setBeats(4);
-	//this.setNoteValue(4);
 	
-	this.bufferTime_ = 0.05;
-	this.precognitionTime_ = 0.3;
-	//this.gridTime_ = 0.2;
-	
-	//this.startTime_ = 0;
+	this.minBpm_ = 20;
+	this.maxBpm_ = 360;
+
+	this.precognitionTime_ = 0.5; // the time between the nextBar event and the actual time of the nextBar
+
+	/**
+	 * @property started {boolean} whether the clock is started or not
+	 */
 	this.started = false;
-	this.nextbar_ = 0;
+	
+	this.nextBar_ = 0;
+	this.nextBarTime_ = 0;
 	
 };
 synth.inherits(synth.Clock, synth.StateExchangeObject);
 synth.inherits(synth.Clock, synth.ObservableObject);
 
+/**
+ * Gives the BpM of the clock
+ * NOTE: not whenable
+ * @method
+ * @returns bpm {float} the BpM (Beats per Minute) of the clock. It is assumed that every bar is 4/4
+ */
 synth.Clock.prototype.getBpM = function () {
 	return this.bpm_;
 };
 
-/*
-* 
-* NOTE: whenability ...
-*/
+/**
+ * Changes the tempo of the clock
+ * NOTE: not whenable
+ * @method
+ * @param bpm {float} the BpM (Beats per Minute) of the clock. It is assumed that every bar is 4/4
+ */
 synth.Clock.prototype.setBpM = function (bpm) {
-
-	//setTimeout( function () {
 		
-		var oldBpM = this.bpm_;
-		var oldBarLength = this.getBarLength();
+	var oldBpM = Math.min(this.maxBpm_, Math.max(this.minBpm_, this.bpm_));
+	var oldBarLength = this.getBarLength();
+	
+	this.bpm_ = bpm;
+	
+	if (this.started) {
 		
-		this.bpm_ = bpm;
+		var barTimeBeforeTimeChange = this.nextBarTime_ - oldBarLength;
 		
-		if (this.started) {
-			
-			// if (when > this.nextBarTime_) {
-				// // this only happens when the timeChange falls in the precognition interval
-				// // causes a problem in calculation of the intervals and timeouts
-				// var barTimeBeforeTimeChange = this.nextBarTime_;
-				// //var correction = -1;
-			// } else {
-				var barTimeBeforeTimeChange = this.nextBarTime_ - oldBarLength;
-			//}
-			
-			var oldTempoPart = (this.audioContext_.currentTime - barTimeBeforeTimeChange) / oldBarLength;
-			var newTempoPart = 1 - oldTempoPart;
-			
-			// console.log("when: %f timeBefore: %f oldBarLength: %f newBarLength: %f oldNextBar: %f newNextBar: %f now: %f", 
-				// when, barTimeBeforeTimeChange, oldBarLength, this.getBarLength(), this.nextBarTime_, when + (1 - oldTempoPart) * this.getBarLength(), this.audioContext_.currentTime);			
-			
-			this.nextBarTime_ = this.audioContext_.currentTime + (1 - oldTempoPart) * this.getBarLength(); 
-			this.makeTicker();
-		}
+		var oldTempoPart = (this.audioContext_.currentTime - barTimeBeforeTimeChange) / oldBarLength;
+		var newTempoPart = 1 - oldTempoPart;
 		
-		this.fireEvent("tempoChange", [oldBpM/bpm]);
-	//}.bind(this), (when-this.audioContext_.currentTime-this.precognitionTime_) * 1000);
-	//this.setState("bpm", bpm);
+		// console.log("when: %f timeBefore: %f oldBarLength: %f newBarLength: %f oldNextBar: %f newNextBar: %f now: %f", 
+			// when, barTimeBeforeTimeChange, oldBarLength, this.getBarLength(), this.nextBarTime_, when + (1 - oldTempoPart) * this.getBarLength(), this.audioContext_.currentTime);			
+		
+		this.nextBarTime_ = this.audioContext_.currentTime + (1 - oldTempoPart) * this.getBarLength(); 
+		this.makeLoop_();
+	}
+	
+	/**
+	 * tempoChange Event
+	 * @event tempoChange
+	 * @property multiplier {float} a multiplier to get from the old to the new tempo
+	 */
+	this.fireEvent("tempoChange", [oldBpM/bpm]);
 };
 
-// synth.Clock.prototype.setNoteValue = function (noteValue) {
-	// var oldValue = this.noteValue_;
-	// this.noteValue_ = noteValue;
-	// this.fireEvent("change:noteValue", [{oldValue: oldValue, newValue: noteValue}]);
-	// //this.setState("noteValue", noteValue);
-// };
-
-// synth.Clock.prototype.setBeats = function (beats) {
-	// var oldValue = this.beats_;
-	// this.beats_ = beats;
-	// this.fireEvent("change:beats", [{oldValue: oldValue, newValue: beats}]);
-	// //this.setState("beats", beats);
-// };
-
-
-
-// sketch
-
-// synth.Clock.prototype.getRealTime = function (relativeTime) {
-	// var bar = Math.floor(relativeTime);
-// };
-
-// synth.Clock.prototype.getRealTime = function (time) {
-	// return this.startTime_ + this.bufferTime_ + time;
-// };
-
+/**
+ * NOTE: not whenable
+ * @method
+ * @returns barLength {float} The length of a bar in seconds
+ */
 synth.Clock.prototype.getBarLength = function () {
 	return 60 / this.bpm_ * 4;
 };
 
+/**
+ * Starts the clock at specified time or now
+ * @method
+ * @param when {float} time to start the clock
+ */
 synth.Clock.prototype.start = function (when) {
 	
 	when = when || this.audioContext_.currentTime;
 	
+	/**
+	 * start Event
+	 * @event start
+	 * @property when {float} the time the clock starts
+	 */
 	this.fireEvent("start", [when]);
 	
+	/**
+	 * nextBar Event - see below
+	 */
 	this.fireEvent("nextBar", [ 0, when ] );
 	
 	this.nextBar_ = 1;
 	this.nextBarTime_ = when + this.getBarLength();
-	this.makeTicker(when);
+	this.makeLoop_(when);
 	
 	this.started = true;
-	//this.startTime_ = this.audioContext_.currentTime;
 };
 
-synth.Clock.prototype.makeTicker = function () {
-	clearInterval(this.ticker_);
-	
-	var loop = function () {
-		this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
-		this.nextBar_++;
-		this.nextBarTime_ += this.getBarLength();
-		this.ticker_ = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
-	}.bind(this);
-	
-	this.ticker_ = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
-};
-
-// NOTE: another possibility: makeTicker to when the tempo changes
-
+/**
+ * Stops the clock at specified time or now
+ * @param when {float} time to stop the clock
+ * @method
+ */
 synth.Clock.prototype.stop = function (when) {
-	//clearInterval(this.informer_);
 	setTimeout(function () {
 		this.started = false;
 	
-		clearTimeout(this.ticker_);
-	
+		clearTimeout(this.loopTimeout);
+		
+		/**
+		 * stop Event
+		 * @event stop
+		 * @property when {float} the time the clock stops
+		 */
 		this.fireEvent("stop", [when]);
 	}.bind(this), (when - this.audioContext_.currentTime) * 1000)
 };
 
-// synth.Clock.prototype.registerPlayer = function (player) {
-	// this.players_.push(player);
-// };
-
-// synth.Clock.prototype.informPlayers = function (when) {
-	// for (var i=0; i<this.players_.length; i++) {
-		// this.players_[i].playBar(when, this.getBarLength());
-	// }
-// };
-
-// synth.Clock.prototype.bars2beats = function (bars) {
+/**
+ * This method creates a self adjusting loop which fires the nextBar event
+ * @private
+ * @method
+ */
+synth.Clock.prototype.makeLoop_ = function () {
+	clearInterval(this.loopTimeout);
 	
-// };
+	var loop = function () {
+		/**
+		 * nextBar Event
+		 * @event nextBar
+		 * @property barNumber {int} which bar it is
+		 * @property when {float} at which time this bar starts
+		 */
+		this.fireEvent("nextBar", [this.nextBar_, this.nextBarTime_]);
 
-// synth.Clock.prototype.beats2bars = function (beats) {
-
-// };
-
-// synth.Clock.prototype.getBarLength = function () {
-	// return this.beats_ / this.bpm_ * 60;
-// };
-
-// synth.Clock.prototype.calcTime = function (beats) {
-	// return this.startTime_ + beats / this.bpm_ * 60 * 1000;
-// };
+		this.nextBar_++;
+		this.nextBarTime_ += this.getBarLength();
+		this.loopTimeout = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
+	}.bind(this);
+	
+	this.loopTimeout = setTimeout(loop, (this.nextBarTime_ - this.audioContext_.currentTime - this.precognitionTime_) * 1000);
+};
 
 // #endif

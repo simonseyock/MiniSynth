@@ -1,10 +1,16 @@
 
-	//// #include "controller/ChessboardSequencerController.js"
-	// #include "instruments/MultiVoiceOscillator.js"
-	// #include "players/OneBarStepSequencer.js"
-	// #include "InstrumentLine.js"
-	// #include "GlobalMerger.js"
-	// #include "Scale.js"
-	// #include "Clock.js"
-	// #include "TimeCollection.js"
+/*
+ * This file is the main assembly file for the project. Maintaining all available parts.
+ */
+ 
+window.synth = window.synth || {};
+var synth = window.synth;
+
+// #include "Structure.js"
+// #include "instruments/MultiVoiceOscillator.js"
+// #include "players/OneBarStepSequencer.js"
+// #include "ViewControllers/PlayBackViewController.js"
+// #include "Scale.js"
+// #include "Clock.js"
+// #include "TimeCollection.js"
 

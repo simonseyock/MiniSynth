@@ -1,8 +1,7 @@
 // #ifndef __PLAYER__
 // #define __PLAYER__
 
-// #include "../init.js"
-// #include "../StateExchangeObject.var.js"
+// #include "../StateExchangeObject.js"
 
 synth.player = synth.player || {};
 

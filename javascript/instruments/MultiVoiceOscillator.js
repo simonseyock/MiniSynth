@@ -1,7 +1,6 @@
 // #ifndef __MULTIOSCILLATOR__
 // #define __MULTIOSCILLATOR__
 
-// #include "../init.js"
 // #include "Instrument.js"
 // #include "SingleVoiceOscillator.js"
 

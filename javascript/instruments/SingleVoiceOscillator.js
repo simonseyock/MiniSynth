@@ -1,9 +1,8 @@
 // #ifndef __SIMPLEOSCILLATOR__
 // #define __SIMPLEOSCILLATOR__
 
-// #include "../init.js"
 // #include "Instrument.js"
-// #include "../TimeGate.js"
+// #include "TimeGate.js"
 
 synth.instrument = synth.instrument || {};
 
