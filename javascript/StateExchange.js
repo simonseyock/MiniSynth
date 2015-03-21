@@ -3,11 +3,11 @@
 
 // NOTE: Question: (important) How to prevent Circles? (difficult) How to reduce Redundancy?
 
-synth.StateExchangeObject = function () {
+synth.StateExchange = function () {
 	this.state_ = {};
 };
 
-synth.StateExchangeObject.stateExchangeFactory_ = {
+synth.StateExchange.stateExchangeFactory_ = {
 	prototypes: [],
 	addType: function (name, aPrototype) {
 		this.prototypes[name] = aPrototype;
@@ -21,8 +21,8 @@ synth.StateExchangeObject.stateExchangeFactory_ = {
 	}
 };
 
-synth.StateExchangeObject.addType = function (typeName, aPrototype) {
-	synth.StateExchangeObject.stateExchangeFactory_.addType(typeName, aPrototype);
+synth.StateExchange.addType = function (typeName, aPrototype) {
+	synth.StateExchange.stateExchangeFactory_.addType(typeName, aPrototype);
 };
 
 /**
@@ -30,23 +30,23 @@ synth.StateExchangeObject.addType = function (typeName, aPrototype) {
  * @param getter {function} should return valid JSON (http://json.org)
  * @parma setter {function}
  */
-synth.StateExchangeObject.prototype.addNormalStateParameter = function (name, getter, setter) {
+synth.StateExchange.prototype.addNormalStateParameter = function (name, getter, setter) {
 	this.state_[name] = { get: getter, set: setter };
 };
 
 /**
  * @param name {string}
- * @param getter {function} should return a {synth.StateExchangeObject} !
- * @parma setter {function} should accept a {synth.StateExchangeObject}
+ * @param getter {function} should return a {synth.StateExchange} !
+ * @parma setter {function} should accept a {synth.StateExchange}
  */
-synth.StateExchangeObject.prototype.addExchangeObjectStateParameter = function (name, getter, setter) {
+synth.StateExchange.prototype.addExchangeObjectStateParameter = function (name, getter, setter) {
 	this.state_[name] = { 
 		get: function() { 
 			return { type: getter().typeName, state: getter().getState() };
 		}, 
 		set: function(typedState) { 
 			// insert validation if obj is already of the same type here
-			var obj = synth.StateExchangeObject.stateExchangeFactory_.createObject(typedState.typeName);
+			var obj = synth.StateExchange.stateExchangeFactory_.createObject(typedState.typeName);
 			obj.setState(typedState.state);
 			setter(obj);
 		}
@@ -55,10 +55,10 @@ synth.StateExchangeObject.prototype.addExchangeObjectStateParameter = function (
 
 /**
  * @param name {string}
- * @param getter {function} should return a {synth.StateExchangeObject[]} !
- * @parma setter {function} should accept a {synth.StateExchangeObject[]}
+ * @param getter {function} should return a {synth.StateExchange[]} !
+ * @parma setter {function} should accept a {synth.StateExchange[]}
  */
-synth.StateExchangeObject.prototype.addExchangeObjectArrayStateParameter = function (name, getter, setter) {
+synth.StateExchange.prototype.addExchangeObjectArrayStateParameter = function (name, getter, setter) {
 	this.state_[name] = { 
 		get: function() {
 			var retArr = [];
@@ -72,7 +72,7 @@ synth.StateExchangeObject.prototype.addExchangeObjectArrayStateParameter = funct
 			// insert validation if obj is already of the same type here
 			var setArr = [];
 			for (var i=0; typedStates.length; i++) {
-				setArr.push(synth.StateExchangeObject.stateExchangeFactory_ .createObject(typedStates[i].typeName));
+				setArr.push(synth.StateExchange.stateExchangeFactory_ .createObject(typedStates[i].typeName));
 			}
 			obj.setState(typedState.state);
 			setter(obj);
@@ -84,7 +84,7 @@ synth.StateExchangeObject.prototype.addExchangeObjectArrayStateParameter = funct
  * @returns {JSON} (if all setted values where valid json)
  */
 
-synth.StateExchangeObject.prototype.getState = function (opt_parameter) {
+synth.StateExchange.prototype.getState = function (opt_parameter) {
 	if (opt_parameter) {
 		// insert validation if opt_parameter is in state
 		return this.state_[opt_parameter].get();
@@ -103,7 +103,7 @@ synth.StateExchangeObject.prototype.getState = function (opt_parameter) {
  * @param value {JSON} needs to be plain JSON! If (look it up on http://json.org)
  */
 
-synth.StateExchangeObject.prototype.setState = function (opt_parameter, value) {
+synth.StateExchange.prototype.setState = function (opt_parameter, value) {
 	// shuffle arguments ;)
 	if (arguments.length === 1) {
 		value = arguments[0];

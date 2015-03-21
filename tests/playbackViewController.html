@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	window.logCollection = function (collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	};
+	
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	var clock = new synth.Clock(audioCtx);
+	
+	var playbackViewController = new synth.viewController.Playback(clock);
+	
+	$("body").append(playbackViewController.get$Element());
+	
+	window.sequencer = new synth.player.OneBarStepSequencer(clock, 8);
+	
+	window.multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
+	sequencer.setInstrument(multiVoiceOscillator);
+	
+	var gain = audioCtx.createGain();
+	gain.gain.value = 0.5;
+	multiVoiceOscillator.connect(gain);
+	
+	gain.connect(audioCtx.destination);
+	
+	var scaleC3 = new synth.EqualTemperedScale(21, 440);
+	
+	multiVoiceOscillator.setScale(scaleC3);
+	
+	var addPattern = function (pattern) {
+		for(var i=0; i<8; i++) {
+			pattern[i].forEach(function (note) {
+				sequencer.addNote(i, note);
+			}.bind(this));
+		}
+	};
+	
+	$("#testC").on("click", function () {
+		sequencer.clear();
+		var patternA = [[5],[],[5],[],[17],[],[5],[]];
+		addPattern(patternA);
+	});
+	
+	$("#testD").on("click", function () {
+		sequencer.clear();
+		var patternB = [[5],[],[5,12],[7],[7,10,14],[10],[5,8],[7]];
+		addPattern(patternB);
+	});
+	
+	$("#testE").on("click", function () {
+		sequencer.addNote(3,0);
+	});
+	
+	$("#testF").on("click", function () {
+		sequencer.removeNote(3,0);
+	});
+	
+	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
+	
+	multiVoiceOscillator.frequenciesToPlay.on("insert", function () {
+		//logCollection(multiVoiceOscillator.frequenciesToPlay.sort());
+	});
+	
+	sequencer.notes_.on("remove", function () {
+		//logCollection(sequencer.notes_);
+	});
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+<button id="testC">Pattern A</button>
+<button id="testD">Pattern B</button>
+<button id="testE">Add Note</button>
+<button id="testF">Remove Note</button>
+<div>Open up the console (F12) to see output</div>
+</body>
+</html>

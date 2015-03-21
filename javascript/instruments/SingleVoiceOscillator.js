@@ -32,7 +32,7 @@ synth.instrument.SingleVoiceOscillator = function (audioContext, waveType, opt_s
 	
 };
 synth.inherits(synth.instrument.SingleVoiceOscillator, synth.instrument.Instrument);
-synth.StateExchangeObject.addType("synth.instrument.SingleVoiceOscillator", synth.instrument.SingleVoiceOscillator);
+synth.StateExchange.addType("synth.instrument.SingleVoiceOscillator", synth.instrument.SingleVoiceOscillator);
 
 // synth.instrument.SingleVoiceOscillator.prototype.addFrequencies = function (frequencyCollection) {
 	// var that = this;

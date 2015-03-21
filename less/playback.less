@@ -1,0 +1,25 @@
+.synth-playback {
+	* {
+		display: inline-block;
+		vertical-align: middle;
+	}
+	
+	.synth-playback-play {
+		width: @button-size;
+		height: @button-size;
+	}
+
+	.synth-playback-stop {
+		width: @button-size;
+		height: @button-size;
+	}
+	
+	.synth-playback-bpm {
+		height: @button-size;
+		input {
+			width: 3em;
+			height: @button-size;
+			cursor: drag;
+		}
+	}
+}

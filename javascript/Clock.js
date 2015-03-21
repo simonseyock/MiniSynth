@@ -1,8 +1,8 @@
 // #ifndef __CLOCK__
 // #define __CLOCK__
 
-// #include "StateExchangeObject.js"
-// #include "ObservableObject.js"
+// #include "StateExchange.js"
+// #include "Observable.js"
 
 /**
  * This class provides a timing event named nextBar, which is listened to by playing objects of the project to know when the next notes should be played and in which tempo they should be played.
@@ -17,7 +17,7 @@
 // NOTE: Global Assumption: BpM is the Velocity of Quarters
 
 synth.Clock = function (audioContext) {
-	synth.ObservableObject.call(this);
+	synth.Observable.call(this);
 	
 	this.registerEventType("nextBar");
 	this.registerEventType("start");
@@ -42,8 +42,8 @@ synth.Clock = function (audioContext) {
 	this.nextBarTime_ = 0;
 	
 };
-synth.inherits(synth.Clock, synth.StateExchangeObject);
-synth.inherits(synth.Clock, synth.ObservableObject);
+synth.inherits(synth.Clock, synth.StateExchange);
+synth.inherits(synth.Clock, synth.Observable);
 
 /**
  * Gives the BpM of the clock

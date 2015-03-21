@@ -1,7 +1,7 @@
 // #ifndef __TIMECOLLECTION__
 // #define __TIMECOLLECTION__
 
-// #include "ObservableObject.js"
+// #include "Observable.js"
 
 /**
  * This is a class which stores a collection of timed objects. Each timeObject must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
@@ -14,7 +14,7 @@
  */
   
 synth.TimeCollection = function (begin, end, options) {
-	synth.ObservableObject.call(this);
+	synth.Observable.call(this);
 	
 	options = options || {};
 	
@@ -35,7 +35,7 @@ synth.TimeCollection = function (begin, end, options) {
 	this.registerEventType("objectChanged");
 	//this.registerEventType("object:change");
 };
-synth.inherits(synth.TimeCollection, synth.ObservableObject);
+synth.inherits(synth.TimeCollection, synth.Observable);
 
 /**
  * Inserts a timeObject

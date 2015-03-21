@@ -48,7 +48,7 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 	}.bind(this));
 };
 synth.inherits(synth.instrument.MultiVoiceOscillator, synth.instrument.Instrument);
-synth.StateExchangeObject.addType("synth.instrument.MultiVoiceOscillator", synth.instrument.MultiVoiceOscillator);
+synth.StateExchange.addType("synth.instrument.MultiVoiceOscillator", synth.instrument.MultiVoiceOscillator);
 
 synth.instrument.MultiVoiceOscillator.prototype.setScale = function (scale) {
 	for (var i=0; i<this.voices_; i++) {

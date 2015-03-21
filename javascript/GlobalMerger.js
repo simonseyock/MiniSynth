@@ -7,7 +7,7 @@
  *	Can only play one sound at a time (no chords possible)
  */
 synth.GlobalMerger = function (audioContext) {
-	synth.StateExchangeObject.call(this);
+	synth.StateExchange.call(this);
 	
 	this.audioContext_ = audioContext;
 	
@@ -16,8 +16,8 @@ synth.GlobalMerger = function (audioContext) {
 	this.addExchangeObjectArrayStateParameter("lines", this.getLines, this.setLines);
 	this.setLines([]);
 };
-synth.inherits(synth.GlobalMerger, synth.StateExchangeObject);
-synth.StateExchangeObject.addType("synth.GlobalMerger", synth.GlobalMerger);
+synth.inherits(synth.GlobalMerger, synth.StateExchange);
+synth.StateExchange.addType("synth.GlobalMerger", synth.GlobalMerger);
 
 synth.GlobalMerger.prototype.setLines = function (lines) {
 	//this.merger_ = this.audioContext_.createChannelMerger(Math.max(lines.length * 2, 2));

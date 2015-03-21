@@ -55,7 +55,7 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 	}.bind(this));
 };
 synth.inherits(synth.player.OneBarStepSequencer, synth.player.Player);
-synth.StateExchangeObject.addType("synth.player.OneBarStepSequencer", synth.player.OneBarStepSequencer);
+synth.StateExchange.addType("synth.player.OneBarStepSequencer", synth.player.OneBarStepSequencer);
 
 synth.player.OneBarStepSequencer.prototype.playBar = function (bar, when) {
 	this.getInstrument().addNotes(this.notes_.clone().timeAdd(when));

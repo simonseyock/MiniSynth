@@ -1,7 +1,7 @@
 // #ifndef __INSTRUMENT__
 // #define __INSTRUMENT__
 
-// #include "../StateExchangeObject.js"
+// #include "../StateExchange.js"
 
 
 synth.instrument = synth.instrument || {};
@@ -13,7 +13,7 @@ synth.instrument = synth.instrument || {};
  */
 // NOTE: At the moment instrument doesn't support live playing of a note
 synth.instrument.Instrument = function (audioContext, scale) {
-	synth.StateExchangeObject.call(this);
+	synth.StateExchange.call(this);
 	
 	this.audioContext_ = audioContext;
 	
@@ -22,8 +22,8 @@ synth.instrument.Instrument = function (audioContext, scale) {
 	this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
 	this.setScale(scale);
 };
-synth.inherits(synth.instrument.Instrument, synth.StateExchangeObject);
-synth.StateExchangeObject.addType("synth.instrument.Instrument", synth.instrument.Instrument);
+synth.inherits(synth.instrument.Instrument, synth.StateExchange);
+synth.StateExchange.addType("synth.instrument.Instrument", synth.instrument.Instrument);
 
 /**
  *

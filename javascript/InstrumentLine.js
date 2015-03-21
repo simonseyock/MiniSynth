@@ -7,7 +7,7 @@
  *	Can only play one sound at a time (no chords possible)
  */
 synth.InstrumentLine = function (audioContext) {
-	synth.StateExchangeObject.call(this);
+	synth.StateExchange.call(this);
 	
 	this.addExchangeObjectStateParameter("player", this.getPlayer, this.setPlayer);
 	this.player_ = null;
@@ -21,8 +21,8 @@ synth.InstrumentLine = function (audioContext) {
 	
 	this.gain_ = audioContext.createGain();
 };
-synth.inherits(synth.InstrumentLine, synth.StateExchangeObject);
-synth.StateExchangeObject.addType("synth.InstrumentLine", synth.InstrumentLine);
+synth.inherits(synth.InstrumentLine, synth.StateExchange);
+synth.StateExchange.addType("synth.InstrumentLine", synth.InstrumentLine);
 
 synth.InstrumentLine.prototype.setPlayer = function (player) {
 	this.player_ = player;

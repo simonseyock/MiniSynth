@@ -76,7 +76,8 @@ Zeitplanung:
 |6. Clock													| 19.03.2015	|
 |7. Sequencer												| 21.03.2015	|
 | --- Fertig: 25.03.2015 ---							    |				|
-|8. ViewControllers für Clock/Playback und Sequencer		|				|
+|8. ViewController für Clock/Playback 						| 21.03.2015	|
+|9. ViewController für  Sequencer							|				|
 |--- Fertig: 02.04.2015 ---									|				|
 |9. Vorlaeufiges CSS (verschiebbar)							|				|
 |--- Fertig: 09.04.2015 ---									|				|
