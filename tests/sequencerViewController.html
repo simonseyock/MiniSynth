@@ -50,42 +50,11 @@ $(document).ready(function () {
 	
 	multiVoiceOscillator.setScale(scaleC3);
 	
-	var addPattern = function (pattern) {
-		for(var i=0; i<8; i++) {
-			pattern[i].forEach(function (note) {
-				sequencer.addNote(i, note);
-			}.bind(this));
-		}
-	};
-	
-	$("#testC").on("click", function () {
-		sequencer.clear();
-		var patternA = [[5],[],[5],[],[17],[],[5],[]];
-		addPattern(patternA);
-	});
-	
-	$("#testD").on("click", function () {
-		sequencer.clear();
-		var patternB = [[5],[],[5,12],[7],[7,10,14],[10],[5,8],[7]];
-		addPattern(patternB);
-	});
-	
-	$("#testE").on("click", function () {
-		sequencer.addNote(3,0);
-	});
-	
-	$("#testF").on("click", function () {
-		sequencer.removeNote(3,0);
-	});
 	
 	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
 	
 	multiVoiceOscillator.frequenciesToPlay.on("insert", function () {
 		//logCollection(multiVoiceOscillator.frequenciesToPlay.sort());
-	});
-	
-	sequencer.notes_.on("remove", function () {
-		//logCollection(sequencer.notes_);
 	});
 });
 </script>

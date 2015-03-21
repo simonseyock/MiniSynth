@@ -12,13 +12,16 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 	
 	this.steps_ = opt_steps || 4;
 	
-	this.notes_ = new synth.TimeCollection(0, this.clock_.getBarLength());
+	this.notes_ = [];
+	for (var i=0; i<this.steps_; i++) {
+		this.notes_.push([]);
+	}
+	
 	this.stepLength_ = this.clock_.getBarLength() / this.steps_;
 	
 	this.clock_.on("tempoChange", function (multiplier) {
 		this.getInstrument().changeTempo(multiplier);
 		this.stepLength_ *= multiplier;
-		this.notes_.timeMultiply(multiplier);
 	}.bind(this));
 	
 	this.nextBarTime_ = 0;
@@ -32,51 +35,50 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 		this.getInstrument().interrupt(when);
 	}.bind(this));
 	
-	this.notes_.on("remove", function (timeObject) {
-		if (this.clock_.started) {
-			var barLength = this.clock_.getBarLength();
-			var timeCollection = new synth.TimeCollection(0, 2 * barLength);
-			timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject)).timeAdd(this.nextBarTime_);
-			// logCollection(this.getInstrument().frequenciesToPlay);
-			// logCollection(timeCollection);
-			this.getInstrument().removeNotes(timeCollection);
-			//logCollection(this.getInstrument().frequenciesToPlay);
-		}
-	}.bind(this));
-	
-	
-	this.notes_.on("insert", function (timeObject) {
-		if (this.clock_.started) {
-			var barLength = this.clock_.getBarLength();
-			var timeCollection = new synth.TimeCollection(0, 2 * barLength);
-			timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
-			this.getInstrument().addNotes(timeCollection.timeAdd(this.nextBarTime_));
-		}
-	}.bind(this));
 };
 synth.inherits(synth.player.OneBarStepSequencer, synth.player.Player);
 synth.StateExchange.addType("synth.player.OneBarStepSequencer", synth.player.OneBarStepSequencer);
 
 synth.player.OneBarStepSequencer.prototype.playBar = function (bar, when) {
-	this.getInstrument().addNotes(this.notes_.clone().timeAdd(when));
+	for (var i=0; i<this.steps_; i++) {
+		this.notes_[i].forEach(function (value) {
+			this.getInstrument().addNote({ time: when + i * this.stepLength_, duration: this.stepLength_, value: value });
+		}.bind(this));
+	}
 };
 
 synth.player.OneBarStepSequencer.prototype.addNote = function (stepIndex, value) {
-	var timeObject = { time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value };
+	this.notes_[stepIndex].push(value);
 	
-	this.notes_.insert(timeObject);
+	if (this.clock_.started) {
+		var timeObject = { time: stepIndex*this.stepLength_, duration: this.stepLength_, value: value };
+		var barLength = this.clock_.getBarLength();
+		var timeCollection = new synth.TimeCollection(0, 2 * barLength);
+		timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject));
+		this.getInstrument().addNotes(timeCollection.timeAdd(this.nextBarTime_));
+	}
 };
 
 synth.player.OneBarStepSequencer.prototype.removeNote = function (stepIndex, value) {
-	var timeObject = { time: this.stepLength_ * stepIndex, duration: this.stepLength_, value: value };
+	var index = this.notes_[stepIndex].indexOf(value);
 	
-	this.notes_.remove(timeObject);
+	if (index > -1) {
+		this.notes_[stepIndex].splice(index,1);
+		
+		if (this.clock_.started) {
+			var timeObject = { time: stepIndex*this.stepLength_, duration: this.stepLength_, value: value };
+			var barLength = this.clock_.getBarLength();
+			var timeCollection = new synth.TimeCollection(0, 2 * barLength);
+			timeCollection.insert(_.cloneDeep(timeObject)).timeAdd(-barLength).insert(_.cloneDeep(timeObject)).timeAdd(this.nextBarTime_);
+			this.getInstrument().removeNotes(timeCollection);
+		}
+	}
 };
 
 synth.player.OneBarStepSequencer.prototype.clear = function () {
-	var notesToRemove = this.notes_.clone();
-	notesToRemove.forEach(function (timeObject) {
-		this.notes_.remove(timeObject);
-	}.bind(this));
+	for (var i=0; i<this.steps_; i++) {
+		this.notes_[i] = [];
+	}
+	this.getInstrument().interrupt();
 };
 // #endif
