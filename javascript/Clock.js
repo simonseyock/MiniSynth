@@ -63,10 +63,10 @@ synth.Clock.prototype.getBpM = function () {
  */
 synth.Clock.prototype.setBpM = function (bpm) {
 		
-	var oldBpM = Math.min(this.maxBpm_, Math.max(this.minBpm_, this.bpm_));
+	var oldBpM = this.bpm_;
 	var oldBarLength = this.getBarLength();
 	
-	this.bpm_ = bpm;
+	this.bpm_ = Math.min(this.maxBpm_, Math.max(this.minBpm_, bpm));
 	
 	if (this.started) {
 		
