@@ -18,14 +18,14 @@ synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
 	this.classNameRow_ = this.className_ + "-row";
 	this.classNameColumn_ = this.className_ + "-column";
 
+  var $buttonDiv = $("<div>").addClass(this.className_ + "-buttons");
 
 	for (var i=0; i<rows; i++) { // rows
 		for (var j=0; j<cols; j++) { // cols
 			(function (row, col) {
 				var $button = $("<button>").addClass(this.classNameButton_).addClass(this.classNameColumn_ + "-" + j).addClass(this.classNameRow_ + "-" + i);
-				var active = false;
 				$button.on("click", function () {
-					active = !active;
+					var active = !$button.hasClass(this.classNameButtonActive_);
 					$button.toggleClass(this.classNameButtonActive_);
 					if (active) {
 						this.sequencer_.addNote(col, rows-row);
@@ -33,11 +33,21 @@ synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
 						this.sequencer_.removeNote(col, rows-row);
 					}
 				}.bind(this));
-				this.$element_.append($button);
+				$buttonDiv.append($button);
 			}.bind(this))(i,j);
 		}
 	}
+
+  this.$element_.append($buttonDiv);
+
+  var $clearButton = $("<button>").addClass(this.className_ + "-clear").text("Clear").on("click", function () {
+    this.sequencer_.clear();
+    $buttonDiv.children().removeClass(this.classNameButtonActive_);
+  }.bind(this));
+
+  this.$element_.append($clearButton);
 };
 synth.inherits(synth.viewController.Sequencer, synth.viewController.ViewController);
+
 
 // #endif

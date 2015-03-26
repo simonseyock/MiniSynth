@@ -76,9 +76,10 @@ synth.player.OneBarStepSequencer.prototype.removeNote = function (stepIndex, val
 };
 
 synth.player.OneBarStepSequencer.prototype.clear = function () {
-	for (var i=0; i<this.steps_; i++) {
-		this.notes_[i] = [];
+	for (var i=this.steps_-1; i>=0; i--) {
+    for(var j=this.notes_[i].length-1; j>=0; j--) {
+      this.removeNote(i, this.notes_[i][j]);
+    }
 	}
-	this.getInstrument().interrupt();
 };
 // #endif
