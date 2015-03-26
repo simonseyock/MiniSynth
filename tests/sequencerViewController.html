@@ -16,46 +16,50 @@ $(document).ready(function () {
 			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
 		});
 	};
-	
+
 	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 	// Clock
-	
+
 	var clock = new synth.Clock(audioCtx);
-	
+
 	var playbackViewController = new synth.viewController.Playback(clock);
-	
+
 	$("body").append(playbackViewController.get$Element());
-	
+
 	// Sequencer
-	
+
 	window.sequencer = new synth.player.OneBarStepSequencer(clock, 8);
-	
+
 	var sequencerViewController = new synth.viewController.Sequencer(sequencer, 8, 8);
-	
+
 	$("body").append(sequencerViewController.get$Element());
-	
-	
-	
+
+
+
 	window.multiVoiceOscillator = new synth.instrument.MultiVoiceOscillator(audioCtx, "square", 8);
 	sequencer.setInstrument(multiVoiceOscillator);
-	
+
 	var gain = audioCtx.createGain();
 	gain.gain.value = 0.5;
 	multiVoiceOscillator.connect(gain);
-	
+
 	gain.connect(audioCtx.destination);
-	
+
 	var scaleC3 = new synth.EqualTemperedScale(21, 440);
-	
+
 	multiVoiceOscillator.setScale(scaleC3);
-	
-	
+
+
 	multiVoiceOscillator.start(audioCtx.currentTime + 0.5);
-	
-	multiVoiceOscillator.frequenciesToPlay.on("insert", function () {
-		//logCollection(multiVoiceOscillator.frequenciesToPlay.sort());
-	});
+
+    synth.debuggers.debugTime(audioCtx);
+    synth.debuggers.debugCollection(multiVoiceOscillator.frequenciesToPlay);
+
+    clock.on("tempoChange", function (mult) {
+        console.log(mult);
+    });
+
 });
 </script>
 <link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">

@@ -17,7 +17,7 @@
     "parallelshell": "latest",
     "uprocess": "latest",
     "watch": "latest",
-	"jsdoc": "latest"
+	  "jsdoc": "latest"
   },
   "scripts": {
     "build:js": "uprocess \"javascript/main.js\" -o \"build/lib/MobileSynthMiniSeq.js\"",
@@ -28,6 +28,8 @@
     "watch": "parallelshell \"npm run watch:js\" \"npm run watch:css\"",
     "livereload": "live-reload --port 9091 build/",
     "develop": "parallelshell \"npm run watch\" \"npm run livereload\"",
-	"jsdoc": "jsdoc javascript -r -d doc/jsdoc"
+	  "jsdoc": "jsdoc javascript -r -d doc/jsdoc",
+    "test": "echo $PATH",
+    "test2": "node -e 'console.log(2)'"
   }
 }

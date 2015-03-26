@@ -92,21 +92,10 @@ synth.instrument.Instrument.prototype.removeNotes = function (noteTimeCollection
  * @method
  */
 synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, when) {
-
-  // notes which already started at the time of the tempo change only need to be changed in length
-  this.frequenciesToPlay.atTime(when).forEach(function (timeObject) {
-    var modifiedPart = (timeObject.time + timeObject.duration - when) * tempoMultiplier;
-    var originalPart = when - timeObject.time;
-    timeObject.duration = originalPart + modifiedPart;
-  });
-
-  // notes which start afterwards need to be changed both in time and duration
-	this.frequenciesToPlay.after(when, false).forEach(function (timeObject) {
-    //var old = _.cloneDeep(timeObject);
-		timeObject.time = (timeObject.time - when) * tempoMultiplier + when;
+	this.frequenciesToPlay.afterEqual(when, true).forEach(function (timeObject) {
+		timeObject.time = (timeObject - when) * tempoMultiplier + when;
 		timeObject.duration *= tempoMultiplier;
-    //this.frequenciesToPlay.fireEvent("objectChanged",[{old: old, new: timeObject}]);
-	}.bind(this));
+	});
 };
 
 /**

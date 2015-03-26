@@ -6,30 +6,30 @@
 /**
  * This is a class which stores a collection of timed objects. Each timeObject must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
  * It provides many helper methods.
- * It is chainable. 
+ * It is chainable.
  * @class
  * @fires insert
  * @fires remove
  * @fires objectChanged
  */
-  
+
 synth.TimeCollection = function (begin, end, options) {
 	synth.Observable.call(this);
-	
+
 	options = options || {};
-	
+
 	this.timeObjects_ = [];
 	this.count = 0;
-	
+
 	if (_.isNaN(begin) || _.isNaN(end)) {
 		throw new Error("TimeCollection needs a begin and an end!"); // NOTE: really?
 	}
 	this.begin = begin;
 	this.end = end;
-	  
+
 	//this.lines_ = false;
 	//this.flat_ = false;
-	
+
 	this.registerEventType("insert");
 	this.registerEventType("remove");
 	this.registerEventType("objectChanged");
@@ -45,14 +45,14 @@ synth.inherits(synth.TimeCollection, synth.Observable);
 synth.TimeCollection.prototype.insert = function (timeObject) {
 	this.timeObjects_.push(timeObject);
 	this.count++;
-	
+
 	/**
 	 * Insert Event
 	 * @event insert
 	 * @property timeObject {object} the inserted timeObject
 	 */
 	this.fireEvent("insert", [timeObject]);
-	
+
 	return this;
 };
 
@@ -67,7 +67,7 @@ synth.TimeCollection.prototype.insert = function (timeObject) {
 			this.timeObjects_.splice(i, 1);
 			found = true;
 			this.count--;
-			
+
 			/**
 			 * Remove Event
 			 * @event remove
@@ -90,7 +90,7 @@ synth.TimeCollection.prototype.forEach = function (callback) {
 };
 
 /**
- * Returns a new collection containing all objects before the given time. If overlapping is set to true it also contains objects which start, but don't end before the given time. 
+ * Returns a new collection containing all objects before the given time. If overlapping is set to true it also contains objects which start, but don't end before the given time.
  * @method
  * @param when {float} time
  * @param overlapping {boolean}
@@ -104,16 +104,16 @@ synth.TimeCollection.prototype.before = function (when, overlapping) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
-	
+
 	return newTimeCollection;
 };
 
 
 /**
- * Returns a new collection containing all objects before or equal the given time. If overlapping is set to true it also contains objects which start, but don't end before or equal the given time. 
+ * Returns a new collection containing all objects before or equal the given time. If overlapping is set to true it also contains objects which start, but don't end before or equal the given time.
  * @method
  * @param when {float} time
- * @param overlapping {boolean} 
+ * @param overlapping {boolean}
  */
 synth.TimeCollection.prototype.beforeEqual = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(this.begin, when);
@@ -124,16 +124,16 @@ synth.TimeCollection.prototype.beforeEqual = function (when, overlapping) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
-	
+
 	return newTimeCollection;
 };
 
 
 /**
- * Returns a new collection containing all objects after the given time. If overlapping is set to true it also contains objects which start, but don't end after the given time. 
+ * Returns a new collection containing all objects after the given time. If overlapping is set to true it also contains objects which start, but don't end after the given time.
  * @method
  * @param when {float} time
- * @param overlapping {boolean} 
+ * @param overlapping {boolean}
  */
 synth.TimeCollection.prototype.after = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(when, this.end);
@@ -144,15 +144,15 @@ synth.TimeCollection.prototype.after = function (when, overlapping) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
-	
+
 	return newTimeCollection;
 };
 
 /**
- * Returns a new collection containing all objects after or equal the given time. If overlapping is set to true it also contains objects which start, but don't end after or equal the given time. 
+ * Returns a new collection containing all objects after or equal the given time. If overlapping is set to true it also contains objects which start, but don't end after or equal the given time.
  * @method
  * @param when {float} time
- * @param overlapping {boolean} 
+ * @param overlapping {boolean}
  */
 synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
 	var newTimeCollection = new synth.TimeCollection(when, this.end);
@@ -163,21 +163,21 @@ synth.TimeCollection.prototype.afterEqual = function (when, overlapping) {
 			newTimeCollection.insert(this.timeObjects_[i]);
 		}
 	}
-	
+
 	return newTimeCollection;
 };
 
 // synth.TimeCollection.prototype.merge = function (anotherTimeCollection) {
 	// var newTimeCollection = new synth.TimeCollection(Math.min(this.begin, anotherTimeCollection.begin), Math.max(this.end, anotherTimeCollection.end));
-	
-	// this.forEach( function (timeObject) { 
+
+	// this.forEach( function (timeObject) {
 		// newTimeCollection.insert(_.cloneDeep(timeObject));
 	// } );
-	
+
 	// anotherTimeCollection.forEach(function (timeObject) {
 		// newTimeCollection.insert(_.cloneDeep(timeObject));
 	// } );
-	
+
 	// return newTimeCollection;
 // };
 
@@ -205,7 +205,7 @@ synth.TimeCollection.prototype.clone = function () {
 
 
 /**
- * Adds a given time to all times of the timeObjects 
+ * Adds a given time to all times of the timeObjects
  * @method
  */
 synth.TimeCollection.prototype.timeAdd = function (time) {
@@ -213,20 +213,23 @@ synth.TimeCollection.prototype.timeAdd = function (time) {
 	this.end += time;
 	//var newTimeCollection = this.clone();
 	this.forEach(function (timeObject) {
+    var old = _.cloneDeep(timeObject);
 		timeObject.time += time;
 		/**
 		 * Object changed Event
 		 * @event objectChanged
-		 * @property timeObject {object} the changed object
+     * @type {object}
+		 * @property old {object} a copy of the old object
+     * @property new {object} the new object
 		 */
-		this.fireEvent("objectChanged", [timeObject]);
+    this.fireEvent("objectChanged", [{old: old, new: timeObject}]);
 	}.bind(this));
 	return this;
 };
 
 
 /**
- * Multiply a given value to all times of the timeObjects 
+ * Multiply a given value to all times of the timeObjects
  * @method
  */
 synth.TimeCollection.prototype.timeMultiply = function (value) {
@@ -267,7 +270,7 @@ synth.TimeCollection.prototype.atTime = function (time) {
 			newTimeCollection.insert(timeObject);
 		}
 	});
-	
+
 	return newTimeCollection;
 };
 

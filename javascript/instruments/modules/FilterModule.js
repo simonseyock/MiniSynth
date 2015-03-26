@@ -1,8 +1,7 @@
-// #ifndef __MULTIOSCILLATOR__
-// #define __MULTIOSCILLATOR__
+// #ifndef __FILTERMODULE__
+// #define __FILTERMODULE__
 
-// #include "Instrument.js"
-// #include "SingleVoiceOscillator.js"
+// #include "Module.js"
 
 synth.instrument = synth.instrument || {};
 
@@ -33,7 +32,7 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 		for(var i=0, found=false; i<this.voices_ && !found; i++) {
 			if (this.voiceOscillators_[i].frequenciesToPlay.after(timeObject.time, true).before(timeObject.time + timeObject.duration, true).count == 0) {
 				found = true;
-				this.voiceOscillators_[i].addFrequency(_.cloneDeep(timeObject));
+				this.voiceOscillators_[i].addFrequency(timeObject);
 			}
 		}
 		if(!found) {
@@ -46,8 +45,6 @@ synth.instrument.MultiVoiceOscillator = function (audioContext, waveType, voices
 			this.voiceOscillators_[i].removeFrequency(timeObject);
 		}
 	}.bind(this));
-
-
 };
 synth.inherits(synth.instrument.MultiVoiceOscillator, synth.instrument.Instrument);
 synth.StateExchange.addType("synth.instrument.MultiVoiceOscillator", synth.instrument.MultiVoiceOscillator);
@@ -98,13 +95,6 @@ synth.instrument.MultiVoiceOscillator.prototype.interrupt = function (when) {
 	for(var i=0; i<this.voices_; i++) {
 		this.voiceOscillators_[i].interrupt(when);
 	}
-};
-
-synth.instrument.MultiVoiceOscillator.prototype.changeTempo = function (multiplier, when) {
-  for( var i=0; i<this.voices_; i++) {
-    this.voiceOscillators_[i].changeTempo(multiplier, when);
-  }
-  synth.instrument.Instrument.prototype.changeTempo.call(this, multiplier, when);
-};
+}
 
 // #endif
