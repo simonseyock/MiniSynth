@@ -3,17 +3,23 @@
 		display: inline-block;
 		vertical-align: middle;
 	}
-	
+
 	.synth-playback-play {
 		width: @button-size;
 		height: @button-size;
+    &.synth-active {
+      background-color: green;
+    }
 	}
 
 	.synth-playback-stop {
 		width: @button-size;
 		height: @button-size;
+    &.synth-active {
+      background-color: green;
+    }
 	}
-	
+
 	.synth-playback-bpm {
 		height: @button-size;
 		input {
