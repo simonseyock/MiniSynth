@@ -1,17 +1,21 @@
-// #ifndef __TIMEGATE
-// #define __TIMEGATE
+// #ifndef __TIMERMODULE
+// #define __TIMERMODULE
+
+// #include "Module.js"
 
 /*
  *
  * This class controls if a sound should be let through at a certain time or not.
- * NOTE: TimeGate does not support layered timeCollections, they need to be flat, at most the notes may start and begin at the same time.
+ * NOTE: Timer does not support layered timeCollections, they need to be flat, at most the notes may start and begin at the same time.
  */
 
-synth.TimeGate = function (audioContext, collection) {
+synth.instrument.module.Timer = function (audioContext) {
 	this.audioContext_ = audioContext;
 	this.gain_ = audioContext.createGain();
 	this.gain_.gain.value = 0;
+};
 
+synth.instrument.module.Timer.prototype.watch = function (collection) {
   this.collection_ = collection;
 
   this.collection_.on("insert", function (timeObject) {
@@ -21,17 +25,9 @@ synth.TimeGate = function (audioContext, collection) {
   this.collection_.on("remove", function (timeObject) {
     this.removeTime_(timeObject);
   }.bind(this));
-
-
-  /*this.collection_.on("objectChanged", function (e) {
-    this.removeTime_(e.old);
-    this.addTime_(e.new);
-  }.bind(this));*/
-  //does not work because notes will overlap
-  // instead an update function needs to be called after all objects have been changed
 };
 
-synth.TimeGate.prototype.update = function (when) {
+synth.instrument.module.Timer.prototype.update = function (when) {
   this.cancel(when);
 
   this.collection_.afterEqual(when, true).forEach(function (timeObject) {
@@ -40,7 +36,7 @@ synth.TimeGate.prototype.update = function (when) {
 };
 
 
-synth.TimeGate.prototype.addTime_ = function (timeObject) {
+synth.instrument.module.Timer.prototype.addTime_ = function (timeObject) {
 
   // check if note is to be played
 	if (timeObject.time + timeObject.duration > this.audioContext_.currentTime) {
@@ -60,7 +56,7 @@ synth.TimeGate.prototype.addTime_ = function (timeObject) {
 	}
 };
 
-synth.TimeGate.prototype.removeTime_ = function (timeObject) {
+synth.instrument.module.Timer.prototype.removeTime_ = function (timeObject) {
 
   // check if note needs to be muted
 	if (timeObject.time + timeObject.duration > this.audioContext_.currentTime) {
@@ -89,21 +85,30 @@ synth.TimeGate.prototype.removeTime_ = function (timeObject) {
 	}
 };
 
-synth.TimeGate.prototype.connect = function (anAudioNode) {
+synth.instrument.module.Timer.prototype.connect = function (anAudioNode) {
 	this.gain_.connect(anAudioNode);
 };
 
-synth.TimeGate.prototype.getNode = function () {
+synth.instrument.module.Timer.prototype.getNode = function () {
 	return this.gain_;
 };
 
-synth.TimeGate.prototype.cancel = function (when) {
-	this.gain_.gain.cancelScheduledValues(when);
+synth.instrument.module.Timer.prototype.cancel = function (when) {
+	this.gain_.gain.cancelScheduledValues(when || 0);
 };
 
-synth.TimeGate.prototype.interrupt = function (when) {
+synth.instrument.module.Timer.prototype.pause = function (when) {
+  when = when || 0;
 	this.cancel(when);
 	this.gain_.gain.setValueAtTime(0, when);
+};
+
+synth.instrument.module.Timer.prototype.isFreeFor = function (timeObject) {
+  if (this.collection_.after(timeObject.time, true).before(timeObject.time + timeObject.duration, true).count == 0) {
+		return true;
+  } else {
+    return false;
+  }
 };
 
 // #endif

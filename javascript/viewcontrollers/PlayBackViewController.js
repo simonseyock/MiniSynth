@@ -2,8 +2,8 @@
 // #define __PLAYBACKVIEWCONTROLLER__
 
 // #include "ViewController.js"
-// #include "../html/InputFieldWithValueDrag.js"
-// #include "../svgs.js"
+// #include "html/InputFieldWithValueDrag.js"
+// #include "svgs.js"
 
 synth.viewController.Playback = function (clock, opt_options) {
 

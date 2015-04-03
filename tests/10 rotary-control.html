@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+
+
+#here1 {
+	width: 50px;
+	height: auto;
+}
+
+#here1 .rotary-control-svg {
+	fill: red;
+	stroke: red;
+}
+
+#here2 {
+	width: 100px;
+	height: auto;
+}
+
+#here3 {
+	background-color: lightblue;
+	width: 150px;
+	height: auto;
+}
+
+#here3 .rotary-control-svg {
+	fill: green;
+	stroke: green;
+}
+
+#here4 {
+	width: 150px;
+	height: auto;
+}
+
+#here4 .rotary-control-svg {
+	fill: blue;
+	stroke: blue;
+}
+
+</style>
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css" />
+<script>
+
+
+$(document).ready(function() {
+
+
+    window.rc1 = new synth.html.AnalogRotaryControl({editable: false});
+    $("#here1").append(rc1.get$Element());
+	//rc1.setValue(0.5);
+    window.rc2 = new synth.html.AnalogRotaryControl({ min: -2, max: 4, unit: "m", displayPrecision: 3});
+    $("#here2").append(rc2.get$Element());
+	//rc2.setValueInternal_(0.25);
+	//rc2.setTransformFunctions(transformFromLin, transformToLin);
+
+    window.rc3 = new synth.html.DiscreteRotaryControl({values: ["jkl", 23, "kl;d", 2312, "sadsss"] });
+    $("#here3").append(rc3.get$Element());
+
+    window.rc4 = new synth.html.DiscreteRotaryControl();
+	$("#here4").append(rc4.get$Element());
+    rc4.setValueArray(["1/16", "1/8", "1/4", "1/2", "1", "2"]);
+});
+</script>
+</head>
+<body>
+<div id="here1"></div>
+<div id="here2"></div>
+<div id="here3"></div>
+<div id="here4"></div>
+</body>
+</html>

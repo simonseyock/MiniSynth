@@ -4,8 +4,8 @@
 synth.instrument = synth.instrument || {};
 synth.instrument.module = synth.instrument.module || {};
 
-synth.instrument.module.Module = function (opt_options) {
-
+synth.instrument.module.Module = function (audioContext) {
+  this.audioContext_ = audioContext;
 
 };
 

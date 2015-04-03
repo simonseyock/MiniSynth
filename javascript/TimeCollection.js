@@ -274,4 +274,18 @@ synth.TimeCollection.prototype.atTime = function (time) {
 	return newTimeCollection;
 };
 
+/**
+ * Returns true if the collection contains the timeObject
+ * @method
+ */
+synth.TimeCollection.prototype.contains = function (checkTimeObject) {
+	var found = false;
+	this.forEach(function (timeObject) {
+		if (timeObject.time === checkTimeObject.time && timeObject.duration === checkTimeObject.duration && timeObject.value === checkTimeObject.value) {
+      found = true;
+    }
+	});
+
+	return found;
+};
 // #endif

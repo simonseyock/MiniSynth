@@ -1,17 +1,33 @@
-@button-size: 30px;
+.synth {
 
-@accent-color: #1af800;
-@dark-main-color: #000000;
-@light-main-color: #ffffff;
+  @button-size: 30px;
 
-@import "sequencer.less";
-@import "playback.less";
-@import "svgs.less";
+  @accent-color: #1af800;
+  @dark-main-color: #000000;
+  @light-main-color: #ffffff;
 
-* {
-	box-sizing: border-box;
-}
+  @stroke-width: 4px;
 
-.blue {
-	background-color: blue;
+  @import "misc.less";
+  @import "sequencer.less";
+  @import "playback.less";
+  @import "svgs.less";
+  @import "rotary-control.less";
+  @import "sound-generator.less";
+  @import "lowpassfilter.less";
+  @import "modular-synth.less";
+
+  * {
+	  box-sizing: border-box;
+  }
+
+  .blue {
+	  background-color: blue;
+  }
+
+  button {
+    background: @light-main-color;
+    border-width: @stroke-width;
+    border-color: @dark-main-color;
+  }
 }

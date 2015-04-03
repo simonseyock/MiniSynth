@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	window.logCollection = function (collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	};
+
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	// Clock
+
+	var clock = new synth.Clock(audioCtx);
+
+	var playbackViewController = new synth.viewController.Playback(clock);
+
+	$("body").append(playbackViewController.get$Element());
+
+	// Sequencer
+
+	window.sequencer = new synth.player.OneBarStepSequencer(clock, 8);
+
+	var sequencerViewController = new synth.viewController.Sequencer(sequencer, 8, 8);
+
+	$("body").append(sequencerViewController.get$Element());
+
+
+    var scaleC3 = new synth.EqualTemperedScale(21, 440);
+
+    window.modularSynth = new synth.instrument.ModularSynth2o3g(audioCtx, scaleC3)
+
+    modularSynth.setWaveType1("sine");
+    modularSynth.setWaveType2("square");
+
+    modularSynth.setGain1(0.8);
+    modularSynth.setGain2(0.2);
+    modularSynth.setGain3(0.7);
+
+	sequencer.setInstrument(modularSynth);
+
+	modularSynth.connect(audioCtx.destination);
+
+
+	//simpleModularSynth.start(audioCtx.currentTime + 0.5);
+
+    //synth.debuggers.debugTime(audioCtx);
+    //synth.debuggers.debugCollection(simpleModularSynth.frequenciesToPlay);
+
+    clock.on("tempoChange", function (mult) {
+        console.log(mult);
+    });
+
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+<div>Open up the console (F12) to see output</div>
+</body>
+</html>

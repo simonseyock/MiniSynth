@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<!--script src="http://localhost:9091"></script-->
+<script src="../build/lib/jquery.js"></script>
+<script src="../build/lib/lodash.js"></script>
+<script src="../build/lib/MobileSynthMiniSeq.js"></script>
+<script>
+$(document).ready(function () {
+	window.logCollection = function (collection) {
+		console.log("Log TimeCollection, begin: ", collection.begin, ", end: ", collection.end);
+		collection.forEach(function (timeObject) {
+			console.log("time: ", timeObject.time, ", duration: ", timeObject.duration + ", value: ", timeObject.value);
+		});
+	};
+
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+	// Clock
+
+	var clock = new synth.Clock(audioCtx);
+
+	var playbackViewController = new synth.viewController.Playback(clock);
+
+	$("#synth").append(playbackViewController.get$Element());
+
+	// Sequencer
+
+	window.sequencer = new synth.player.OneBarStepSequencer(clock, 8);
+
+	var sequencerViewController = new synth.viewController.Sequencer(sequencer, 8, 8);
+
+	$("#synth").append(sequencerViewController.get$Element());
+
+
+    var scaleC3 = new synth.EqualTemperedScale(21, 440);
+
+    window.modularSynth = new synth.instrument.ModularSynth(audioCtx, scaleC3)
+
+    $synthModules = $("<div>").addClass("synth-modular-synth");
+
+    // osc 1
+
+    window.soundGeneratorModule1 = new synth.instrument.module.SoundGenerator(audioCtx, "sine", synth.instrument.module.Timer, 8);
+
+    modularSynth.addModule(soundGeneratorModule1);
+
+    window.soundGeneratorView1 = new synth.viewController.SoundGeneratorSimple(soundGeneratorModule1);
+
+    $synthModules.append(soundGeneratorView1.get$Element());
+
+    // filter 1
+
+    window.filterModule1 = new synth.instrument.module.LowpassFilter(audioCtx);
+
+    soundGeneratorModule1.connect(filterModule1.getNode());
+
+    modularSynth.addModule(filterModule1);
+
+    window.filterView1 = new synth.viewController.LowpassFilter(filterModule1);
+
+    $synthModules.append(filterView1.get$Element());
+
+    // osc 2
+
+    window.soundGeneratorModule2 = new synth.instrument.module.SoundGenerator(audioCtx, "sine", synth.instrument.module.Timer, 8);
+
+    modularSynth.addModule(soundGeneratorModule2);
+
+    window.soundGeneratorView2 = new synth.viewController.SoundGeneratorSimple(soundGeneratorModule2);
+
+    $synthModules.append(soundGeneratorView2.get$Element());
+
+    // filter2
+
+    window.filterModule2 = new synth.instrument.module.LowpassFilter(audioCtx);
+
+    soundGeneratorModule2.connect(filterModule2.getNode());
+
+    modularSynth.addModule(filterModule2);
+
+    window.filterView2 = new synth.viewController.LowpassFilter(filterModule2);
+
+    $synthModules.append(filterView2.get$Element());
+
+    // merge
+
+    window.gainModule = new synth.instrument.module.Gain(audioCtx);
+
+    modularSynth.addModule(gainModule);
+
+    filterModule1.connect(gainModule.getNode());
+
+    filterModule2.connect(gainModule.getNode());
+
+
+    $("#synth").append($synthModules);
+
+	sequencer.setInstrument(modularSynth);
+
+	gainModule.connect(audioCtx.destination);
+
+
+	//simpleModularSynth.start(audioCtx.currentTime + 0.5);
+
+    //synth.debuggers.debugTime(audioCtx);
+    //synth.debuggers.debugCollection(simpleModularSynth.frequenciesToPlay);
+
+    clock.on("tempoChange", function (mult) {
+        console.log(mult);
+    });
+
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../build/css/MobileSynthMiniSeq.css">
+<style>
+</style>
+</head>
+<body>
+    <h2>PhiSense</h2>
+    <p>A synthesizer with a sequencer that is supposed to run in browser on a mobile</p>
+    <div id="synth" class="synth"></div>
+    <br />written by Simon Seyock.
+</body>
+</html>

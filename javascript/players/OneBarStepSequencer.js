@@ -32,7 +32,7 @@ synth.player.OneBarStepSequencer = function (clock, opt_steps) {
 	}.bind(this));
 
 	this.clock_.on("stop", function (when) {
-		this.getInstrument().interrupt(when);
+		this.getInstrument().pause(when);
 	}.bind(this));
 
 };
