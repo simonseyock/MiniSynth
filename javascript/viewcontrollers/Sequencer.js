@@ -28,9 +28,9 @@ synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
 					var active = !$button.hasClass(this.classNameButtonActive_);
 					$button.toggleClass(this.classNameButtonActive_);
 					if (active) {
-						this.sequencer_.addNote(col, rows-row);
+						this.sequencer_.addNote(col, rows-row-1);
 					} else {
-						this.sequencer_.removeNote(col, rows-row);
+						this.sequencer_.removeNote(col, rows-row-1);
 					}
 				}.bind(this));
 				$buttonDiv.append($button);

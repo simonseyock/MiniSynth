@@ -8,7 +8,7 @@
  */
 synth.Scale = function () {
 	synth.StateExchange.call(this);
-	
+
 	//this.addExchangeObjectArrayStateParameter("lines", this.getLines, this.setLines);
 };
 synth.inherits(synth.Scale, synth.StateExchange);
@@ -23,18 +23,31 @@ synth.Scale.prototype.getFrequency = synth.abstractFunction;
  */
 synth.EqualTemperedScale = function (index, frequency) {
 	synth.Scale.call(this);
-	
+
 	this.factor_ = Math.pow(2, 1/12);
-	
+
 	this.addNormalStateParameter("baseFrequency", function () { return this.baseFrequency_ }, function (value) { this.baseFrequency_ = value; });
 	this.baseFrequency_ = frequency / Math.pow(this.factor_, index);
-	
+
 };
 synth.inherits(synth.EqualTemperedScale, synth.Scale);
 synth.StateExchange.addType("synth.EqualTemperedScale", synth.EqualTemperedScale);
 
 synth.EqualTemperedScale.prototype.getFrequency = function (index) {
 	return this.baseFrequency_ * Math.pow(this.factor_, index);
+};
+
+
+
+synth.FixedScale = function () {
+  synth.Scale.call(this);
+
+  this.frequencies_ = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+};
+synth.inherits(synth.FixedScale, synth.Scale);
+
+synth.FixedScale.prototype.getFrequency = function (index) {
+  return this.frequencies_[index-1];
 };
 
 // #endif

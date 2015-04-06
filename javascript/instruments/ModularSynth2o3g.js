@@ -6,6 +6,9 @@
 // #include "modules/Timer.js"
 // #include "modules/GainModule.js"
 
+
+/////////// IDEA - not in use! //////////////
+
 synth.instrument.ModularSynth2o3g = function (audioContext, scale) {
 
   //opt_options = opt_options || {};

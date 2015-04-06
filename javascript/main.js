@@ -7,7 +7,7 @@ var synth = window.synth;
 
 // #include "Structure.js"
 // #include "instruments/ModularSynth.js"
-// #include "instruments/modules/SoundGenerator.js"
+// #include "instruments/modules/SoundGenerator2.js"
 // #include "instruments/modules/Timer.js"
 // #include "instruments/modules/Gain.js"
 // #include "instruments/modules/LowpassFilter.js"

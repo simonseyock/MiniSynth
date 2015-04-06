@@ -4,6 +4,8 @@
 // #include "Instrument.js"
 // #include "Timer.js"
 
+//////////////////// OLDER VERSION, not in use anymore ////////////////////////
+
 synth.instrument = synth.instrument || {};
 
 /**

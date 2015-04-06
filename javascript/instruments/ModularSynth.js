@@ -35,8 +35,8 @@ synth.instrument.ModularSynth.prototype.changeTempo = function (tempoMultiplier,
   synth.instrument.Instrument.prototype.changeTempo.call(this, tempoMultiplier, when);
 
   this.modules_.forEach(function (aModule) {
-    if(aModule.update) {
-      aModule.update(when);
+    if(aModule.updateTiming) {
+      aModule.updateTiming(when);
     }
   }.bind(this));
 };

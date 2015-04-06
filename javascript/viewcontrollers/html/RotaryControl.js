@@ -147,18 +147,25 @@ synth.html.RotaryControl.prototype.setPosition = function (position) {
 synth.html.AnalogRotaryControl = function(opt_options) {
   opt_options = opt_options || {};
 
+  this.min_ = opt_options.min || 0;
+  this.max_ = opt_options.max || 1;
+
+  if (opt_options.hasOwnProperty("logarithmic") && opt_options.logarithmic) {
+    this.mappingFunction_ = function (x) {
+      return min/Math.E * Math.exp(Math.log(max*math.E/min)*x);
+    };
+    this.inverseMappingFunction_ = function (y) {
+      return Math.log(y*Math.E/min) / Math.log(max*Math.E/min);
+    };
+  } else {
+    this.mappingFunction_ = this.inverseMappingFunction_ = function (value) { return value; };
+  }
+
 	synth.html.RotaryControl.call(this, opt_options);
 
   this.dots_ = [0,1];
   this.createDots_();
 
-  this.displayFunction_ = null;
-	this.editFunction_ = null;
-
-  this.min_ = opt_options.min || 0;
-  this.max_ = opt_options.max || 1;
-  //this.mappingFunction_ = opt_options.mappingFunction_ || function (value) { return value; }; // would need to be monotounus rising to calculate the position from a given value (via edit)
-  //this.inverseMappingFunction_ // does not need to be very exact, some digits behind the dot would be enough
   this.displayPrecision_ = opt_options.displayPrecision_ || 2;
   this.unit_ = opt_options.unit || "";
   this.setEditable(opt_options.editable || true);
@@ -212,11 +219,11 @@ synth.html.AnalogRotaryControl.prototype.setEditable = function (editable) {
 };
 
 synth.html.AnalogRotaryControl.prototype.updateValueFromPosition = function () {
-  this.setValue(this.min_ + this.position_ * (this.max_ - this.min_)); //this.mappingFunction_(this.position_);
+  this.setValue(this.mappingFunction_(this.min_ + this.position_ * (this.max_ - this.min_)));
 };
 
 synth.html.AnalogRotaryControl.prototype.updatePositionFromValue = function () {
-  this.setPosition(this.value_ / (this.max_ - this.min_) - this.min_); //this.inverseMappingFunction_(this.value_);
+  this.setPosition(this.inverseMappingFunction_(this.value_ / (this.max_ - this.min_) - this.min_));
 };
 
 

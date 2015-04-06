@@ -1,7 +1,18 @@
+
 // #ifndef __TIMECOLLECTION__
 // #define __TIMECOLLECTION__
 
 // #include "Observable.js"
+
+/**
+ * Helpers
+ */
+
+var helpers = helpers || {};
+
+helpers.timeObjectsEqual = function (tO1, tO2) {
+  return tO1.time === tO2.time && tO1.duration === tO2.duration && tO1.value === tO2.value;
+};
 
 /**
  * This is a class which stores a collection of timed objects. Each timeObject must have a time, a duration, a value (comparable), they are identified by all this three parameters combined and can have any additional data.
@@ -63,7 +74,7 @@ synth.TimeCollection.prototype.insert = function (timeObject) {
  */
  synth.TimeCollection.prototype.remove = function (timeObject) {
 	for(var i=0, found=false; i<this.count && !found; i++) {
-		if(timeObject.time == this.timeObjects_[i].time && timeObject.duration == this.timeObjects_[i].duration && timeObject.value == this.timeObjects_[i].value) {
+		if(helpers.timeObjectsEqual(this.timeObjects_[i], timeObject)) {
 			this.timeObjects_.splice(i, 1);
 			found = true;
 			this.count--;

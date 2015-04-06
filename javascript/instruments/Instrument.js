@@ -19,7 +19,7 @@ synth.instrument.Instrument = function (audioContext, scale) {
 
 	this.frequenciesToPlay = new synth.TimeCollection(0, 0); // May not be overriden! NOTE: maybe using a defineProperty here?
 
-	this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
+	//this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
 	this.setScale(scale);
 };
 synth.inherits(synth.instrument.Instrument, synth.StateExchange);
@@ -50,7 +50,7 @@ synth.instrument.Instrument.prototype.addFrequencies = function (frequencyTimeCo
 
 synth.instrument.Instrument.prototype.addNote = function (timeObject) {
 	var newTimeObject = _.cloneDeep(timeObject);
-	newTimeObject.value = this.scale_.getFrequency(timeObject.value);
+	newTimeObject.value = this.scale_[timeObject.value];
 	this.addFrequency(newTimeObject);
 };
 
@@ -77,7 +77,7 @@ synth.instrument.Instrument.prototype.removeFrequencies = function (frequencyTim
 
 synth.instrument.Instrument.prototype.removeNote = function (timeObject) {
 	var newTimeObject = _.cloneDeep(timeObject);
-	timeObject.value = this.scale_.getFrequency(timeObject.value);
+	timeObject.value = this.scale_[timeObject.value];
 	this.removeFrequency(timeObject);
 };
 

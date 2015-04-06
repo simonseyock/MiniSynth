@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+<script src="http://localhost:9091"></script>
+<script src="../build/lib/jquery.js"></script>
+<script src="lib/MobileSynthMiniSeq.js"></script>
+<script>
+	$(document).ready(function () {
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        window.osc = audioCtx.createOscillator();
+        osc.start(audioCtx.currentTime + 0.5);
+        //osc.start(audioCtx.currentTime + 1);
+        osc.stop(audioCtx.currentTime + 4);
+        osc.stop(audioCtx.currentTime + 12);
+
+        //osc.start(audioCtx.currentTime + 7);
+
+        osc.connect(audioCtx.destination);
+
+	});
+</script>
+<link rel="stylesheet" type="text/css" href="css/MobileSynthMiniSeq.css">
+<style>
+	#blinkenlights {
+		width: 30px;
+		height: 30px;
+	}
+</style>
+</head>
+<body>
+<div>Open up the console (F12) to see output</div>
+</body>
+</html>
