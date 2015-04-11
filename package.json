@@ -17,19 +17,19 @@
     "parallelshell": "latest",
     "uprocess": "latest",
     "watch": "latest",
-	  "jsdoc": "latest"
+	  "jsdoc": "latest",
+    "uglify-js": "latest"
   },
   "scripts": {
-    "build:js": "uprocess \"javascript/main.js\" -o \"build/lib/MobileSynthMiniSeq.js\"",
+    "build:js": "uprocess \"src/main.js\" -o \"build/lib/MobileSynthMiniSeq.js\"",
     "watch:js": "watch \"npm run build:js\" javascript/",
-    "build:css": "lessc less/main.less build/css/MobileSynthMiniSeq.css",
+    "build:css": "lessc css/main.less build/css/MobileSynthMiniSeq.css",
     "watch:css": "watch \"npm run build:css\" less/",
     "build": "npm run build:js && npm run build:css",
     "watch": "parallelshell \"npm run watch:js\" \"npm run watch:css\"",
     "livereload": "live-reload --port 9091 build/",
     "develop": "parallelshell \"npm run watch\" \"npm run livereload\"",
-	  "jsdoc": "jsdoc javascript -r -d doc/jsdoc",
-    "test": "echo $PATH",
-    "test2": "node -e 'console.log(2)'"
+	  "jsdoc": "jsdoc src -r -d doc/jsdoc",
+    "uglify": "npm run build && uglifyjs \"build/lib/MobileSynthMiniSeq.js\" --compress --mangle > \"build/lib/MobileSynthMiniSeq.min.js\""
   }
 }

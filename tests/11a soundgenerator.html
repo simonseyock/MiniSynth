@@ -48,7 +48,7 @@ $(document).ready(function () {
 
     modularSynth.addModule(soundGeneratorModule1);
 
-    window.soundGeneratorView1 = new synth.viewController.SoundGeneratorSimple(soundGeneratorModule1);
+    window.soundGeneratorView1 = new synth.viewController.SoundGenerator(soundGeneratorModule1);
 
     $("#synth").append(soundGeneratorView1.get$Element());
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
 
     modularSynth.addModule(soundGeneratorModule2);
 
-    window.soundGeneratorView2 = new synth.viewController.SoundGeneratorSimple(soundGeneratorModule2);
+    window.soundGeneratorView2 = new synth.viewController.SoundGenerator(soundGeneratorModule2);
 
     $("#synth").append(soundGeneratorView2.get$Element());
 
@@ -98,6 +98,5 @@ $(document).ready(function () {
     <h2>PhiSense</h2>
     <p>A synthesizer with a sequencer that is supposed to run in browser on a mobile</p>
     <div id="synth" class="synth"></div>
-    <br />written by Simon Seyock.
 </body>
 </html>

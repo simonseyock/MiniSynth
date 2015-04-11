@@ -79,14 +79,15 @@ Zeitplanung:
 |8. ViewController für Clock/Playback 						| 21.03.2015	|
 |9. ViewController für  Sequencer							| 21.03.2015	|
 |--- Fertig: 02.04.2015 ---									|				|
-|9. Vorlaeufiges CSS (verschiebbar)							|				|
+|9. Vorlaeufiges CSS (verschiebbar)							| (06.04.2015)	| 
 |--- Fertig: 09.04.2015 ---									|				|
-|10. Synthesizer											|				|
+|10. Synthesizer											| 06.04.2015	| -> Die wichtigsten Parts sind fertig.
 |--- Fertig: 30.04.2015 ---									|				|
-|11. ViewController für Synthesizer, FlipView				|				|
+|11. ViewController für Synthesizer							| 06.04.2015	|
+|12. FlipView												|				|
 |--- Fertig: 14.05.2015 ---									|				|
-|12. Restliches CSS											|				|
-|13. Bughunting												|				|
+|13. Restliches CSS											|				|
+|14. Bughunting												|				|
 |--- Fertig: 28.05.2015 ---									|				|
-|14. Buffer													|				|
+|15. Buffer													|				|
 |--- Fertig: 12.06.2015 ---									|				|
