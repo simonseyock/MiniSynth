@@ -1,6 +1,7 @@
 # MiniSynth
 A small synthsizer with sequencer that is supposed to run on a smartphone.
 
+
 Demo-Version
 ============
 
