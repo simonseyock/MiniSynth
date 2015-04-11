@@ -1,0 +1,167 @@
+.synth .synth-input-camouflage {
+  border: 0;
+  background: transparent;
+}
+.synth .synth-input-camouflage:focus {
+  border: 0;
+}
+.synth .synth-sequencer-row-1 {
+  top: 30px;
+}
+.synth .synth-sequencer-row-2 {
+  top: 60px;
+}
+.synth .synth-sequencer-row-3 {
+  top: 90px;
+}
+.synth .synth-sequencer-row-4 {
+  top: 120px;
+}
+.synth .synth-sequencer-row-5 {
+  top: 150px;
+}
+.synth .synth-sequencer-row-6 {
+  top: 180px;
+}
+.synth .synth-sequencer-row-7 {
+  top: 210px;
+}
+.synth .synth-sequencer-row-8 {
+  top: 240px;
+}
+.synth .synth-sequencer-column-1 {
+  left: 30px;
+}
+.synth .synth-sequencer-column-2 {
+  left: 60px;
+}
+.synth .synth-sequencer-column-3 {
+  left: 90px;
+}
+.synth .synth-sequencer-column-4 {
+  left: 120px;
+}
+.synth .synth-sequencer-column-5 {
+  left: 150px;
+}
+.synth .synth-sequencer-column-6 {
+  left: 180px;
+}
+.synth .synth-sequencer-column-7 {
+  left: 210px;
+}
+.synth .synth-sequencer-column-8 {
+  left: 240px;
+}
+.synth .synth-sequencer-buttons {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  box-sizing: border-box;
+  border-color: #000000;
+  border-width: 2px;
+}
+.synth .synth-sequencer-button {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-width: 2px;
+}
+.synth .synth-sequencer-button.synth-sequencer-row-0 {
+  border-top-width: 4px;
+}
+.synth .synth-sequencer-button.synth-sequencer-column-0 {
+  border-left-width: 4px;
+}
+.synth .synth-sequencer-button.synth-sequencer-row-7 {
+  border-bottom-width: 4px;
+}
+.synth .synth-sequencer-button.synth-sequencer-column-7 {
+  border-right-width: 4px;
+}
+.synth .synth-sequencer-button.synth-sequencer-button-active {
+  background: green;
+}
+.synth .synth-playback * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.synth .synth-playback .synth-playback-play {
+  width: 30px;
+  height: 30px;
+}
+.synth .synth-playback .synth-playback-play.synth-active {
+  background-color: green;
+}
+.synth .synth-playback .synth-playback-stop {
+  width: 30px;
+  height: 30px;
+}
+.synth .synth-playback .synth-playback-stop.synth-active {
+  background-color: green;
+}
+.synth .synth-playback .synth-playback-bpm {
+  height: 30px;
+}
+.synth .synth-playback .synth-playback-bpm input {
+  width: 3em;
+  height: 30px;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+.synth .synth-svg-play {
+  width: 100%;
+  height: 100%;
+  fill: black;
+  stroke: black;
+}
+.synth .synth-svg-stop {
+  width: 100%;
+  height: 100%;
+  fill: black;
+  stroke: black;
+}
+.synth .rotary-control {
+  width: 50px;
+  height: 70px;
+}
+.synth .rotary-control .rotary-control-title {
+  text-align: center;
+}
+.synth .rotary-control .rotary-control-svg {
+  fill: black;
+  stroke: black;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+.synth .rotary-control .rotary-control-valuefield {
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  color: black;
+}
+.synth .synth-module-soundgenerator-simple .rotary-control {
+  display: inline-block;
+}
+.synth .synth-module-soundgenerator .rotary-control {
+  display: inline-block;
+}
+.synth .synth-module-passfilter .rotary-control {
+  display: inline-block;
+}
+.synth .synth-modular-synth > * {
+  display: inline-block;
+}
+.synth * {
+  box-sizing: border-box;
+}
+.synth .blue {
+  background-color: blue;
+}
+.synth button {
+  background: #ffffff;
+  border-width: 4px;
+  border-color: #000000;
+}
