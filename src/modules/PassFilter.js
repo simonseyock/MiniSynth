@@ -9,8 +9,9 @@
  */
 
 synth.module.PassFilter = function (audioContext, opt_options) {
-	synth.module.Module.call(this, audioContext, opt_options);
   opt_options = opt_options || {};
+
+	synth.module.Module.call(this, audioContext, opt_options);
 
   this.filter_ = this.audioContext_.createBiquadFilter();
   //this.filter_.frequency.value = 350;

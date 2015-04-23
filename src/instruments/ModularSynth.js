@@ -2,14 +2,15 @@
 // #define __MODULARSYNTH__
 
 // #include "Instrument.js"
+// #include "../Scales.js"
 
-synth.instrument.ModularSynth = function (audioContext, frequencyTable) {
+synth.instrument.ModularSynth = function (audioContext, opt_options) {
 
-  //opt_options = opt_options || {};
+  opt_options = opt_options || {};
 
 	//synth.StateExchange.call(this);
 
-  synth.instrument.Instrument.call(this, audioContext, frequencyTable);
+  synth.instrument.Instrument.call(this, audioContext, opt_options.frequencyTable);
 
   this.modules_ = [];
 

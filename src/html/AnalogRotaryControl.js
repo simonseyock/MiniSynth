@@ -1,3 +1,8 @@
+// #ifndef __ANALOGROTARYCONTROL__
+// #define __ANALOGROTARYCONTROL__
+
+// #include "RotaryControl.js"
+
 //AnalogRotaryControl.prototype.setTransformFunctions = function (from, to) {
 //	this.valueFromExternal_ = from
 //	this.valueToExternal_ = to;
@@ -111,3 +116,5 @@ synth.html.AnalogRotaryControl.prototype.updateValueFromPosition = function () {
 synth.html.AnalogRotaryControl.prototype.updatePositionFromValue = function () {
   this.setPosition(this.inverseMappingFunction_(this.value_));
 };
+
+// #endif

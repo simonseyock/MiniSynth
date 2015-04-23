@@ -1,5 +1,7 @@
+// #ifndef __DISCRETEROTARYCONTROL__
+// #define __DISCRETEROTARYCONTROL__
 
-
+// #include "RotaryControl.js"
 
 /**
  * DiscreteRotaryControl
@@ -81,3 +83,5 @@ synth.html.DiscreteRotaryControl.prototype.onDocMouseUp_ = function (e) {
 
   synth.html.RotaryControl.prototype.onDocMouseUp_.call(this, e);
 };
+
+// #endif

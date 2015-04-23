@@ -20,7 +20,7 @@ synth.instrument.Instrument = function (audioContext, frequencyTable) {
 	this.frequenciesToPlay = new synth.TimeCollection(0, 0); // May not be overriden! NOTE: maybe using a defineProperty here?
 
 	//this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
-	this.frequencyTable_ = frequencyTable;
+	this.frequencyTable_ = frequencyTable || synth.scales.frequencyTables.a4is440Hz;
 };
 synth.inherits(synth.instrument.Instrument, synth.StateExchange);
 synth.StateExchange.addType("synth.instrument.Instrument", synth.instrument.Instrument);

@@ -3,12 +3,14 @@
 
 // #include "ViewController.js"
 // #include "../html/RotaryControl.js"
+// #include "../modules/Gain.js"
 
-synth.viewController.Gain = function (gainModule, opt_options) {
-
-	this.gainModule_ = gainModule;
+synth.viewController.Gain = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
+
+  this.module = new synth.module.Gain(audioContext, opt_options.gainOptions);
+
 	this.className_ = opt_options.className || "synth-module-gain";
 
 	synth.viewController.ViewController.call(this, opt_options);
@@ -21,10 +23,10 @@ synth.viewController.Gain = function (gainModule, opt_options) {
     min: 0.001, max: 1,
     interpretValueBelowAsZero: 0.00105,
     displayPrecision: 3,
-    initial: gainModule.getGain()
+    initial: this.module.getGain()
   });
   gainControl.on("change:value", function () {
-    this.gainModule_.setGain(gainControl.getValue());
+    this.module.setGain(gainControl.getValue());
   }.bind(this));
 
 

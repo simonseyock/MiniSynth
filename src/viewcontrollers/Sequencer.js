@@ -2,12 +2,19 @@
 // #define __VIEWCONTROLLERSEQUENCER__
 
 // #include "ViewController.js"
+// #include "../players/OneBarStepSequencer.js"
 
-synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
-
-	this.sequencer_ = sequencer;
+synth.viewController.Sequencer = function (clock, opt_options) {
 
 	opt_options = opt_options || {};
+
+  opt_options.sequencerOptions = opt_options.sequencerOptions || {};
+  this.cols_ = opt_options.cols || 8;
+  this.rows_ = opt_options.rows || 8;
+  opt_options.sequencerOptions.steps = this.cols_;
+
+  this.player = new synth.player.OneBarStepSequencer(clock, opt_options.sequencerOptions);
+
 	this.className_ = opt_options.className || "synth-sequencer";
 
 	synth.viewController.ViewController.call(this, opt_options);
@@ -20,17 +27,17 @@ synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
 
   var $buttonDiv = $("<div>").addClass(this.className_ + "-buttons");
 
-	for (var i=0; i<rows; i++) { // rows
-		for (var j=0; j<cols; j++) { // cols
+	for (var i=0; i<this.rows_; i++) { // this.rows_
+		for (var j=0; j<this.cols_; j++) { // this.cols_
 			(function (row, col) {
 				var $button = $("<button>").addClass(this.classNameButton_).addClass(this.classNameColumn_ + "-" + j).addClass(this.classNameRow_ + "-" + i);
 				$button.on("click", function () {
 					var active = !$button.hasClass(this.classNameButtonActive_);
 					$button.toggleClass(this.classNameButtonActive_);
 					if (active) {
-						this.sequencer_.addNote(col, rows-row-1);
+						this.player.addNote(col, this.rows_-row-1);
 					} else {
-						this.sequencer_.removeNote(col, rows-row-1);
+						this.player.removeNote(col, this.rows_-row-1);
 					}
 				}.bind(this));
 				$buttonDiv.append($button);
@@ -41,7 +48,7 @@ synth.viewController.Sequencer = function (sequencer, rows, cols, opt_options) {
   this.$element_.append($buttonDiv);
 
   var $clearButton = $("<button>").addClass(this.className_ + "-clear").text("Clear").on("click", function () {
-    this.sequencer_.clear();
+    this.player.clear();
     $buttonDiv.children().removeClass(this.classNameButtonActive_);
   }.bind(this));
 

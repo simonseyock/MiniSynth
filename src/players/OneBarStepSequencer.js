@@ -2,6 +2,7 @@
 // #define __ONEBARSTEPSEQUENCER__
 
 // #include "Player.js"
+// #include "../Scales.js"
 
 synth.player.OneBarStepSequencer = function (clock, opt_options) {
 	synth.player.Player.call(this);
@@ -12,7 +13,7 @@ synth.player.OneBarStepSequencer = function (clock, opt_options) {
 
 	this.steps_ = opt_options.steps || 4;
 
-  this.baseNoteIndex_ = opt_options.baseNoteIndex || 36; // C3
+  this.baseNoteIndex_ = opt_options.baseNoteIndex || 48; // C3
 
   //this.startingNoteIndex_ = opt_options.startingNoteIndex || 0;
 

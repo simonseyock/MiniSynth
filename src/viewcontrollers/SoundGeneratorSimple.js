@@ -3,28 +3,31 @@
 
 // #include "ViewController.js"
 // #include "../html/RotaryControl.js"
+// #include "../modules/SoundGenerator.js"
 
-synth.viewController.SoundGeneratorSimple = function (soundGenerator, opt_options) {
-
-	this.soundGenerator_ = soundGenerator;
+synth.viewController.SoundGeneratorSimple = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
-	this.className_ = opt_options.className || "synth-module-soundgenerator-simple";
 
-	synth.viewController.ViewController.call(this, opt_options);
+  opt_options.soundGeneratorOptions = opt_options.soundGeneratorOptions || {};
+  opt_options.soundGeneratorOptions.waveType = "sine";
+  opt_options.soundGeneratorOptions.gain = 0.6;
+  opt_options.soundGeneratorOptions.envelope = { attack: 0.1, decay: 0, sustain: 1, release: 0.1 };
+
+  this.module = new synth.module.SoundGenerator(audioContext, opt_options.soundGeneratorOptions);
 
   // wave form -> dropdown?
 
-  var waveTypeControl = new synth.html.DiscreteRotaryControl({ title: "Wave", values: ["sine", "square", "sawtooth", "triangle"], initial: soundGenerator.getWaveType() });
+  var waveTypeControl = new synth.html.DiscreteRotaryControl({ title: "Wave", values: ["sine", "square", "sawtooth", "triangle"], initial: this.module.getWaveType() });
   waveTypeControl.on("change:value", function () {
-    this.soundGenerator_.setWaveType(waveTypeControl.getValue());
+     this.module.setWaveType(waveTypeControl.getValue());
   }.bind(this));
 
   // gain
 
-  var gainControl = new synth.html.AnalogRotaryControl({ title: "Gain", min: 0, max: 2, initial: soundGenerator.getGain() });
+  var gainControl = new synth.html.AnalogRotaryControl({ title: "Gain", min: 0, max: 2, initial: this.module.getGain() });
   gainControl.on("change:value", function () {
-    this.soundGenerator_.setGain(gainControl.getValue());
+     this.module.setGain(gainControl.getValue());
   }.bind(this));
 
   this.$element_.append(waveTypeControl.get$Element());
