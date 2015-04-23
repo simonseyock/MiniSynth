@@ -25,14 +25,14 @@ synth.viewController.PassFilter = function (passFilter, opt_options) {
 
   // frequency
 
-  var freqControl = new synth.html.AnalogRotaryControl({ title: "Freq", min: 100, max: 1000, logarithmic: true, displayPrecision: 0, initial: passFilter.getFrequency() });
+  var freqControl = new synth.html.AnalogRotaryControl({ title: "Freq", min: 50, max: 1000, logarithmic: true, displayPrecision: 0, initial: passFilter.getFrequency() });
   freqControl.on("change:value", function () {
     this.passFilter_.setFrequency(freqControl.getValue());
   }.bind(this));
 
   // resonance (Q)
 
-  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 10, logarithmic: true, displayPrecision: 0, initial: passFilter.getResonance() });
+  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 100, logarithmic: true, displayPrecision: 0, initial: passFilter.getResonance() });
   resoControl.on("change:value", function () {
     this.passFilter_.setResonance(resoControl.getValue());
   }.bind(this));

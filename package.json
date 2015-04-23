@@ -1,12 +1,11 @@
 {
-  "name": "MobileSynthMiniSeq",
+  "name": "MiniSynth",
   "version": "0.0.1",
-  "description": "A small sequencer and synthesizer for a mobile.",
+  "description": "A synthesizer with sequencer for smartphones.",
   "author": {
     "name": "Simon Seyock",
     "email": "simonseyock@gmail.com"
   },
-  "private": true,
   "dependencies": {
     "jquery": "1.11.1",
     "lodash": "3.2.0"
@@ -21,15 +20,17 @@
     "uglify-js": "latest"
   },
   "scripts": {
-    "build:js": "uprocess \"src/main.js\" -o \"build/lib/MobileSynthMiniSeq.js\"",
+    "clean": "rm -r build/*",
+    "build:base": "mkdir -p build/lib build/css && cp -n html/index.html build/ && cp -n node_modules/jquery/dist/jquery.* build/lib && cp -n node_modules/lodash/index.js build/lodash.js",
+    "build:js": "uprocess \"src/main.js\" -o \"build/lib/MiniSynth.js\"",
     "watch:js": "watch \"npm run build:js\" javascript/",
-    "build:css": "lessc css/main.less build/css/MobileSynthMiniSeq.css",
+    "build:css": "lessc css/main.less build/css/MiniSynth.css",
     "watch:css": "watch \"npm run build:css\" less/",
     "build": "npm run build:js && npm run build:css",
     "watch": "parallelshell \"npm run watch:js\" \"npm run watch:css\"",
     "livereload": "live-reload --port 9091 build/",
     "develop": "parallelshell \"npm run watch\" \"npm run livereload\"",
 	  "jsdoc": "jsdoc src -r -d doc/jsdoc",
-    "uglify": "npm run build && uglifyjs \"build/lib/MobileSynthMiniSeq.js\" --compress --mangle > \"build/lib/MobileSynthMiniSeq.min.js\""
+    "uglify": "npm run build && uglifyjs \"build/lib/MiniSynth.js\" --compress --mangle > \"build/lib/MiniSynth.min.js\""
   }
 }

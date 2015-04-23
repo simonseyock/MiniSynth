@@ -15,6 +15,8 @@ Building the project
 2. run ``npm install`` in the project directory
 3. run ``npm run build``
 
+Run ``npm run`` to see all development related scripts.
+
 
 Documentation
 =============
