@@ -12,7 +12,7 @@ var synth = window.synth;
 // #include "TimeCollection.js"
 // #include "html/AnalogRotaryControl.js"
 // #include "html/DiscreteRotaryControl.js"
-// #include "viewcontrollers/Main.js"
+// #include "controllers/Main.js"
 // #include "debuggers.js"
 
 })();

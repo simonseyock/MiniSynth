@@ -1,16 +1,14 @@
 // #ifndef __PLAYER__
 // #define __PLAYER__
 
-// #include "../StateExchange.js"
+// #include "../StateExchangable.js"
 
 synth.player = synth.player || {};
 
 synth.player.Player = function () {
-	synth.StateExchange.call(this);
-	
-	this.addExchangeObjectStateParameter("instrument", this.getInstrument, this.setInstrument);
+	synth.StateExchangable.call(this);
 };
-synth.inherits(synth.player.Player, synth.StateExchange);
+synth.inherits(synth.player.Player, synth.StateExchangable);
 
 synth.player.Player.prototype.getInstrument = function () {
 	return this.instrument_;

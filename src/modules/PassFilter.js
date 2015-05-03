@@ -21,9 +21,13 @@ synth.module.PassFilter = function (audioContext, opt_options) {
   this.amount_.biConnectWetChain(this.filter_, this.filter_);
 
   this.input = this.output = this.amount_;
+
+  this.registerEventType("change:type");
+  this.registerEventType("change:frequency");
+  this.registerEventType("change:resonance");
+  this.registerEventType("change:amount");
 };
 synth.inherits(synth.module.PassFilter, synth.module.Module);
-//synth.StateExchange.addType("synth.MultiVoiceOscillator", synth.MultiVoiceOscillator);
 
 /* Type is either "lowpass", "highpass" or "bandpass" */
 synth.module.PassFilter.prototype.getType = function () {
@@ -32,6 +36,7 @@ synth.module.PassFilter.prototype.getType = function () {
 
 synth.module.PassFilter.prototype.setType = function (type) {
   this.filter_.type = type;
+  this.fireEvent("change:type", [type]);
 };
 
 synth.module.PassFilter.prototype.getFrequency = function () {
@@ -40,6 +45,7 @@ synth.module.PassFilter.prototype.getFrequency = function () {
 
 synth.module.PassFilter.prototype.setFrequency = function (frequency) {
   this.filter_.frequency.value = frequency;
+  this.fireEvent("change:frequency", [frequency]);
 };
 
 synth.module.PassFilter.prototype.getResonance = function () {
@@ -48,6 +54,7 @@ synth.module.PassFilter.prototype.getResonance = function () {
 
 synth.module.PassFilter.prototype.setResonance = function (resonance) {
   this.filter_.Q.value = resonance;
+  this.fireEvent("change:resonance", [resonance]);
 };
 
 synth.module.PassFilter.prototype.getAmount = function () {
@@ -56,6 +63,24 @@ synth.module.PassFilter.prototype.getAmount = function () {
 
 synth.module.PassFilter.prototype.setAmount = function (amount) {
   return this.amount_.setAmount(amount);
+  this.fireEvent("change:amount", [amount]);
+};
+
+synth.module.PassFilter.prototype.getState = function () {
+  var state = synth.module.Module.prototype.getState.call(this);
+  state.type = this.getType();
+  state.frequency = this.getFrequency();
+  state.resonance = this.getResonance();
+  state.amount = this.getAmount();
+  return state;
+};
+
+synth.module.PassFilter.prototype.setState = function (state) {
+  synth.module.Module.prototype.setState.call(this, state);
+  this.setType(state.type);
+  this.setFrequency(state.frequency);
+  this.setResonance(state.resonance);
+  this.setAmount(state.amount);
 };
 
 // #endif

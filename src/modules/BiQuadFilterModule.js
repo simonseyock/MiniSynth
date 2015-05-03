@@ -7,11 +7,13 @@
  *
  */
 
+// NOTE: Not used!
+// DEPRECATED
+
 synth.module.Filter = function (audioContext) {
 	synth.module.Module.call(this, audioContext);
 };
 synth.inherits(synth.module.Filter, synth.module.Module);
-//synth.StateExchange.addType("synth.MultiVoiceOscillator", synth.MultiVoiceOscillator);
 
 synth.module.Filter.prototype.setFrequency = function (frequency) {
   this.frequency_ = frequency;

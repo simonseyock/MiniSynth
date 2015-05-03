@@ -2,6 +2,7 @@
 // #define __AMOUNTMODULE__
 
 // #include "Module.js"
+// #include "../makeChangeFiringSetter.js"
 
 synth.module.Amount = function (audioContext, opt_options) {
   synth.module.Module.call(this, audioContext, opt_options);
@@ -18,6 +19,7 @@ synth.module.Amount = function (audioContext, opt_options) {
   this.output = this.audioContext_.createGain();
   this.wet_.connect(this.output);
   this.dry_.connect(this.output);
+
 };
 synth.inherits(synth.module.Amount, synth.module.Module);
 
@@ -26,14 +28,24 @@ synth.module.Amount.prototype.biConnectWetChain = function (wetChainIn, wetChain
   wetChainOut.connect(this.wet_);
 };
 
-synth.module.Amount.prototype.setAmount = function (amount) {
-  this.amount_ = amount;
-  this.wet_.gain.value = amount;
-  this.dry_.gain.value = 1 - amount;
-};
+synth.module.Amount.prototype.setAmount = makeChangeFiringSetter(synth.module.Amount, "amount", function (e) {
+  this.wet_.gain.value = e.newValue;
+  this.dry_.gain.value = 1 - e.newValue;
+});
 
 synth.module.Amount.prototype.getAmount = function () {
   return this.amount_;
+};
+
+synth.module.Amount.prototype.getState = function () {
+  var state = synth.module.Module.prototype.getState.call(this);
+  state.amount = this.getAmount();
+  return state;
+};
+
+synth.module.Amount.prototype.setState = function (state) {
+  synth.module.Module.prototype.getState.call(this, state);
+  this.setAmount(state.amount);
 };
 
 // #endif

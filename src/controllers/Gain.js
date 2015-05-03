@@ -1,11 +1,11 @@
-// #ifndef __VIEWCONTROLLERGAIN_
-// #define __VIEWCONTROLLERGAIN__
+// #ifndef __CONTROLLERGAIN_
+// #define __CONTROLLERGAIN__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../html/RotaryControl.js"
 // #include "../modules/Gain.js"
 
-synth.viewController.Gain = function (audioContext, opt_options) {
+synth.controller.Gain = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -13,7 +13,7 @@ synth.viewController.Gain = function (audioContext, opt_options) {
 
 	this.className_ = opt_options.className || "synth-module-gain";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
   // frequency
 
@@ -25,14 +25,18 @@ synth.viewController.Gain = function (audioContext, opt_options) {
     displayPrecision: 3,
     initial: this.module.getGain()
   });
-  gainControl.on("change:value", function () {
-    this.module.setGain(gainControl.getValue());
+
+  gainControl.on("change:value", function (e) {
+    this.module.setGain(e.newValue);
   }.bind(this));
 
+  this.module.on("change:gain", function (gain) {
+    gainControl.setValue(gain);
+  }.bind(this));
 
   this.$element_.append(gainControl.get$Element());
 };
-synth.inherits(synth.viewController.Gain, synth.viewController.ViewController);
+synth.inherits(synth.controller.Gain, synth.controller.Controller);
 
 
 // #endif

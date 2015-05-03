@@ -1,11 +1,11 @@
-// #ifndef __VIEWCONTROLLERSOUNDGENERATOR_
-// #define __VIEWCONTROLLERSOUNDGENERATOR__
+// #ifndef __CONTROLLERSOUNDGENERATOR_
+// #define __CONTROLLERSOUNDGENERATOR__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../html/RotaryControl.js"
 // #include "../modules/SoundGenerator.js"
 
-synth.viewController.SoundGenerator = function (audioContext, opt_options) {
+synth.controller.SoundGenerator = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -18,7 +18,7 @@ synth.viewController.SoundGenerator = function (audioContext, opt_options) {
 
 	this.className_ = opt_options.className || "synth-module-soundgenerator";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
   // wave form -> dropdown?
 
@@ -70,7 +70,7 @@ synth.viewController.SoundGenerator = function (audioContext, opt_options) {
   this.$element_.append(releaseControl.get$Element());
 
 };
-synth.inherits(synth.viewController.SoundGenerator, synth.viewController.ViewController);
+synth.inherits(synth.controller.SoundGenerator, synth.controller.Controller);
 
 
 // #endif

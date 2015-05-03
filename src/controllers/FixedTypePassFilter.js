@@ -1,13 +1,16 @@
-// #ifndef __VIEWCONTROLLERFIXEDTYPEPASSFILTER_
-// #define __VIEWCONTROLLERFIXEDTYPEPASSFILTER__
+// #ifndef __CONTROLLERFIXEDTYPEPASSFILTER_
+// #define __CONTROLLERFIXEDTYPEPASSFILTER__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../html/RotaryControl.js"
 // #include "../modules/PassFilter.js"
 
+// NOTE: not used
+// DEPRECATED
+
 // Amount
 
-synth.viewController.FixedTypePassFilter = function (audioContext, opt_options) {
+synth.controller.FixedTypePassFilter = function (audioContext, opt_options) {
 
   opt_options = opt_options || {};
 
@@ -15,7 +18,7 @@ synth.viewController.FixedTypePassFilter = function (audioContext, opt_options) 
 
 	this.className_ = opt_options.className || "synth-module-fixedtypepassfilter";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
   // frequency
 
@@ -24,6 +27,9 @@ synth.viewController.FixedTypePassFilter = function (audioContext, opt_options) 
     this.module.setFrequency(freqControl.getValue());
   }.bind(this));
 
+  this.module.on("change:frequency", function (value) {
+    freqControl.setValue(value);
+  }.bind(this));
   // resonance (Q)
 
   var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 10, logarithmic: true, displayPrecision: 0, initial: this.module.getResonance() });
@@ -35,7 +41,7 @@ synth.viewController.FixedTypePassFilter = function (audioContext, opt_options) 
   this.$element_.append(freqControl.get$Element());
   this.$element_.append(resoControl.get$Element());
 };
-synth.inherits(synth.viewController.FixedTypePassFilter, synth.viewController.ViewController);
+synth.inherits(synth.controller.FixedTypePassFilter, synth.controller.Controller);
 
 
 // #endif

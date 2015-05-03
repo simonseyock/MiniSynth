@@ -1,13 +1,13 @@
-// #ifndef __VIEWCONTROLLERSCREEN__
-// #define __VIEWCONTROLLERSCREEN__
+// #ifndef __CONTROLLERSCREEN__
+// #define __CONTROLLERSCREEN__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 
-synth.viewController.Screen = function (opt_options) {
+synth.controller.Screen = function (opt_options) {
 
   opt_options = opt_options || {};
   this.className_ = opt_options.className || "synth-screens";
-  synth.viewController.ViewController.call(this, opt_options);
+  synth.controller.Controller.call(this, opt_options);
 
   this.$screens_ = [];
   this.activeScreen_ = 0;
@@ -20,9 +20,9 @@ synth.viewController.Screen = function (opt_options) {
     }
   }.bind(this)));
 };
-synth.inherits(synth.viewController.Screen, synth.viewController.ViewController);
+synth.inherits(synth.controller.Screen, synth.controller.Controller);
 
-synth.viewController.Screen.prototype.addScreen = function($newScreen) {
+synth.controller.Screen.prototype.addScreen = function($newScreen) {
 
   if(this.$screens_.length > 0) {
     // #warning "all screens after the first should be hidden"
@@ -33,7 +33,7 @@ synth.viewController.Screen.prototype.addScreen = function($newScreen) {
   this.$element_.append($newScreen);
 };
 
-synth.viewController.Screen.prototype.changeScreen = function(diff) {
+synth.controller.Screen.prototype.changeScreen = function(diff) {
   var newPosition = Math.max(0, Math.min(this.activeScreen_ + diff, this.$screens_.length-1));
 
   this.$screens_[this.activeScreen_].hide();

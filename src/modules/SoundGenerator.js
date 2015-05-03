@@ -5,6 +5,165 @@
 
 (function () {
 
+  synth.module.SoundGenerator = function (audioContext, opt_options) {
+    this.audioContext_ = audioContext;
+
+    opt_options = opt_options || {};
+
+    this.gain_ = audioContext.createGain();
+
+    this.waveType_ = opt_options.waveType || "sine";
+
+    this.singleSoundGenerators_ = [];
+
+    this.envelope_ = opt_options.envelope || { attack: 0, decay: 0, sustain: 1, release: 0 };
+
+    this.setGain(opt_options.gain || 1);
+
+    this.output = this.gain_;
+
+    this.registerEventType("change:waveType");
+    this.registerEventType("change:gain");
+    this.registerEventType("change:attack");
+    this.registerEventType("change:decay");
+    this.registerEventType("change:sustain");
+    this.registerEventType("change:release");
+  };
+  synth.inherits(synth.module.SoundGenerator, synth.module.Module);
+
+  synth.module.SoundGenerator.prototype.disposeFinishedSingleSoundGenerators_ = function () {
+    for(var i=this.singleSoundGenerators_.length-1; i >= 0; i--) {
+      if(this.singleSoundGenerators_[i].isFinished()) {
+        this.singleSoundGenerators_[i].dispose(true);
+        this.singleSoundGenerators_.splice(i,1);
+      }
+    }
+  };
+
+  synth.module.SoundGenerator.prototype.watch = function (collection) {
+
+    collection.on("insert", function (timeObject) {
+      this.disposeFinishedSingleSoundGenerators_();
+      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.waveType_, this.envelope_);
+      this.singleSoundGenerators_.push(sSG);
+      sSG.connect(this.gain_);
+    }.bind(this));
+
+    collection.on("remove", function (timeObject) {
+      this.disposeFinishedSingleSoundGenerators_();
+      for(var i=this.singleSoundGenerators_.length-1, found=false; i >= 0 && !found; i--) {
+        if(helpers.timeObjectsEqual(this.singleSoundGenerators_[i].timeObject, timeObject)) {
+          found = true;
+          this.singleSoundGenerators_[i].dispose();
+        }
+      };
+    }.bind(this));
+  };
+
+  synth.module.SoundGenerator.prototype.pause = function (when) {
+    // pause doesn't support continuation at the moment
+    when = when || 0;
+    this.singleSoundGenerators_.forEach(function (sSG) {
+      sSG.dispose(false);
+    });
+    //this.singleSoundGenerators_ = [];
+  };
+
+  synth.module.SoundGenerator.prototype.interrupt = function () {
+    this.singleSoundGenerators_.forEach(function (sSG) {
+      sSG.dispose(true);
+    });
+    //this.singleSoundGenerators_ = [];
+  };
+
+  synth.module.SoundGenerator.prototype.getWaveType = function () {
+    return this.waveType_;
+  };
+
+  synth.module.SoundGenerator.prototype.setWaveType = function (waveType) {
+    this.waveType_ = waveType;
+    this.disposeFinishedSingleSoundGenerators_();
+    this.singleSoundGenerators_.forEach(function (sSG) {
+       sSG.setWaveType(waveType);
+    });
+    this.fireEvent("change:waveType", [waveType]);
+  };
+
+  synth.module.SoundGenerator.prototype.getGain = function () {
+    return this.gain_.gain.value;
+  };
+
+  synth.module.SoundGenerator.prototype.setGain = function (gain) {
+    this.gain_.gain.value = gain;
+    this.fireEvent("change:gain", [gain]);
+  };
+
+  synth.module.SoundGenerator.prototype.updateTiming = function () {
+    this.disposeFinishedSingleSoundGenerators_();
+    this.singleSoundGenerators_.forEach(function (sSG) {
+      sSG.updateTiming();
+    });
+  };
+
+  synth.module.SoundGenerator.prototype.getAttack = function () {
+    return this.envelope_.attack;
+  };
+
+  synth.module.SoundGenerator.prototype.setAttack = function (attack) {
+    this.envelope_.attack = attack;
+    this.updateTiming();
+    this.fireEvent("change:attack", [attack]);
+  };
+
+  synth.module.SoundGenerator.prototype.getDecay = function () {
+    return this.envelope_.decay;
+  };
+
+  synth.module.SoundGenerator.prototype.setDecay = function (decay) {
+    this.envelope_.decay = decay;
+    this.updateTiming();
+    this.fireEvent("change:decay", [decay]);
+  };
+
+  synth.module.SoundGenerator.prototype.getSustain = function () {
+    return this.envelope_.sustain;
+  };
+
+  synth.module.SoundGenerator.prototype.setSustain = function (sustain) {
+    this.envelope_.sustain = sustain;
+    this.updateTiming();
+    this.fireEvent("change:sustain", [sustain]);
+  };
+
+  synth.module.SoundGenerator.prototype.getRelease = function () {
+    return this.envelope_.release;
+  };
+
+  synth.module.SoundGenerator.prototype.setRelease = function (release) {
+    this.envelope_.release = release;
+    this.updateTiming();
+    this.fireEvent("change:release", [release]);
+  };
+
+  synth.module.SoundGenerator.prototype.getState = function () {
+    var state = synth.module.Module.prototype.getState.call(this);
+    state.waveType = this.getWaveType();
+    state.gain = this.getGain();
+    state.envelope = this.envelope_;
+    return state;
+  };
+
+  synth.module.SoundGenerator.prototype.setState = function (state) {
+    synth.module.Module.prototype.getState.call(this, state);
+    this.getWaveType(state.waveType);
+    this.getGain(state.gain);
+    this.envelope_ = state.envelope;
+    this.updateTiming();
+    this.fireEvent("propertychange");
+  };
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   var SingleSoundGenerator = function (audioContext, timeObject, waveType, envelope) {
     this.audioContext_ = audioContext;
 
@@ -167,7 +326,6 @@
 
 
     if (immediately) {
-
       stopNow();
     } else {
 
@@ -179,139 +337,6 @@
 
       setTimeout(stopNow, this.envelope_.release * 1000);
     }
-  };
-
-
-
-  synth.module.SoundGenerator = function (audioContext, opt_options) {
-    this.audioContext_ = audioContext;
-
-    opt_options = opt_options || {};
-
-    this.gain_ = audioContext.createGain();
-
-    this.waveType_ = opt_options.waveType || "sine";
-
-    //this.voices_ = 8;
-
-    //this.voiceCollections_ = [];
-
-    this.singleSoundGenerators_ = [];
-
-    this.envelope_ = opt_options.envelope || { attack: 0, decay: 0, sustain: 1, release: 0 };
-
-    this.setGain(opt_options.gain || 1);
-
-    this.output = this.gain_;
-  };
-  synth.inherits(synth.module.SoundGenerator, synth.module.Module);
-
-  synth.module.SoundGenerator.prototype.disposeFinishedSingleSoundGenerators_ = function () {
-    for(var i=this.singleSoundGenerators_.length-1; i >= 0; i--) {
-      if(this.singleSoundGenerators_[i].isFinished()) {
-        this.singleSoundGenerators_[i].dispose(true);
-        this.singleSoundGenerators_.splice(i,1);
-      }
-    }
-  };
-
-  synth.module.SoundGenerator.prototype.watch = function (collection) {
-
-    collection.on("insert", function (timeObject) {
-      this.disposeFinishedSingleSoundGenerators_();
-      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.waveType_, this.envelope_);
-      this.singleSoundGenerators_.push(sSG);
-      sSG.connect(this.gain_);
-    }.bind(this));
-
-    collection.on("remove", function (timeObject) {
-      this.disposeFinishedSingleSoundGenerators_();
-      for(var i=this.singleSoundGenerators_.length-1, found=false; i >= 0 && !found; i--) {
-        if(helpers.timeObjectsEqual(this.singleSoundGenerators_[i].timeObject, timeObject)) {
-          found = true;
-          this.singleSoundGenerators_[i].dispose();
-        }
-      };
-    }.bind(this));
-  };
-
-  synth.module.SoundGenerator.prototype.pause = function (when) {
-    // pause doesn't support continuation at the moment
-    when = when || 0;
-    this.singleSoundGenerators_.forEach(function (sSG) {
-      sSG.dispose(false);
-    });
-    //this.singleSoundGenerators_ = [];
-  };
-
-  synth.module.SoundGenerator.prototype.interrupt = function () {
-    this.singleSoundGenerators_.forEach(function (sSG) {
-      sSG.dispose(true);
-    });
-    //this.singleSoundGenerators_ = [];
-  };
-
-  synth.module.SoundGenerator.prototype.getWaveType = function () {
-    return this.waveType_;
-  };
-
-  synth.module.SoundGenerator.prototype.setWaveType = function (waveType) {
-    this.waveType_ = waveType;
-    this.disposeFinishedSingleSoundGenerators_();
-    this.singleSoundGenerators_.forEach(function (sSG) {
-       sSG.setWaveType(waveType);
-    });
-  };
-
-  synth.module.SoundGenerator.prototype.getGain = function () {
-    return this.gain_.gain.value;
-  };
-
-  synth.module.SoundGenerator.prototype.setGain = function (gain) {
-    this.gain_.gain.value = gain;
-  };
-
-  synth.module.SoundGenerator.prototype.updateTiming = function () {
-    this.disposeFinishedSingleSoundGenerators_();
-    this.singleSoundGenerators_.forEach(function (sSG) {
-      sSG.updateTiming();
-    });
-  };
-
-  synth.module.SoundGenerator.prototype.getAttack = function () {
-    return this.envelope_.attack;
-  };
-
-  synth.module.SoundGenerator.prototype.setAttack = function (attack) {
-    this.envelope_.attack = attack;
-    this.updateTiming();
-  };
-
-  synth.module.SoundGenerator.prototype.getDecay = function () {
-    return this.envelope_.decay;
-  };
-
-  synth.module.SoundGenerator.prototype.setDecay = function (decay) {
-    this.envelope_.decay = decay;
-    this.updateTiming();
-  };
-
-  synth.module.SoundGenerator.prototype.getSustain = function () {
-    return this.envelope_.sustain;
-  };
-
-  synth.module.SoundGenerator.prototype.setSustain = function (sustain) {
-    this.envelope_.sustain = sustain;
-    this.updateTiming();
-  };
-
-  synth.module.SoundGenerator.prototype.getRelease = function () {
-    return this.envelope_.release;
-  };
-
-  synth.module.SoundGenerator.prototype.setRelease = function (release) {
-    this.envelope_.release = release;
-    this.updateTiming();
   };
 
 })();

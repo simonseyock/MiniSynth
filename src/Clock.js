@@ -1,7 +1,6 @@
 // #ifndef __CLOCK__
 // #define __CLOCK__
 
-// #include "StateExchange.js"
 // #include "Observable.js"
 
 /**
@@ -43,7 +42,6 @@ synth.Clock = function (audioContext) {
 	this.nextBarTime_ = 0;
 
 };
-synth.inherits(synth.Clock, synth.StateExchange);
 synth.inherits(synth.Clock, synth.Observable);
 
 /**

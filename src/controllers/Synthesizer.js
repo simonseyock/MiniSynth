@@ -1,13 +1,13 @@
-// #ifndef __VIEWCONTROLLERSYNTHESIZER__
-// #define __VIEWCONTROLLERSYNTHESIZER__
+// #ifndef __CONTROLLERSYNTHESIZER__
+// #define __CONTROLLERSYNTHESIZER__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../instruments/ModularSynth.js"
 // #include "SoundGenerator.js"
 // #include "PassFilter.js"
 // #include "Gain.js"
 
-synth.viewController.Synthesizer = function (audioContext, opt_options) {
+synth.controller.Synthesizer = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -18,12 +18,12 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
 	this.className_ = opt_options.className || "synth-synthesizer";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
 
   // sound generator 1
 
-  this.soundGenerator1 = new synth.viewController.SoundGenerator(audioContext);
+  this.soundGenerator1 = new synth.controller.SoundGenerator(audioContext);
 
   this.instrument.addModule(this.soundGenerator1.module);
 
@@ -33,7 +33,7 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
   // filter 1
 
-  this.filter1 = new synth.viewController.PassFilter(audioContext);
+  this.filter1 = new synth.controller.PassFilter(audioContext);
 
   this.soundGenerator1.module.connect(this.filter1.module);
 
@@ -45,7 +45,7 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
   // sound generator 2
 
-  this.soundGenerator2 = new synth.viewController.SoundGenerator(audioContext);
+  this.soundGenerator2 = new synth.controller.SoundGenerator(audioContext);
 
   this.instrument.addModule(this.soundGenerator2.module);
 
@@ -55,7 +55,7 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
   // filter2
 
-  this.filter2 = new synth.viewController.PassFilter(audioContext);
+  this.filter2 = new synth.controller.PassFilter(audioContext);
 
   this.soundGenerator2.module.connect(this.filter2.module);
 
@@ -67,7 +67,7 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
   // merge
 
-  this.gain = new synth.viewController.Gain(audioContext);
+  this.gain = new synth.controller.Gain(audioContext);
 
   this.instrument.addModule(this.gain.module);
 
@@ -81,6 +81,6 @@ synth.viewController.Synthesizer = function (audioContext, opt_options) {
 
   this.gain.module.connect(audioContext.destination);
 };
-synth.inherits(synth.viewController.Synthesizer, synth.viewController.ViewController);
+synth.inherits(synth.controller.Synthesizer, synth.controller.Controller);
 
 // #endif

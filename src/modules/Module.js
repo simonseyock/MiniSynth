@@ -1,22 +1,22 @@
 // #ifndef __MODULE__
 // #define __MODULE__
 
+// #include "../Connectable.js"
+// #include "../StateExchangable.js"
+
 synth = synth || {};
 synth.module = synth.module || {};
 
 synth.module.Module = function (audioContext) {
+  synth.Connectable.call(this);
+  synth.StateExchangable.call(this);
+  synth.Observable.call(this);
+
   this.audioContext_ = audioContext;
-
-  this.input = null;
-  this.output = null;
 };
+synth.inherits(synth.module.Module, synth.Connectable);
+synth.inherits(synth.module.Module, synth.StateExchangable);
+synth.inherits(synth.module.Module, synth.Observable);
 
-synth.module.Module.prototype.connect = function (node) {
-  if(node.hasOwnProperty("input")) {
-    this.connect(node.input);
-  } else {
-    this.output.connect(node);
-  }
-};
 
 // #endif

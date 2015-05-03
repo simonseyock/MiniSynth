@@ -1,7 +1,8 @@
 // #ifndef __INSTRUMENT__
 // #define __INSTRUMENT__
 
-// #include "../StateExchange.js"
+// #include "../StateExchangable.js"
+// #include "../Connectable.js"
 
 
 synth.instrument = synth.instrument || {};
@@ -13,7 +14,8 @@ synth.instrument = synth.instrument || {};
  */
 // NOTE: At the moment instrument doesn't support live playing of a note
 synth.instrument.Instrument = function (audioContext, frequencyTable) {
-	synth.StateExchange.call(this);
+	synth.StateExchangable.call(this);
+  synth.Connectable.call(this);
 
 	this.audioContext_ = audioContext;
 
@@ -22,8 +24,8 @@ synth.instrument.Instrument = function (audioContext, frequencyTable) {
 	//this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
 	this.frequencyTable_ = frequencyTable || synth.scales.frequencyTables.a4is440Hz;
 };
-synth.inherits(synth.instrument.Instrument, synth.StateExchange);
-synth.StateExchange.addType("synth.instrument.Instrument", synth.instrument.Instrument);
+synth.inherits(synth.instrument.Instrument, synth.StateExchangable);
+synth.inherits(synth.instrument.Instrument, synth.Connectable);
 
 /**
  *
@@ -113,12 +115,25 @@ synth.instrument.Instrument.prototype.changeTempo = function (tempoMultiplier, w
  *
  * @method
  */
-synth.instrument.Instrument.prototype.connect = synth.abstractFunction;
+synth.instrument.Instrument.prototype.interrupt = synth.abstractFunction;
 
 /**
  *
  * @method
  */
-synth.instrument.Instrument.prototype.interrupt = synth.abstractFunction;
+synth.instrument.Instrument.prototype.getState = function () {
+  var state = synth.StateExchangable.prototype.getState.call(this);
+  state.frequencyTable = this.frequencyTable_;
+  return state;
+};
+
+/**
+ *
+ * @method
+ */
+synth.instrument.Instrument.prototype.setState = function (state) {
+  synth.StateExchangable.prototype.setState.call(this, state);
+  this.frequencyTable_ = state.frequencyTable;
+};
 
 // #endif

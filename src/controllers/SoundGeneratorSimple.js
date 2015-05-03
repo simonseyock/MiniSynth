@@ -1,11 +1,11 @@
-// #ifndef __VIEWCONTROLLERSOUNDGENERATORSIMPLE_
-// #define __VIEWCONTROLLERSOUNDGENERATORSIMPLE__
+// #ifndef __CONTROLLERSOUNDGENERATORSIMPLE_
+// #define __CONTROLLERSOUNDGENERATORSIMPLE__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../html/RotaryControl.js"
 // #include "../modules/SoundGenerator.js"
 
-synth.viewController.SoundGeneratorSimple = function (audioContext, opt_options) {
+synth.controller.SoundGeneratorSimple = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -33,7 +33,7 @@ synth.viewController.SoundGeneratorSimple = function (audioContext, opt_options)
   this.$element_.append(waveTypeControl.get$Element());
   this.$element_.append(gainControl.get$Element());
 };
-synth.inherits(synth.viewController.SoundGeneratorSimple, synth.viewController.ViewController);
+synth.inherits(synth.controller.SoundGeneratorSimple, synth.controller.Controller);
 
 
 // #endif

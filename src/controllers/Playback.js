@@ -1,12 +1,12 @@
-// #ifndef __PLAYBACKVIEWCONTROLLER__
-// #define __PLAYBACKVIEWCONTROLLER__
+// #ifndef __PLAYBACKCONTROLLER__
+// #define __PLAYBACKCONTROLLER__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../Clock.js"
 // #include "../html/NumberInputFieldWithValueDrag.js"
 // #include "../svgs.js"
 
-synth.viewController.Playback = function (audioContext, opt_options) {
+synth.controller.Playback = function (audioContext, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -15,7 +15,7 @@ synth.viewController.Playback = function (audioContext, opt_options) {
 	this.className_ = opt_options.className || "synth-playback";
   this.classNameActive_ = "synth-active";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
   var $playButton, $stopButton, $bpmDiv;
 
@@ -84,5 +84,5 @@ synth.viewController.Playback = function (audioContext, opt_options) {
 	$bpmDiv.append(bpmField.get$Element()).append("BpM");
 	this.$element_.append($bpmDiv);
 };
-synth.inherits(synth.viewController.Playback, synth.viewController.ViewController);
+synth.inherits(synth.controller.Playback, synth.controller.Controller);
 // #endif

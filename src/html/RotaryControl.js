@@ -117,7 +117,7 @@ synth.html.RotaryControl.prototype.getValue = function () {
 synth.html.RotaryControl.prototype.setValue = function (value) {
   var oldValue = this.value_;
   this.value_ = value;
-  this.fireEvent("change:value", {oldValue: oldValue});
+  this.fireEvent("change:value", {oldValue: oldValue, newValue: value});
 };
 
 synth.html.RotaryControl.prototype.setPosition = function (position) {

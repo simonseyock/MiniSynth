@@ -24,6 +24,11 @@ synth.instrument.ModularSynth.prototype.addModule = function (aModule) {
   }
 };
 
+synth.instrument.ModularSynth.prototype.setOutputModule = function (aModule) {
+  this.addModule(aModule);
+  this.output = aModule;
+};
+
 synth.instrument.ModularSynth.prototype.pause = function (when) {
   this.modules_.forEach(function (aModule) {
     if(aModule.pause) {
@@ -49,4 +54,21 @@ synth.instrument.ModularSynth.prototype.changeTempo = function (tempoMultiplier,
     }
   }.bind(this));
 };
+
+synth.instrument.ModularSynth.prototype.getState = function () {
+  var state = synth.instrument.Instrument.prototype.getState.call(this);
+  state.modules = [];
+  this.modules_.forEach(function (aModule) {
+    state.modules.push(aModule.getState());
+  });
+  return state;
+};
+
+synth.instrument.ModularSynth.prototype.setState = function (state) {
+  synth.instrument.Instrument.prototype.setState.call(this, state);
+  state.modules.forEach(function (aModuleState, index) {
+    this.modules_[index].setState(aModuleState);
+  }.bind(this));
+};
+
 // #endif

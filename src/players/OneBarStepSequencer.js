@@ -9,8 +9,6 @@ synth.player.OneBarStepSequencer = function (clock, opt_options) {
 
 	this.clock_ = clock;
 
-	//this.addNormalStateParameter("steps", this.getSteps, function (steps) { this.steps_ = steps; });
-
 	this.steps_ = opt_options.steps || 4;
 
   this.baseNoteIndex_ = opt_options.baseNoteIndex || 48; // C3
@@ -47,7 +45,6 @@ synth.player.OneBarStepSequencer = function (clock, opt_options) {
   }.bind(this));
 };
 synth.inherits(synth.player.OneBarStepSequencer, synth.player.Player);
-synth.StateExchange.addType("synth.player.OneBarStepSequencer", synth.player.OneBarStepSequencer);
 
 synth.player.OneBarStepSequencer.prototype.playBar = function (bar, when) {
 	for (var i=0; i<this.steps_; i++) {

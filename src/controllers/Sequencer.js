@@ -1,10 +1,10 @@
-// #ifndef __VIEWCONTROLLERSEQUENCER__
-// #define __VIEWCONTROLLERSEQUENCER__
+// #ifndef __CONTROLLERSEQUENCER__
+// #define __CONTROLLERSEQUENCER__
 
-// #include "ViewController.js"
+// #include "Controller.js"
 // #include "../players/OneBarStepSequencer.js"
 
-synth.viewController.Sequencer = function (clock, opt_options) {
+synth.controller.Sequencer = function (clock, opt_options) {
 
 	opt_options = opt_options || {};
 
@@ -17,7 +17,7 @@ synth.viewController.Sequencer = function (clock, opt_options) {
 
 	this.className_ = opt_options.className || "synth-sequencer";
 
-	synth.viewController.ViewController.call(this, opt_options);
+	synth.controller.Controller.call(this, opt_options);
 
 
 	this.classNameButton_ = this.className_ + "-button";
@@ -54,7 +54,7 @@ synth.viewController.Sequencer = function (clock, opt_options) {
 
   this.$element_.append($clearButton);
 };
-synth.inherits(synth.viewController.Sequencer, synth.viewController.ViewController);
+synth.inherits(synth.controller.Sequencer, synth.controller.Controller);
 
 
 // #endif
