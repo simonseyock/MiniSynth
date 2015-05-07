@@ -6,6 +6,7 @@
 // #include "SoundGenerator.js"
 // #include "PassFilter.js"
 // #include "Gain.js"
+// #include "Storage.js"
 
 synth.controller.Synthesizer = function (audioContext, opt_options) {
 
@@ -20,6 +21,13 @@ synth.controller.Synthesizer = function (audioContext, opt_options) {
 
 	synth.controller.Controller.call(this, opt_options);
 
+  // storage
+
+  this.storage = new synth.controller.Storage({ storageKey: "instrument", stateExchangable: this.instrument });
+
+  this.$element_.append(this.storage.get$Element());
+
+  this.$element_.append("<br />");
 
   // sound generator 1
 

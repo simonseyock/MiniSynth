@@ -1,6 +1,9 @@
 // #ifndef __CONTROLLERSOUNDGENERATORSIMPLE_
 // #define __CONTROLLERSOUNDGENERATORSIMPLE__
 
+// NOTE: not used
+// DEPRECATED
+
 // #include "Controller.js"
 // #include "../html/RotaryControl.js"
 // #include "../modules/SoundGenerator.js"

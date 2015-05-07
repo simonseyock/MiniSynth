@@ -22,52 +22,40 @@ synth.controller.SoundGenerator = function (audioContext, opt_options) {
 
   // wave form -> dropdown?
 
-  var waveTypeControl = new synth.html.DiscreteRotaryControl({ title: "Wave", values: ["sine", "square", "sawtooth", "triangle"], initial: this.module.getWaveType() });
-  waveTypeControl.on("change:value", function () {
-    this.module.setWaveType(waveTypeControl.getValue());
-  }.bind(this));
+  this.waveTypeControl_ = new synth.html.DiscreteRotaryControl({ title: "Wave", values: ["sine", "square", "sawtooth", "triangle"], initial: this.module.get("waveType") });
+  this.waveTypeControl_.bindProperty("value", this.module, "waveType");
 
   // gain
 
-  var gainControl = new synth.html.AnalogRotaryControl({ title: "Gain", min: 0.01, max: 1, logarithmic: true, displayPrecision: 2, initial: this.module.getGain() });
-  gainControl.on("change:value", function () {
-    this.module.setGain(gainControl.getValue());
-  }.bind(this));
+  this.gainControl_ = new synth.html.AnalogRotaryControl({ title: "Gain", min: 0.01, max: 1, logarithmic: true, displayPrecision: 2, initial: this.module.get("gain") });
+  this.gainControl_.bindProperty("value", this.module, "gain");
 
   // attack
 
-  var attackControl = new synth.html.AnalogRotaryControl({ title: "Attack", min: 0.01, max: 10, logarithmic: true, displayPrecision: 2, unit: "s", initial: this.module.getAttack() });
-  attackControl.on("change:value", function () {
-    this.module.setAttack(attackControl.getValue());
-  }.bind(this));
+  this.attackControl_ = new synth.html.AnalogRotaryControl({ title: "Attack", min: 0.01, max: 10, logarithmic: true, displayPrecision: 2, unit: "s", initial: this.module.get("attack") });
+  this.attackControl_.bindProperty("value", this.module, "attack");
 
   // decay
 
-  var decayControl = new synth.html.AnalogRotaryControl({ title: "Decay", min: 0.01, max: 10, logarithmic: true, displayPrecision: 2, unit: "s", initial: this.module.getDecay() });
-  decayControl.on("change:value", function () {
-    this.module.setDecay(decayControl.getValue());
-  }.bind(this));
+  this.decayControl_ = new synth.html.AnalogRotaryControl({ title: "Decay", min: 0.01, max: 10, logarithmic: true, displayPrecision: 2, unit: "s", initial: this.module.get("decay") });
+  this.decayControl_.bindProperty("value", this.module, "decay");
 
   // sustain
 
-  var sustainControl = new synth.html.AnalogRotaryControl({ title: "Sustain", min: 0, max: 1, displayPrecision: 2, initial: this.module.getSustain() });
-  sustainControl.on("change:value", function () {
-    this.module.setSustain(sustainControl.getValue());
-  }.bind(this));
+  this.sustainControl_ = new synth.html.AnalogRotaryControl({ title: "Sustain", min: 0, max: 1, displayPrecision: 2, initial: this.module.get("sustain") });
+  this.sustainControl_.bindProperty("value", this.module, "sustain");
 
   // release
 
-  var releaseControl = new synth.html.AnalogRotaryControl({ title: "Release", min: 0.01, max: 20, logarithmic: true, displayPrecision: 3, unit: "s", initial: this.module.getRelease() });
-  releaseControl.on("change:value", function () {
-    this.module.setRelease(releaseControl.getValue());
-  }.bind(this));
+  this.releaseControl_ = new synth.html.AnalogRotaryControl({ title: "Release", min: 0.01, max: 20, logarithmic: true, displayPrecision: 3, unit: "s", initial: this.module.get("release") });
+  this.releaseControl_.bindProperty("value", this.module, "release");
 
-  this.$element_.append(waveTypeControl.get$Element());
-  this.$element_.append(gainControl.get$Element());
-  this.$element_.append(attackControl.get$Element());
-  this.$element_.append(decayControl.get$Element());
-  this.$element_.append(sustainControl.get$Element());
-  this.$element_.append(releaseControl.get$Element());
+  this.$element_.append(this.waveTypeControl_.get$Element());
+  this.$element_.append(this.gainControl_.get$Element());
+  this.$element_.append(this.attackControl_.get$Element());
+  this.$element_.append(this.decayControl_.get$Element());
+  this.$element_.append(this.sustainControl_.get$Element());
+  this.$element_.append(this.releaseControl_.get$Element());
 
 };
 synth.inherits(synth.controller.SoundGenerator, synth.controller.Controller);

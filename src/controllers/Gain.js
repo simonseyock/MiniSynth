@@ -23,16 +23,10 @@ synth.controller.Gain = function (audioContext, opt_options) {
     min: 0.001, max: 1,
     interpretValueBelowAsZero: 0.00105,
     displayPrecision: 3,
-    initial: this.module.getGain()
+    initial: this.module.get("gain")
   });
 
-  gainControl.on("change:value", function (e) {
-    this.module.setGain(e.newValue);
-  }.bind(this));
-
-  this.module.on("change:gain", function (gain) {
-    gainControl.setValue(gain);
-  }.bind(this));
+  gainControl.bindProperty("value", this.module, "gain");
 
   this.$element_.append(gainControl.get$Element());
 };

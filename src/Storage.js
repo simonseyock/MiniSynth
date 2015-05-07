@@ -2,11 +2,11 @@
 // #define __STORAGE__
 
 synth.Storage = {
-  saveObject: function (key, object) {
+  save: function (key, object) {
 	  localStorage.setItem(key, JSON.stringify(object));
   },
-  retrieveObject: function (key) {
-	  return JSON.parse(localStorage.retrieveItem(key));
+  load: function (key) {
+	  return JSON.parse(localStorage.getItem(key));
   }
 };
 

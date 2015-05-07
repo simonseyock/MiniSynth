@@ -15,6 +15,8 @@
  *
  */
 
+// TODO: Use setters, getters from ChangeFiring
+
 synth.html.AnalogRotaryControl = function(opt_options) {
   opt_options = opt_options || {};
 
@@ -46,30 +48,33 @@ synth.html.AnalogRotaryControl = function(opt_options) {
     };
   }
 
+  opt_options.initial = Math.min(this.max_, Math.max(this.min_, opt_options.initial || this.min_));
+
 	synth.html.RotaryControl.call(this, opt_options);
 
   this.dots_ = [0,1];
   this.createDots_();
 
-  this.displayPrecision_ = opt_options.displayPrecision || 2;
+  this.displayPrecision_ = opt_options.displayPrecision || 3;
   this.unit_ = opt_options.unit || "";
   this.setEditable(opt_options.editable || true);
 
-  this.setValue(Math.min(this.max_, Math.max(this.min_, opt_options.initial || this.min_)));
+  //this.set("value",);
   this.updatePositionFromValue();
+  this.updateValueField();
+
+  this.on("change:value", this.updateValueField);
 };
 synth.inherits(synth.html.AnalogRotaryControl, synth.html.RotaryControl);
 
-synth.html.AnalogRotaryControl.prototype.setValue = function (value) {
-  if (this.interpretValueBelowAsZero_ !== false && value < this.interpretValueBelowAsZero_) {
-    value = 0;
-  } else {
-    value = Math.min(this.max_, Math.max(this.min_, value));
-  }
+synth.html.AnalogRotaryControl.prototype.updateValueField = function () {
+//  if (this.interpretValueBelowAsZero_ !== false && value < this.interpretValueBelowAsZero_) {
+//    value = 0;
+//  } else {
+//    value = Math.min(this.max_, Math.max(this.min_, value));
+//  }
 
-  synth.html.RotaryControl.prototype.setValue.call(this, value);
-
-  var displayValue = value.toFixed(this.displayPrecision_);
+  var displayValue = this.get("value").toFixed(this.displayPrecision_);
   if (this.unit_) {
     displayValue += " " + this.unit_;
   }
@@ -91,8 +96,7 @@ synth.html.AnalogRotaryControl.prototype.setEditable = function (editable) {
 			//this.$valueField_.addClass("synth-input-camouflage");
       var input = parseFloat(this.$valueField_.val());
       if (!_.isNaN(input)) {
-        this.setValue(input);
-        this.updatePositionFromValue();
+        this.set("value", input);
       }
 	 	}.bind(this));
 		this.$valueField_.on("keydown", function(e) {
@@ -110,11 +114,11 @@ synth.html.AnalogRotaryControl.prototype.setEditable = function (editable) {
 };
 
 synth.html.AnalogRotaryControl.prototype.updateValueFromPosition = function () {
-  this.setValue(this.mappingFunction_(this.position_));
+  this.set("value", this.mappingFunction_(this.get("position")));
 };
 
 synth.html.AnalogRotaryControl.prototype.updatePositionFromValue = function () {
-  this.setPosition(this.inverseMappingFunction_(this.value_));
+  this.set("position", this.shorten(this.inverseMappingFunction_(this.get("value"))));
 };
 
 // #endif

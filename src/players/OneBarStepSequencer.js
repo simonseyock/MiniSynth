@@ -102,4 +102,5 @@ synth.player.OneBarStepSequencer.prototype.clear = function () {
     }
 	}
 };
+
 // #endif

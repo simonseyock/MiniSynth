@@ -10,16 +10,19 @@
  *
  */
 
+// TODO: Use setters, getters from ChangeFiring
+
 synth.html.DiscreteRotaryControl = function(opt_options) {
   opt_options = opt_options || {};
 
   this.valueIndex_ = 0;
 
+  opt_options.values = opt_options.values || [0, 1];
+  opt_options.initial = opt_options.initial || opt_options.values[0];
+
   synth.html.RotaryControl.call(this, opt_options);
 
-  this.setValueArray(opt_options.values || [0, 1]);
-
-  this.setValue(opt_options.initial || this.values_[0]);
+  this.setValueArray(opt_options.values);
 
   this.updatePositionFromValue();
 };
@@ -39,7 +42,7 @@ synth.html.DiscreteRotaryControl.prototype.setValueArray = function (valueArray)
 
   this.createDots_();
 
-  this.updateValueFromPosition();
+  //this.updateValueFromPosition();
 };
 
 synth.html.DiscreteRotaryControl.prototype.updateValueFromPosition = function () {
@@ -48,13 +51,13 @@ synth.html.DiscreteRotaryControl.prototype.updateValueFromPosition = function ()
     var findNearest = function (start, end) {
       if (end-start > 1) {
         var middle = start + Math.floor((end-start)/2);
-        if (this.position_ <= this.dots_[middle]) {
+        if (this.get("position") <= this.dots_[middle]) {
           return findNearest(start, middle);
         } else {
           return findNearest(middle, end);
         }
       } else if (end-start === 1) {
-        if (this.position_ - this.dots_[start] < this.dots_[end] - this.position_) {
+        if (this.get("position") - this.dots_[start] < this.dots_[end] - this.get("position")) {
           return start;
         } else {
           return end;
@@ -65,20 +68,22 @@ synth.html.DiscreteRotaryControl.prototype.updateValueFromPosition = function ()
     }.bind(this);
 
     this.valueIndex_ = findNearest(0, this.length_-1);
-    this.setValue(this.values_[this.valueIndex_]);
+    this.set("value", this.values_[this.valueIndex_]);
 
-    this.$valueField_.val(this.getValue());
+    this.$valueField_.val(this.get("value"));
   }
 };
 
 synth.html.DiscreteRotaryControl.prototype.updatePositionFromValue = function () {
-  this.valueIndex_ = this.values_.indexOf(this.getValue());
-  this.setPosition(this.dots_[this.valueIndex_]);
+  if (!this.mouseMove_) {
+    this.valueIndex_ = this.values_.indexOf(this.get("value"));
+    this.set("position", this.shorten(this.dots_[this.valueIndex_]));
+  }
 };
 
 synth.html.DiscreteRotaryControl.prototype.onDocMouseUp_ = function (e) {
   if (this.mouseMove_) {
-    this.setPosition(this.dots_[this.valueIndex_]);
+    this.set("position", this.shorten(this.dots_[this.valueIndex_]));
   }
 
   synth.html.RotaryControl.prototype.onDocMouseUp_.call(this, e);

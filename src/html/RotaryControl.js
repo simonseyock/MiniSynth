@@ -1,7 +1,7 @@
 // #ifndef __ROTARYCONTROL__
 // #define __ROTARYCONTROL__
 
-// #include "../Observable.js"
+// #include "../ChangeFiring.js"
 
 synth.html = synth.html || {};
 
@@ -9,13 +9,13 @@ synth.html.RotaryControl = function(opt_options) {
 
   opt_options = opt_options || {};
 
-  synth.Observable.call(this);
+  synth.ChangeFiring.call(this);
 
-  this.registerEventType("change:value");
+  this.set("value", opt_options.initial || 0);
 
 	this.spareDegrees = 90;
 
-	this.resolution = 0.005;
+	this.resolution = 0.003;
 
 	this.className_ = "rotary-control";
   this.classNameTitle_ = this.className_ + "-title";
@@ -72,10 +72,13 @@ synth.html.RotaryControl = function(opt_options) {
 	this.$valueField_ = $('<input type="text" disabled>').addClass(this.classNameValueField_).addClass("synth-input-camouflage");
 	this.$element_.append($("<div>").append(this.$valueField_));
 
-	this.setPosition(0);
+	this.set("position", null);
 
+  this.on("change:value", this.updatePositionFromValue);
+  this.on("change:position", this.updateValueFromPosition);
+  this.on("change:position", this.onChangePosition);
 };
-synth.inherits(synth.html.RotaryControl, synth.Observable);
+synth.inherits(synth.html.RotaryControl, synth.ChangeFiring);
 
 synth.html.RotaryControl.prototype.get$Element = function () {
   return this.$element_;
@@ -100,8 +103,8 @@ synth.html.RotaryControl.prototype.onSVGMouseDown_ = function (e) {
 synth.html.RotaryControl.prototype.onDocMouseMove_ = function (e) {
 	if(this.mouseMove_) {
 		var distance = this.lastY_ - e.pageY;
-		var newValue = Math.max(0, Math.min(this.position_ + distance*this.resolution, 1));
-		this.setPosition(newValue);
+		var newValue = Math.max(0, Math.min(this.get("position") + distance*this.resolution, 1));
+		this.set("position", this.shorten(newValue));
 		this.lastY_ = e.pageY;
 	}
 };
@@ -110,25 +113,14 @@ synth.html.RotaryControl.prototype.onDocMouseUp_ = function (e) {
 	this.mouseMove_ = false;
 };
 
-synth.html.RotaryControl.prototype.getValue = function () {
-	return this.value_;
-};
-
-synth.html.RotaryControl.prototype.setValue = function (value) {
-  var oldValue = this.value_;
-  this.value_ = value;
-  this.fireEvent("change:value", {oldValue: oldValue, newValue: value});
-};
-
-synth.html.RotaryControl.prototype.setPosition = function (position) {
-
-  //var oldValue = this.position_;
-  this.position_ = position;
-
-  var transformString = "rotate(" + (this.spareDegrees/2 + (360-this.spareDegrees)*position)  + " 50 50)";
+synth.html.RotaryControl.prototype.onChangePosition = function (e) {
+  console.log(this.get("position"));
+  var transformString = "rotate(" + (this.spareDegrees/2 + (360-this.spareDegrees)*e.newValue) + " 50 50)";
   this.$svg_.children("."+this.classNamePointer_).attr("transform", transformString);
+};
 
-  this.updateValueFromPosition();
+synth.html.RotaryControl.prototype.shorten = function (value) {
+  return parseFloat(value.toFixed(9));
 };
 
 

@@ -6,28 +6,30 @@
 (function () {
 
   synth.module.SoundGenerator = function (audioContext, opt_options) {
-    this.audioContext_ = audioContext;
+    synth.module.Module.call(this, audioContext);
 
     opt_options = opt_options || {};
+    opt_options.envelope = opt_options.envelope || {};
 
     this.gain_ = audioContext.createGain();
 
-    this.waveType_ = opt_options.waveType || "sine";
-
     this.singleSoundGenerators_ = [];
-
-    this.envelope_ = opt_options.envelope || { attack: 0, decay: 0, sustain: 1, release: 0 };
-
-    this.setGain(opt_options.gain || 1);
 
     this.output = this.gain_;
 
-    this.registerEventType("change:waveType");
-    this.registerEventType("change:gain");
-    this.registerEventType("change:attack");
-    this.registerEventType("change:decay");
-    this.registerEventType("change:sustain");
-    this.registerEventType("change:release");
+    this.set("waveType", opt_options.waveType || "sine");
+    this.set("gain", opt_options.gain || 1);
+    this.set("attack", opt_options.envelope.attack || 0);
+    this.set("decay", opt_options.envelope.decay || 0);
+    this.set("sustain", opt_options.envelope.sustain || 1);
+    this.set("release", opt_options.envelope.release || 0);
+
+    this.on("change:waveType", this.onWaveTypeChange);
+    this.on("change:gain", this.onGainChange);
+    this.on("change:attack", this.updateTiming);
+    this.on("change:decay", this.updateTiming);
+    this.on("change:sustain", this.updateTiming);
+    this.on("change:release", this.updateTiming);
   };
   synth.inherits(synth.module.SoundGenerator, synth.module.Module);
 
@@ -44,7 +46,12 @@
 
     collection.on("insert", function (timeObject) {
       this.disposeFinishedSingleSoundGenerators_();
-      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.waveType_, this.envelope_);
+      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.waveType_, {
+        attack: this.get("attack"),
+        decay: this.get("decay"),
+        sustain: this.get("sustain"),
+        release: this.get("release")
+      });
       this.singleSoundGenerators_.push(sSG);
       sSG.connect(this.gain_);
     }.bind(this));
@@ -76,90 +83,49 @@
     //this.singleSoundGenerators_ = [];
   };
 
-  synth.module.SoundGenerator.prototype.getWaveType = function () {
-    return this.waveType_;
-  };
-
-  synth.module.SoundGenerator.prototype.setWaveType = function (waveType) {
-    this.waveType_ = waveType;
+  synth.module.SoundGenerator.prototype.onWaveTypeChange = function (e) {
     this.disposeFinishedSingleSoundGenerators_();
     this.singleSoundGenerators_.forEach(function (sSG) {
-       sSG.setWaveType(waveType);
+       sSG.setWaveType(e.newValue);
     });
-    this.fireEvent("change:waveType", [waveType]);
   };
 
-  synth.module.SoundGenerator.prototype.getGain = function () {
-    return this.gain_.gain.value;
-  };
-
-  synth.module.SoundGenerator.prototype.setGain = function (gain) {
-    this.gain_.gain.value = gain;
-    this.fireEvent("change:gain", [gain]);
+  synth.module.SoundGenerator.prototype.onGainChange = function (e) {
+    this.gain_.gain.value = e.newValue;
   };
 
   synth.module.SoundGenerator.prototype.updateTiming = function () {
     this.disposeFinishedSingleSoundGenerators_();
     this.singleSoundGenerators_.forEach(function (sSG) {
+      sSG.envelope = {
+        attack: this.get("attack"),
+        decay: this.get("decay"),
+        sustain: this.get("sustain"),
+        release: this.get("release")
+      };
       sSG.updateTiming();
-    });
-  };
-
-  synth.module.SoundGenerator.prototype.getAttack = function () {
-    return this.envelope_.attack;
-  };
-
-  synth.module.SoundGenerator.prototype.setAttack = function (attack) {
-    this.envelope_.attack = attack;
-    this.updateTiming();
-    this.fireEvent("change:attack", [attack]);
-  };
-
-  synth.module.SoundGenerator.prototype.getDecay = function () {
-    return this.envelope_.decay;
-  };
-
-  synth.module.SoundGenerator.prototype.setDecay = function (decay) {
-    this.envelope_.decay = decay;
-    this.updateTiming();
-    this.fireEvent("change:decay", [decay]);
-  };
-
-  synth.module.SoundGenerator.prototype.getSustain = function () {
-    return this.envelope_.sustain;
-  };
-
-  synth.module.SoundGenerator.prototype.setSustain = function (sustain) {
-    this.envelope_.sustain = sustain;
-    this.updateTiming();
-    this.fireEvent("change:sustain", [sustain]);
-  };
-
-  synth.module.SoundGenerator.prototype.getRelease = function () {
-    return this.envelope_.release;
-  };
-
-  synth.module.SoundGenerator.prototype.setRelease = function (release) {
-    this.envelope_.release = release;
-    this.updateTiming();
-    this.fireEvent("change:release", [release]);
+    }.bind(this));
   };
 
   synth.module.SoundGenerator.prototype.getState = function () {
     var state = synth.module.Module.prototype.getState.call(this);
-    state.waveType = this.getWaveType();
-    state.gain = this.getGain();
-    state.envelope = this.envelope_;
+    state.waveType = this.get("waveType");
+    state.gain = this.get("gain");
+    state.attack = this.get("attack");
+    state.decay = this.get("decay");
+    state.sustain = this.get("sustain");
+    state.release = this.get("release");
     return state;
   };
 
   synth.module.SoundGenerator.prototype.setState = function (state) {
-    synth.module.Module.prototype.getState.call(this, state);
-    this.getWaveType(state.waveType);
-    this.getGain(state.gain);
-    this.envelope_ = state.envelope;
-    this.updateTiming();
-    this.fireEvent("propertychange");
+    synth.module.Module.prototype.setState.call(this, state);
+    this.set("waveType", state.waveType);
+    this.set("gain", state.gain);
+    this.set("attack", state.attack);
+    this.set("decay", state.decay);
+    this.set("sustain", state.sustain);
+    this.set("release", state.release);
   };
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +135,7 @@
 
     this.waveType_ = waveType || "sine";
     this.timeObject = timeObject;
-    this.envelope_ = envelope || { attack: 0, decay: 0, sustain: 1, release: 0 };
+    this.envelope = envelope || { attack: 0, decay: 0, sustain: 1, release: 0 };
     this.oscillator_ = null;
 
     this.envelopeShaper_ = audioContext.createGain();
@@ -198,7 +164,7 @@
 
     if (this.audioContext_.currentTime < this.timeObject.time + this.timeObject.duration) {
 
-      this.realEndTime_ = this.timeObject.time + this.timeObject.duration + this.envelope_.release;
+      this.realEndTime_ = this.timeObject.time + this.timeObject.duration + this.envelope.release;
 
       if (this.audioContext_.currentTime < this.timeObject.time) {
         this.startTime_ = this.timeObject.time;
@@ -225,10 +191,10 @@
     var attackCanFinish = false;
     var decayCanFinish = false;
 
-    if (currentTime <= nominalEndTime + this.envelope_.release) {
+    if (currentTime <= nominalEndTime + this.envelope.release) {
       if (currentTime <= nominalEndTime) {
-        if (currentTime <= this.startTime_ + this.envelope_.attack + this.envelope_.decay) {
-          if (currentTime <= this.startTime_ + this.envelope_.attack) {
+        if (currentTime <= this.startTime_ + this.envelope.attack + this.envelope.decay) {
+          if (currentTime <= this.startTime_ + this.envelope.attack) {
             if (currentTime <= this.startTime_) {
               // Note start
               this.envelopeShaper_.gain.setValueAtTime(0, this.startTime_);
@@ -237,14 +203,14 @@
 
             // Attack
             // is the note longer than the attack time?
-            if (this.startTime_ + this.envelope_.attack <= nominalEndTime) {
-              this.envelopeShaper_.gain.linearRampToValueAtTime(1, this.startTime_ + this.envelope_.attack);
-              //console.log("linear Ramp to %s at %s", 1, this.startTime_ + this.envelope_.attack); //DEBUG
+            if (this.startTime_ + this.envelope.attack <= nominalEndTime) {
+              this.envelopeShaper_.gain.linearRampToValueAtTime(1, this.startTime_ + this.envelope.attack);
+              //console.log("linear Ramp to %s at %s", 1, this.startTime_ + this.envelope.attack); //DEBUG
               attackCanFinish = true;
             } else {
-              var part = (nominalEndTime - this.startTime_) / this.envelope_.attack;
+              var part = (nominalEndTime - this.startTime_) / this.envelope.attack;
               this.envelopeShaper_.gain.linearRampToValueAtTime(part, nominalEndTime);
-              //console.log("linear Ramp to %s at %s", part, this.startTime_ + this.envelope_.attack); //DEBUG
+              //console.log("linear Ramp to %s at %s", part, this.startTime_ + this.envelope.attack); //DEBUG
               attackCanFinish = false;
             }
           }
@@ -252,14 +218,14 @@
           // Decay
           // is note longer than attack time plus decay time?
           if (attackCanFinish) {
-            if (this.startTime_ + this.envelope_.attack + this.envelope_.decay <= nominalEndTime) {
-              this.envelopeShaper_.gain.linearRampToValueAtTime(this.envelope_.sustain, this.startTime_ + this.envelope_.attack + this.envelope_.decay);
-              //console.log("linear Ramp to %s at %s", this.envelope_.sustain, this.startTime_ + this.envelope_.attack + this.envelope_.decay); //DEBUG
+            if (this.startTime_ + this.envelope.attack + this.envelope.decay <= nominalEndTime) {
+              this.envelopeShaper_.gain.linearRampToValueAtTime(this.envelope.sustain, this.startTime_ + this.envelope.attack + this.envelope.decay);
+              //console.log("linear Ramp to %s at %s", this.envelope.sustain, this.startTime_ + this.envelope.attack + this.envelope.decay); //DEBUG
               decayCanFinish = true;
             } else {
-              var part = (nominalEndTime - this.startTime_ - this.envelope_.attack) / this.envelope_.decay;
-              this.envelopeShaper_.gain.linearRampToValueAtTime(part * this.envelope_.sustain, nominalEndTime);
-              //console.log("linear Ramp to %s at %s", part * this.envelope_.sustain, this.startTime_ + this.envelope_.attack + this.envelope_.decay); //DEBUG
+              var part = (nominalEndTime - this.startTime_ - this.envelope.attack) / this.envelope.decay;
+              this.envelopeShaper_.gain.linearRampToValueAtTime(part * this.envelope.sustain, nominalEndTime);
+              //console.log("linear Ramp to %s at %s", part * this.envelope.sustain, this.startTime_ + this.envelope.attack + this.envelope.decay); //DEBUG
               decayCanFinish = false;
             }
           }
@@ -267,21 +233,21 @@
 
         // Sustain
         if (attackCanFinish && decayCanFinish) {
-          this.envelopeShaper_.gain.setValueAtTime(this.envelope_.sustain, nominalEndTime);
-          //console.log("%s at %s", this.envelope_.sustain, nominalEndTime); //DEBUG
+          this.envelopeShaper_.gain.setValueAtTime(this.envelope.sustain, nominalEndTime);
+          //console.log("%s at %s", this.envelope.sustain, nominalEndTime); //DEBUG
         }
       }
 
       // Release
-      this.envelopeShaper_.gain.linearRampToValueAtTime(0, nominalEndTime + this.envelope_.release);
-      //console.log("linear Ramp to %s at %s", 0, nominalEndTime + this.envelope_.release); //DEBUG
+      this.envelopeShaper_.gain.linearRampToValueAtTime(0, nominalEndTime + this.envelope.release);
+      //console.log("linear Ramp to %s at %s", 0, nominalEndTime + this.envelope.release); //DEBUG
     }
 
   };
 
   SingleSoundGenerator.prototype.updateTiming = function () {
     this.startTime_ = this.timeObject.time;
-    this.realEndTime_ = this.timeObject.time + this.timeObject.duration + this.envelope_.release;
+    this.realEndTime_ = this.timeObject.time + this.timeObject.duration + this.envelope.release;
 
     if (this.audioContext_.currentTime <= this.startTime_) {
       this.createOscillator_();
@@ -301,6 +267,7 @@
 
 
   SingleSoundGenerator.prototype.setWaveType = function (waveType) {
+    console.log(waveType);
     this.waveType_ = waveType;
     this.oscillator_.type = waveType;
   };
@@ -330,12 +297,12 @@
     } else {
 
       if(this.started_) {
-        this.oscillator_.stop(this.audioContext_.currentTime + this.envelope_.release);
+        this.oscillator_.stop(this.audioContext_.currentTime + this.envelope.release);
         this.envelopeShaper_.gain.cancelScheduledValues(this.audioContext_.currentTime);
-        this.envelopeShaper_.gain.linearRampToValueAtTime(0, this.audioContext_.currentTime + this.envelope_.release);
+        this.envelopeShaper_.gain.linearRampToValueAtTime(0, this.audioContext_.currentTime + this.envelope.release);
       }
 
-      setTimeout(stopNow, this.envelope_.release * 1000);
+      setTimeout(stopNow, this.envelope.release * 1000);
     }
   };
 

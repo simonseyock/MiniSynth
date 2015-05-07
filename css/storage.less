@@ -1,0 +1,25 @@
+@storage-width: 100px;
+@storage-height: @button-size;
+@storage-button-width:  @button-size;
+
+.synth-storage {
+  position: relative;
+  width: @storage-width;
+  height: @storage-height;
+
+  input {
+    height: @storage-height;
+    width: @storage-width - 2*@storage-button-width;
+  }
+
+  button {
+    height: @storage-height;
+    width: @storage-button-width;
+  }
+
+  select {
+    position: absolute;
+    top: @storage-height;
+    width: @storage-width - 2*@storage-button-width;
+  }
+}

@@ -19,43 +19,23 @@ synth.controller.PassFilter = function (audioContext, opt_options) {
 
   // type
 
-  var typeControl = new synth.html.DiscreteRotaryControl({ title: "Type", values: ["lowpass", "highpass", "bandpass"], initial: this.module.getType() });
-  typeControl.on("change:value", function() {
-    this.module.setType(typeControl.getValue());
-  }.bind(this));
-  this.module.on("change:type", function (value) {
-    typeControl.setValue(value);
-  };
+  var typeControl = new synth.html.DiscreteRotaryControl({ title: "Type", values: ["lowpass", "highpass", "bandpass"], initial: this.module.get("type") });
+  typeControl.bindProperty("value", this.module, "type");
 
   // frequency
 
-  var freqControl = new synth.html.AnalogRotaryControl({ title: "Freq", min: 50, max: 1000, logarithmic: true, displayPrecision: 0, initial: this.module.getFrequency() });
-  freqControl.on("change:value", function () {
-    this.module.setFrequency(freqControl.getValue());
-  }.bind(this));
-  this.module.on("change:frequency", function (value) {
-    freqControl.setValue(value);
-  };
+  var freqControl = new synth.html.AnalogRotaryControl({ title: "Cutoff", min: 50, max: 1000, logarithmic: true, displayPrecision: 0, initial: this.module.get("frequency") });
+  freqControl.bindProperty("value", this.module, "frequency");
 
   // resonance (Q)
 
-  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 100, logarithmic: true, displayPrecision: 0, initial: this.module.getResonance() });
-  resoControl.on("change:value", function () {
-    this.module.setResonance(resoControl.getValue());
-  }.bind(this));
-  this.module.on("change:resonance", function (value) {
-    resoControl.setValue(value);
-  };
+  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 100, logarithmic: true, displayPrecision: 0, initial: this.module.get("resonance") });
+  resoControl.bindProperty("value", this.module, "resonance");
 
   // Amount
 
-  var amountControl = new synth.html.AnalogRotaryControl({ title: "Amount", min: 0, max: 1, initial: this.module.getAmount() });
-  amountControl.on("change:value", function () {
-    this.module.setAmount(amountControl.getValue());
-  }.bind(this));
-  this.module.on("change:amount", function (value) {
-    amountControl.setValue(value);
-  };
+  var amountControl = new synth.html.AnalogRotaryControl({ title: "Amount", min: 0, max: 1, initial: this.module.get("amount") });
+  amountControl.bindProperty("value", this.module, "amount");
 
   this.$element_.append(typeControl.get$Element());
   this.$element_.append(freqControl.get$Element());
