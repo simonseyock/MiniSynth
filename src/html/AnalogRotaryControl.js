@@ -44,7 +44,7 @@ synth.html.AnalogRotaryControl = function(opt_options) {
       return this.min_ + x * (this.max_ - this.min_)
     };
     this.inverseMappingFunction_ = function (y) {
-      return y / (this.max_ - this.min_) - this.min_;
+      return (y - this.min_) / (this.max_ - this.min_);
     };
   }
 
@@ -118,6 +118,7 @@ synth.html.AnalogRotaryControl.prototype.updateValueFromPosition = function () {
 };
 
 synth.html.AnalogRotaryControl.prototype.updatePositionFromValue = function () {
+  //console.log(this.inverseMappingFunction_(this.get("value")));
   this.set("position", this.shorten(this.inverseMappingFunction_(this.get("value"))));
 };
 

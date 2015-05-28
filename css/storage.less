@@ -4,22 +4,21 @@
 
 .synth-storage {
   position: relative;
-  width: @storage-width;
+  //width: @storage-width;
   height: @storage-height;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
   input {
+    //display: inline;
     height: @storage-height;
-    width: @storage-width - 2*@storage-button-width;
+    //width: 6em;
+    //width: @storage-width - 2*@storage-button-width;
   }
 
   button {
+    display: inline;
     height: @storage-height;
-    width: @storage-button-width;
-  }
-
-  select {
-    position: absolute;
-    top: @storage-height;
-    width: @storage-width - 2*@storage-button-width;
+    //width: @storage-button-width;
   }
 }

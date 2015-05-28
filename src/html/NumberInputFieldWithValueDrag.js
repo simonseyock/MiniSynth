@@ -70,7 +70,7 @@ synth.html.NumberInputFieldWithValueDrag = function (opt_options) {
 	this.$element_.on("touchmove", function (e) {
 		e.pageX = e.originalEvent.targetTouches[0].pageX;
 		e.pageY = e.originalEvent.targetTouches[0].pageY;
-		onMouseMove_(e);
+		onMouseMove(e);
 	});
 	this.$element_.on("touchend", onMouseUp);
 };

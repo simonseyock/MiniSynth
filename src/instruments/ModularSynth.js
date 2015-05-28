@@ -4,6 +4,13 @@
 // #include "Instrument.js"
 // #include "../Scales.js"
 
+/*
+ * The ModularSynth is an Instrument which consists of different not predefined modules. They can be added with the addModule method.
+ * If a module has a watch method, the module gets informed about new notes to be played.
+ * The modules need to be connected manually outside the modular synth.
+ * Important: The module the output comes from needs to be set with the setOutputModule method.
+ */
+
 synth.instrument.ModularSynth = function (audioContext, opt_options) {
 
   opt_options = opt_options || {};

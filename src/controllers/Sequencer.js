@@ -19,6 +19,9 @@ synth.controller.Sequencer = function (clock, opt_options) {
 
 	synth.controller.Controller.call(this, opt_options);
 
+  this.storageController_ = new synth.controller.Storage({ storageKey: "sequencer", stateExchangable: this.player });
+
+  this.$element_.append(this.storageController_.get$Element());
 
 	this.classNameButton_ = this.className_ + "-button";
 	this.classNameButtonActive_ = this.classNameButton_ + "-active";
@@ -27,23 +30,25 @@ synth.controller.Sequencer = function (clock, opt_options) {
 
   var $buttonDiv = $("<div>").addClass(this.className_ + "-buttons");
 
-	for (var i=0; i<this.rows_; i++) { // this.rows_
-		for (var j=0; j<this.cols_; j++) { // this.cols_
-			(function (row, col) {
-				var $button = $("<button>").addClass(this.classNameButton_).addClass(this.classNameColumn_ + "-" + j).addClass(this.classNameRow_ + "-" + i);
+  this.$buttons_ = []; // 2 dimensional
+
+  for (var col=0; col<this.cols_; col++) {
+    this.$buttons_.push([]);
+    for (var row=0; row<this.rows_; row++) {
+      (function (cCol, cRow) {
+        var $button = $("<button>").addClass(this.classNameButton_).addClass(this.classNameColumn_ + "-" + col).addClass(this.classNameRow_ + "-" + (this.rows_-row-1));
 				$button.on("click", function () {
-					var active = !$button.hasClass(this.classNameButtonActive_);
-					$button.toggleClass(this.classNameButtonActive_);
-					if (active) {
-						this.player.addNote(col, this.rows_-row-1);
-					} else {
-						this.player.removeNote(col, this.rows_-row-1);
-					}
+				  this.player.toggleNote(cCol, cRow);
 				}.bind(this));
 				$buttonDiv.append($button);
-			}.bind(this))(i,j);
-		}
-	}
+        this.$buttons_[col].push($button);
+      }.bind(this))(col, row);
+    }
+  }
+
+  this.player.on("toggleField", function (e) {
+    this.$buttons_[e.col][e.row].toggleClass(this.classNameButtonActive_);
+  }.bind(this));
 
   this.$element_.append($buttonDiv);
 
@@ -52,7 +57,7 @@ synth.controller.Sequencer = function (clock, opt_options) {
     $buttonDiv.children().removeClass(this.classNameButtonActive_);
   }.bind(this));
 
-  this.$element_.append($clearButton);
+  this.$element_.append($("<div>").addClass(this.className_ + "-clear").append($clearButton));
 };
 synth.inherits(synth.controller.Sequencer, synth.controller.Controller);
 

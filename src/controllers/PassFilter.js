@@ -24,17 +24,17 @@ synth.controller.PassFilter = function (audioContext, opt_options) {
 
   // frequency
 
-  var freqControl = new synth.html.AnalogRotaryControl({ title: "Cutoff", min: 50, max: 1000, logarithmic: true, displayPrecision: 0, initial: this.module.get("frequency") });
+  var freqControl = new synth.html.AnalogRotaryControl({ title: "Cutoff", min: 50, max: 1000, displayPrecision: 2, initial: this.module.get("frequency") });
   freqControl.bindProperty("value", this.module, "frequency");
 
   // resonance (Q)
 
-  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 100, logarithmic: true, displayPrecision: 0, initial: this.module.get("resonance") });
+  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0, max: 100, /* logarithmic: true, */ displayPrecision: 2, initial: this.module.get("resonance") });
   resoControl.bindProperty("value", this.module, "resonance");
 
   // Amount
 
-  var amountControl = new synth.html.AnalogRotaryControl({ title: "Amount", min: 0, max: 1, initial: this.module.get("amount") });
+  var amountControl = new synth.html.AnalogRotaryControl({ title: "Amount", min: 0, max: 1, displayPrecision: 2, initial: this.module.get("amount") });
   amountControl.bindProperty("value", this.module, "amount");
 
   this.$element_.append(typeControl.get$Element());

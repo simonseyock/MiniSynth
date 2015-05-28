@@ -15,7 +15,7 @@ synth.html.RotaryControl = function(opt_options) {
 
 	this.spareDegrees = 90;
 
-	this.resolution = 0.003;
+	this.resolution = 0.0025;
 
 	this.className_ = "rotary-control";
   this.classNameTitle_ = this.className_ + "-title";
@@ -114,7 +114,7 @@ synth.html.RotaryControl.prototype.onDocMouseUp_ = function (e) {
 };
 
 synth.html.RotaryControl.prototype.onChangePosition = function (e) {
-  console.log(this.get("position"));
+  //console.log(this.get("position"));
   var transformString = "rotate(" + (this.spareDegrees/2 + (360-this.spareDegrees)*e.newValue) + " 50 50)";
   this.$svg_.children("."+this.classNamePointer_).attr("transform", transformString);
 };

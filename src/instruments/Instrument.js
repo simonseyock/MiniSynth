@@ -121,6 +121,12 @@ synth.instrument.Instrument.prototype.interrupt = synth.abstractFunction;
  *
  * @method
  */
+synth.instrument.Instrument.prototype.pause = synth.abstractFunction;
+
+/**
+ *
+ * @method
+ */
 synth.instrument.Instrument.prototype.getState = function () {
   var state = synth.StateExchangable.prototype.getState.call(this);
   state.frequencyTable = this.frequencyTable_;

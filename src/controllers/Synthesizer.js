@@ -23,71 +23,58 @@ synth.controller.Synthesizer = function (audioContext, opt_options) {
 
   // storage
 
-  this.storage = new synth.controller.Storage({ storageKey: "instrument", stateExchangable: this.instrument });
+  this.storageController_ = new synth.controller.Storage({ storageKey: "instrument", stateExchangable: this.instrument });
 
-  this.$element_.append(this.storage.get$Element());
-
-  this.$element_.append("<br />");
+  this.$element_.append(this.storageController_.get$Element());
 
   // sound generator 1
 
-  this.soundGenerator1 = new synth.controller.SoundGenerator(audioContext);
+  this.soundGenerator1Controller_ = new synth.controller.SoundGenerator(audioContext);
 
-  this.instrument.addModule(this.soundGenerator1.module);
+  this.instrument.addModule(this.soundGenerator1Controller_.module);
 
-  this.$element_.append(this.soundGenerator1.get$Element());
-
-  this.$element_.append("<br />");
+  this.$element_.append(this.soundGenerator1Controller_.get$Element().prepend("<p>Oscillator 1</p>"));
 
   // filter 1
 
-  this.filter1 = new synth.controller.PassFilter(audioContext);
+  this.filter1Controller_ = new synth.controller.PassFilter(audioContext);
 
-  this.soundGenerator1.module.connect(this.filter1.module);
+  this.soundGenerator1Controller_.module.connect(this.filter1Controller_.module);
 
-  this.instrument.addModule(this.filter1.module);
+  this.instrument.addModule(this.filter1Controller_.module);
 
-  this.$element_.append(this.filter1.get$Element());
-
-  this.$element_.append("<br />");
+  this.$element_.append(this.filter1Controller_.get$Element().prepend("<p>Filter 1</p>"));
 
   // sound generator 2
 
-  this.soundGenerator2 = new synth.controller.SoundGenerator(audioContext);
+  this.soundGenerator2Controller_ = new synth.controller.SoundGenerator(audioContext);
 
-  this.instrument.addModule(this.soundGenerator2.module);
+  this.instrument.addModule(this.soundGenerator2Controller_.module);
 
-  this.$element_.append(this.soundGenerator2.get$Element());
-
-  this.$element_.append("<br />");
+  this.$element_.append(this.soundGenerator2Controller_.get$Element().prepend("<p>Oscillator 2</p>"));
 
   // filter2
 
-  this.filter2 = new synth.controller.PassFilter(audioContext);
+  this.filter2Controller_ = new synth.controller.PassFilter(audioContext);
 
-  this.soundGenerator2.module.connect(this.filter2.module);
+  this.soundGenerator2Controller_.module.connect(this.filter2Controller_.module);
 
-  this.instrument.addModule(this.filter2.module);
+  this.instrument.addModule(this.filter2Controller_.module);
 
-  this.$element_.append(this.filter2.get$Element());
-
-  this.$element_.append("<br />");
+  this.$element_.append(this.filter2Controller_.get$Element().prepend("<p>Filter 2</p>"));
 
   // merge
 
-  this.gain = new synth.controller.Gain(audioContext);
+  this.gainController_ = new synth.controller.Gain(audioContext);
 
-  this.instrument.addModule(this.gain.module);
+  this.instrument.setOutputModule(this.gainController_.module);
 
-  this.$element_.append(this.gain.get$Element());
+  this.$element_.append(this.gainController_.get$Element());
 
-  this.filter1.module.connect(this.gain.module);
+  this.filter1Controller_.module.connect(this.gainController_.module);
 
-  this.filter2.module.connect(this.gain.module);
+  this.filter2Controller_.module.connect(this.gainController_.module);
 
-  // connect to destination
-
-  this.gain.module.connect(audioContext.destination);
 };
 synth.inherits(synth.controller.Synthesizer, synth.controller.Controller);
 

@@ -37,7 +37,7 @@ synth.ChangeFiring.prototype.set = function (propertyName, value) {
     if (oldValue !== value) {
       var e = { oldValue: oldValue, newValue: value };
 //      console.log(propertyName);
-//      console.log(e);
+  //    console.log(e);
       this.fireEvent("change:" + propertyName, [e]);
       //this.fireEvent("propertychange", [e]);
     }

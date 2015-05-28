@@ -23,11 +23,12 @@ synth.controller.Main = function (opt_options) {
 
   this.screenController_ = new synth.controller.Screen();
 
-  this.screenController_.addScreen($("<div>").append(this.playbackController_.get$Element()).append(this.playerController_.get$Element()));
-  this.screenController_.addScreen(this.instrumentController_.get$Element());
+  this.$element_.append(this.playbackController_.get$Element());
+  this.screenController_.addScreen(this.playerController_.get$Element(), "Sequencer");
+  this.screenController_.addScreen(this.instrumentController_.get$Element(), "Synthesizer");
   this.$element_.append(this.screenController_.get$Element());
 
-  this.instrumentController_.gain.module.connect(this.audioContext_.destination);
+  this.instrumentController_.instrument.connect(this.audioContext_.destination);
 };
 synth.inherits(synth.controller.Main, synth.controller.Controller);
 

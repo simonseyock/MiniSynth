@@ -1,4 +1,7 @@
 .synth-playback {
+  //margin-top: 40px;
+  margin-bottom: 20px;
+
 	* {
 		display: inline-block;
 		vertical-align: middle;
@@ -22,9 +25,11 @@
 
 	.synth-playback-bpm {
 		height: @button-size;
+    margin-left: 20px;
 		input {
-			width: 3em;
+			width: 4em;
 			height: @button-size;
+      border: 1px solid @dark-main-color;
 			.synth-grab();
 		}
 	}

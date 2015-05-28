@@ -5,6 +5,13 @@
 
 (function () {
 
+  /*
+   * The module Soundgenerator can produce sounds in different frequencies, wavetypes, lengths and with a defined envelope shape.
+   * The tempo can be changed after notes where send to play.
+   * To achieve this the Soundgenerator creates a SingleSoundGenerator for every sound it plays.
+   * If the tempo, the wavetype or the envelope shape gets changed every SingleSoundGenerator gets updated
+   */
+
   synth.module.SoundGenerator = function (audioContext, opt_options) {
     synth.module.Module.call(this, audioContext);
 

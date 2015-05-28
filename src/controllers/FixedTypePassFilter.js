@@ -22,7 +22,7 @@ synth.controller.FixedTypePassFilter = function (audioContext, opt_options) {
 
   // frequency
 
-  var freqControl = new synth.html.AnalogRotaryControl({ title: "Freq", min: 100, max: 1000, logarithmic: true, displayPrecision: 0, initial: this.module.getFrequency() });
+  var freqControl = new synth.html.AnalogRotaryControl({ title: "Freq", min: 100, max: 1000, displayPrecision: 0, initial: this.module.getFrequency() });
   freqControl.on("change:value", function () {
     this.module.setFrequency(freqControl.getValue());
   }.bind(this));
@@ -32,7 +32,7 @@ synth.controller.FixedTypePassFilter = function (audioContext, opt_options) {
   }.bind(this));
   // resonance (Q)
 
-  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0.01, max: 10, logarithmic: true, displayPrecision: 0, initial: this.module.getResonance() });
+  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0, max: 10, displayPrecision: 3, initial: this.module.getResonance() });
   resoControl.on("change:value", function () {
     this.module.setResonance(resoControl.getValue());
   }.bind(this));

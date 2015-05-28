@@ -19,8 +19,8 @@ synth.controller.Gain = function (audioContext, opt_options) {
 
   var gainControl = new synth.html.AnalogRotaryControl({
     title: "Vol",
-    logarithmic: true,
-    min: 0.001, max: 1,
+    //logarithmic: true,
+    min: 0, max: 1,
     interpretValueBelowAsZero: 0.00105,
     displayPrecision: 3,
     initial: this.module.get("gain")

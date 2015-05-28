@@ -1,1 +1,1 @@
-Renaming ViewController into Controller?
+If waveType gets chaged, sounds double
