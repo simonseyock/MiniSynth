@@ -49,7 +49,7 @@
     }
   };
 
-  synth.module.SoundGenerator.prototype.watch = function (collection) {
+  synth.module.SoundGenerator.prototype.listen = function (collection) {
 
     collection.on("insert", function (timeObject) {
       this.disposeFinishedSingleSoundGenerators_();

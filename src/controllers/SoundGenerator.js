@@ -12,7 +12,7 @@ synth.controller.SoundGenerator = function (audioContext, opt_options) {
   opt_options.soundGeneratorOptions = opt_options.soundGeneratorOptions || {};
   opt_options.soundGeneratorOptions.waveType = "sine";
   opt_options.soundGeneratorOptions.gain = 0.6;
-  opt_options.soundGeneratorOptions.envelope = { attack: 0, decay: 0, sustain: 1, release: 0 };
+  opt_options.soundGeneratorOptions.envelope = { attack: 0.1, decay: 0, sustain: 1, release: 0.2 };
 
   this.module = new synth.module.SoundGenerator(audioContext, opt_options.soundGeneratorOptions);
 
@@ -32,12 +32,12 @@ synth.controller.SoundGenerator = function (audioContext, opt_options) {
 
   // attack
 
-  this.attackControl_ = new synth.html.AnalogRotaryControl({ title: "Attack", min: 0, max: 10, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("attack") });
+  this.attackControl_ = new synth.html.AnalogRotaryControl({ title: "Attack", min: 0, max: 1, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("attack") });
   this.attackControl_.bindProperty("value", this.module, "attack");
 
   // decay
 
-  this.decayControl_ = new synth.html.AnalogRotaryControl({ title: "Decay", min: 0, max: 10, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("decay") });
+  this.decayControl_ = new synth.html.AnalogRotaryControl({ title: "Decay", min: 0, max: 1, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("decay") });
   this.decayControl_.bindProperty("value", this.module, "decay");
 
   // sustain
@@ -47,7 +47,7 @@ synth.controller.SoundGenerator = function (audioContext, opt_options) {
 
   // release
 
-  this.releaseControl_ = new synth.html.AnalogRotaryControl({ title: "Release", min: 0, max: 20, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("release") });
+  this.releaseControl_ = new synth.html.AnalogRotaryControl({ title: "Release", min: 0, max: 5, /* logarithmic: true, */ displayPrecision: 2, unit: "s", initial: this.module.get("release") });
   this.releaseControl_.bindProperty("value", this.module, "release");
 
   this.$element_.append(this.waveTypeControl_.get$Element());

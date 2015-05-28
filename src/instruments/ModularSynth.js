@@ -26,8 +26,8 @@ synth.inherits(synth.instrument.ModularSynth, synth.instrument.Instrument);
 
 synth.instrument.ModularSynth.prototype.addModule = function (aModule) {
   this.modules_.push(aModule);
-  if(aModule.watch) {
-    aModule.watch(this.frequenciesToPlay);
+  if(aModule.listen) {
+    aModule.listen(this.frequenciesToPlay);
   }
 };
 
