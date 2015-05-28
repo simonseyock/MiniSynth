@@ -29,7 +29,7 @@ synth.controller.PassFilter = function (audioContext, opt_options) {
 
   // resonance (Q)
 
-  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0, max: 100, /* logarithmic: true, */ displayPrecision: 2, initial: this.module.get("resonance") });
+  var resoControl = new synth.html.AnalogRotaryControl({ title: "Q", min: 0, max: 50, /* logarithmic: true, */ displayPrecision: 2, initial: this.module.get("resonance") });
   resoControl.bindProperty("value", this.module, "resonance");
 
   // Amount

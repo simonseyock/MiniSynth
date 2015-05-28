@@ -18,6 +18,9 @@ synth.module.Gain = function (audioContext, opt_options) {
 
   this.input = this.output = this.gainNode_;
 
+  this.on("change:gain", function (e) {
+    this.gainNode_.gain.value = e.newValue;
+  }.bind(this));
 };
 synth.inherits(synth.module.Gain, synth.module.Module);
 

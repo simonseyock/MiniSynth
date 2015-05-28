@@ -1,6 +1,6 @@
 {
   "name": "MiniSynth",
-  "version": "0.0.1",
+  "version": "0.3.0",
   "description": "A synthesizer with sequencer for smartphones.",
   "author": {
     "name": "Simon Seyock",
@@ -16,12 +16,12 @@
     "parallelshell": "latest",
     "uprocess": "latest",
     "watch": "latest",
-	  "jsdoc": "latest",
+	"jsdoc": "latest",
     "uglify-js": "latest"
   },
   "scripts": {
     "clean": "rm -r build/*",
-    "build:base": "mkdir -p build/lib build/css && cp -n html/index.html build/ && cp -n node_modules/jquery/dist/jquery.* build/lib && cp -n node_modules/lodash/index.js build/lodash.js",
+    "build:base": "mkdir -p build/lib && mkdir -p build/css && cp html/index.html build/ && cp node_modules/jquery/dist/jquery.* build/lib/ && cp node_modules/lodash/index.js build/lodash.js",
     "build:js": "uprocess \"src/main.js\" -o \"build/lib/MiniSynth.js\"",
     "watch:js": "watch \"npm run build:js\" javascript/",
     "build:css": "lessc css/main.less build/css/MiniSynth.css",
