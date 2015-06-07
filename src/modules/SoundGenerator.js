@@ -53,7 +53,7 @@
 
     collection.on("insert", function (timeObject) {
       this.disposeFinishedSingleSoundGenerators_();
-      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.waveType_, {
+      var sSG = new SingleSoundGenerator(this.audioContext_, timeObject, this.get("waveType"), {
         attack: this.get("attack"),
         decay: this.get("decay"),
         sustain: this.get("sustain"),
