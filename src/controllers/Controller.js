@@ -7,7 +7,7 @@ synth.controller.Controller = function (opt_options) {
 
 	opt_options = opt_options || {};
 
-	this.$element_ = $("<div>").addClass(this.className_);
+	this.$element_ = opt_options.$element || $("<div>").addClass(this.className_);
 
 	if ("$target" in opt_options) {
 		opt_options.$target.append(this.$element_);

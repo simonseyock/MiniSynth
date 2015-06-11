@@ -2,6 +2,7 @@
 // #define __PLAYBACKCONTROLLER__
 
 // #include "Controller.js"
+// #include "TempoTap.js"
 // #include "../Clock.js"
 // #include "../html/NumberInputFieldWithValueDrag.js"
 // #include "../svgs.js"
@@ -80,6 +81,11 @@ synth.controller.Playback = function (audioContext, opt_options) {
   this.clock.on("tempoChange", function () {
     bpmField.setValue(this.clock.getBpM());
   }.bind(this));
+
+  // TEMPOTAP
+
+  this.tempoTap = new synth.controller.TempoTap(this.clock);
+  this.$element_.append(this.tempoTap.get$Element());
 
 	$bpmDiv.append(bpmField.get$Element()).append("BpM");
 	this.$element_.append($bpmDiv);
