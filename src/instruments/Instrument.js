@@ -13,16 +13,23 @@ synth.instrument = synth.instrument || {};
  * @class
  */
 // NOTE: At the moment instrument doesn't support live playing of a note
-synth.instrument.Instrument = function (audioContext, frequencyTable) {
+synth.instrument.Instrument = function (audioContext, opt_options) {
 	synth.StateExchangable.call(this);
   synth.Connectable.call(this);
+
+  opt_options = opt_options || {};
 
 	this.audioContext_ = audioContext;
 
 	this.frequenciesToPlay = new synth.TimeCollection(0, 0); // May not be overriden! NOTE: maybe using a defineProperty here?
 
 	//this.addExchangeObjectStateParameter("scale", this.getScale, this.setScale);
-	this.frequencyTable_ = frequencyTable || synth.scales.frequencyTables.a4is440Hz;
+  if (opt_options.frequencyTableName) {
+    this.frequencyTableName_ = opt_options.frequencyTableName;
+  } else {
+    this.frequencyTableName_ = "a4is440Hz";
+  }
+  this.frequencyTable_ = synth.scales.frequencyTables[this.frequencyTableName_];
 };
 synth.inherits(synth.instrument.Instrument, synth.StateExchangable);
 synth.inherits(synth.instrument.Instrument, synth.Connectable);
@@ -129,7 +136,7 @@ synth.instrument.Instrument.prototype.pause = synth.abstractFunction;
  */
 synth.instrument.Instrument.prototype.getState = function () {
   var state = synth.StateExchangable.prototype.getState.call(this);
-  state.frequencyTable = this.frequencyTable_;
+  state.frequencyTableName = this.frequencyTableName_;
   return state;
 };
 
@@ -139,7 +146,8 @@ synth.instrument.Instrument.prototype.getState = function () {
  */
 synth.instrument.Instrument.prototype.setState = function (state) {
   synth.StateExchangable.prototype.setState.call(this, state);
-  this.frequencyTable_ = state.frequencyTable;
+  this.frequencyTableName_ = state.frequencyTableName;
+  this.frequencyTable_ = synth.scales.frequencyTables[this.frequencyTableName_];
 };
 
 // #endif

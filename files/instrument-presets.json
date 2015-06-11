@@ -1,0 +1,12 @@
+{
+    "default": {
+        "frequencyTableName":"a4is440Hz",
+        "modules":[
+            {"waveType":"sine","gain":0.4675,"attack":0.2025,"decay":0,"sustain":1,"release":0.3375},
+            {"type":"lowpass","frequency":350,"resonance":1,"amount":0},
+            {"waveType":"sawtooth","gain":0.6775,"attack":0.1275,"decay":0.2,"sustain":0.52,"release":0.4375},
+            {"type":"highpass","frequency":459.2500003,"resonance":0,"amount":0},
+            {"gain":0.4}
+        ]
+    }
+}

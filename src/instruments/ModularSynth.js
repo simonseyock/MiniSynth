@@ -17,7 +17,7 @@ synth.instrument.ModularSynth = function (audioContext, opt_options) {
 
 	//synth.StateExchange.call(this);
 
-  synth.instrument.Instrument.call(this, audioContext, opt_options.frequencyTable);
+  synth.instrument.Instrument.call(this, audioContext, opt_options);
 
   this.modules_ = [];
 

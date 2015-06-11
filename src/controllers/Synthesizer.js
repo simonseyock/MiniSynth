@@ -23,7 +23,7 @@ synth.controller.Synthesizer = function (audioContext, opt_options) {
 
   // storage
 
-  this.storageController_ = new synth.controller.Storage({ storageKey: "instrument", stateExchangable: this.instrument });
+  this.storageController_ = new synth.controller.Storage({ storageKey: "instrument", stateExchangable: this.instrument, selectFirst: true });
 
   this.$element_.append(this.storageController_.get$Element());
 

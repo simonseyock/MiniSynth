@@ -16,12 +16,13 @@
     "parallelshell": "latest",
     "uprocess": "latest",
     "watch": "latest",
-	"jsdoc": "latest",
+    "express": "latest",
+	  "jsdoc": "latest",
     "uglify-js": "latest"
   },
   "scripts": {
     "clean": "rm -r build/*",
-    "build:base": "mkdir -p build/lib && mkdir -p build/css && cp html/index.html build/ && cp node_modules/jquery/dist/jquery.* build/lib/ && cp node_modules/lodash/index.js build/lodash.js",
+    "build:base": "mkdir -p build/lib && mkdir -p build/css && mkdir -p build/files && cp files/index.html build/ && cp node_modules/jquery/dist/jquery.* build/lib/ && cp node_modules/lodash/index.js build/lib/lodash.js && cp files/*-presets.json build/files/",
     "build:js": "uprocess \"src/main.js\" -o \"build/lib/MiniSynth.js\"",
     "watch:js": "watch \"npm run build:js\" javascript/",
     "build:css": "lessc css/main.less build/css/MiniSynth.css",
@@ -31,6 +32,7 @@
     "livereload": "live-reload --port 9091 build/",
     "develop": "parallelshell \"npm run watch\" \"npm run livereload\"",
 	  "jsdoc": "jsdoc src -r -d doc/jsdoc",
-    "uglify": "npm run build && uglifyjs \"build/lib/MiniSynth.js\" --compress --mangle > \"build/lib/MiniSynth.min.js\""
+    "uglify": "npm run build && uglifyjs \"build/lib/MiniSynth.js\" --compress --mangle > \"build/lib/MiniSynth.min.js\"",
+    "server": "node server.js"
   }
 }
