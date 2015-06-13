@@ -74,7 +74,9 @@ synth.instrument.ModularSynth.prototype.getState = function () {
 synth.instrument.ModularSynth.prototype.setState = function (state) {
   synth.instrument.Instrument.prototype.setState.call(this, state);
   state.modules.forEach(function (aModuleState, index) {
-    this.modules_[index].setState(aModuleState);
+    if (this.modules_[index]) {
+      this.modules_[index].setState(aModuleState);
+    }
   }.bind(this));
 };
 
