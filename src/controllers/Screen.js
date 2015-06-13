@@ -14,7 +14,7 @@ synth.controller.Screen = function (opt_options) {
 
   this.activeScreen_ = 0;
 
-  this.$button_ = $("<button>").text("Switch Screen").on("click", function (e) {
+  this.$button_ = $("<button>").addClass(this.className_ + "-button").text("Switch Screen").on("click", function (e) {
     if (this.activeScreen_ == 1) {
       this.changeScreen(-1);
       this.$button_.text("Switch to " + this.titles_[1]);

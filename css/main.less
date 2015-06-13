@@ -1,52 +1,68 @@
-@viewport {
-  //zoom: 1.0;
-  //user-zoom: fixed;
-  width: 400px;
+
+
+.design(@factor) {
+
+  .synth {
+
+    width: 100 * @factor;
+    padding: 2 * @factor;
+
+    * {
+      box-sizing: border-box;
+      font-family: monospace;
+      font-size: 4 * @factor;
+    }
+
+    h2 {
+      font-size: 6 * @factor;
+      vertical-align: center;
+    }
+
+    @button-size: 10 * @factor;
+
+    @accent-color: #1af800;
+    @accent-color-2: #900000;
+    @dark-main-color: #000000;
+    @light-main-color: #ffffff;
+
+    @stroke-width: 1 * @factor;
+
+    @import "misc.less";
+    @import "sequencer.less";
+    @import "playback.less";
+    @import "svgs.less";
+    @import "rotary-control.less";
+    @import "sound-generator.less";
+    @import "passfilter.less";
+    @import "synthesizer.less";
+    @import "storage.less";
+    @import "screens.less";
+
+    .blue {
+      background-color: blue;
+    }
+
+    button {
+      background: @light-main-color;
+      border-width: @stroke-width;
+      border-color: @dark-main-color;
+    }
+
+    .synth-module-gain {
+      float: right;
+    }
+  }
 }
 
-.synth {
+@media (max-width: 400px) {
+  .design(1vw);
+}
 
-  width: 400px;
-
-  h2 {
-    font-size: x-large;
+@media (min-width: 400px) {
+  html, body {
+    width: 400px;
+    padding: 0;
+    margin: 0;
   }
-
-  @button-size: 46px;
-
-  @accent-color: #1af800;
-  @dark-main-color: #000000;
-  @light-main-color: #ffffff;
-
-  @stroke-width: 4px;
-
-  @import "misc.less";
-  @import "sequencer.less";
-  @import "playback.less";
-  @import "svgs.less";
-  @import "rotary-control.less";
-  @import "sound-generator.less";
-  @import "passfilter.less";
-  @import "synthesizer.less";
-  @import "storage.less";
-
-  * {
-	  box-sizing: border-box;
-    font-family: monospace;
-    font-size: large;
-  }
-
-  .blue {
-	  background-color: blue;
-  }
-
-  button {
-    background: @light-main-color;
-    border-width: @stroke-width;
-    border-color: @dark-main-color;
-  }
-
-  .synth-module-gain {
-    float: right;
-  }
+  .design(4px);
 }
